@@ -1,92 +1,362 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Attendance Tracker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: Arial, sans-serif; background-color: #111019; color: white; padding: 20px; }
-    .container { max-width: 400px; margin: 0 auto; background: #201D2B; padding: 25px; border-radius: 8px; }
-    input, select, button { width: 100%; padding: 12px; margin: 8px 0 16px 0; border-radius: 4px; box-sizing: border-box; border: 1px solid #3B344C; background: #111019; color: white; }
-    button { background-color: #16A36A; color: white; font-weight: bold; border: none; cursor: pointer; }
-    button:hover { opacity: 0.9; }
-    .btn-out { background-color: #DC3545; margin-top: 5px; }
-    #status { margin-top: 15px; color: #FBBF24; font-size: 14px; text-align: center; font-weight: bold; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2 style="text-align: center; color: #B99AF7;">Attendance Portal</h2>
-    
-    <label>Employee Name</label>
-    <input type="text" id="empName" placeholder="e.g. John Doe">
-    
-    <label>Team</label>
-    <input type="text" id="team" placeholder="e.g. Sales">
-    
-    <label>Device ID</label>
-    <input type="text" id="deviceId" placeholder="Create a unique ID (e.g. JohnPhone1)">
-    
-    <label>Work Arrangement</label>
-    <select id="arrangement">
-      <option value="Onsite">Onsite</option>
-      <option value="Work From Home">Work From Home</option>
-    </select>
-    
-    <button onclick="sendData('TIME_IN')">TIME IN</button>
-    <button class="btn-out" onclick="sendData('TIME_OUT')">TIME OUT</button>
-    
-    <div id="status">Ready to record attendance.</div>
-  </div>
+/**
+ * ATTENDANCE TRACKER v3.7.4 — MANAGER APPROVAL BYPASSED
+ * Google Sheets remains the official database.
+ * Attendance columns:
+ * Date | Employee Name | Team | Device ID | Time In | Time Out |
+ * Last Updated | Total Hours | Work Arrangement
+ * Members columns: Name | Team | Device ID | Device Status
+ *
+ * Manager credentials are stored in Script Properties:
+ * MANAGER_USERNAME (default admin), MANAGER_PASSWORD (default admin).
+ * Change the default password before distributing the app.
+ */
+const SPREADSHEET_ID = "1ELQ4J7Ej0X_1RGdAGO-7cLDyR5c-WmhZA75zaFPxhn4";
+const ATTENDANCE_SHEET = "Attendance";
+const MEMBERS_SHEET = "Members";
+const TIME_ZONE = "Asia/Manila";
+const ATTENDANCE_HEADERS = ["Date", "Employee Name", "Team", "Device ID", "Time In", "Time Out", "Last Updated", "Total Hours", "Work Arrangement"];
+const MEMBER_HEADERS = ["Name", "Team", "Device ID", "Device Status", "Profile Picture File ID"];
 
-  <script>
-    // REPLACE THIS URL WITH YOUR LIVE GOOGLE APPS SCRIPT URL
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
+function doPost(e) {
+  let locked = false;
+  const lock = LockService.getScriptLock();
+  try {
+    const body = JSON.parse((e && e.postData && e.postData.contents) || "{}");
+    const action = String(body.action || "").trim().toUpperCase();
+    const name = String(body.employee_name || "").trim();
+    const team = String(body.team || "").trim();
+    const deviceId = String(body.device_id || "").trim();
 
-    async function sendData(action) {
-      const name = document.getElementById('empName').value.trim();
-      const team = document.getElementById('team').value.trim();
-      const device = document.getElementById('deviceId').value.trim();
-      const arrangement = document.getElementById('arrangement').value;
-      const statusDiv = document.getElementById('status');
+    const allowed = ["TIME_IN", "TIME_OUT", "GET_DATA", "GET_TEAM_DATA", "REGISTER_DEVICE",
+      "UPLOAD_PROFILE_IMAGE", "MANAGER_LOGIN", "GET_MANAGER_DATA", "GET_MANAGER_PROFILE_IMAGES",
+      "GET_ALL_ATTENDANCE", "GET_DEVICE_REQUESTS", "SET_DEVICE_STATUS", "RESET_EMPLOYEE_APP", "DELETE_REJECTED_DEVICE"];
+    if (allowed.indexOf(action) < 0) return json_({ok:false,error:"Invalid action."});
 
-      if (!name || !team || !device) {
-        statusDiv.innerText = "Error: Please fill in your Name, Team, and Device ID.";
-        return;
-      }
+    // Manager-only operations are authenticated against Script Properties.
+    const managerActions = ["MANAGER_LOGIN", "GET_MANAGER_DATA", "GET_MANAGER_PROFILE_IMAGES", "GET_ALL_ATTENDANCE", "GET_DEVICE_REQUESTS", "SET_DEVICE_STATUS", "RESET_EMPLOYEE_APP", "DELETE_REJECTED_DEVICE"];
+    if (managerActions.indexOf(action) >= 0 && !validManager_(body))
+      return json_({ok:false,error:"Manager authentication failed. Check the manager username and password in Apps Script Script Properties."});
+    if (action === "MANAGER_LOGIN")
+      return json_({ok:true,message:"Manager credentials verified. No manager Device ID is required."});
 
-      statusDiv.innerText = "Processing " + action + "... please wait.";
-      statusDiv.style.color = "#38BDF8";
+    if (["TIME_IN","TIME_OUT","GET_DATA","REGISTER_DEVICE"].indexOf(action) >= 0 && (!name || !team || !deviceId))
+      return json_({ok:false,error:"Employee setup is incomplete. Check employee name, team and Device ID."});
 
-      const payload = {
-        action: action,
-        employee_name: name,
-        team: team,
-        device_id: device,
-        work_arrangement: arrangement
-      };
+    lock.waitLock(20000); locked = true;
+    const attendance = getAttendanceSheet_();
+    const members = getMembersSheet_();
 
-      try {
-        // We use text/plain to avoid strict browser security blocks (CORS) when talking to Google Scripts
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        
-        const result = await response.json();
-        
-        if (result.ok) {
-            statusDiv.style.color = "#34D399";
-            statusDiv.innerText = result.message;
-        } else {
-            statusDiv.style.color = "#F87171";
-            statusDiv.innerText = "Error: " + result.error;
-        }
-      } catch (error) {
-        statusDiv.style.color = "#F87171";
-        statusDiv.innerText = "Failed to connect to the server. Check your Google URL.";
-      }
+    if (action === "REGISTER_DEVICE") return json_(registerDevice_(members,name,team,deviceId));
+    if (action === "GET_DATA") return json_(getEmployeeData_(attendance,name,team,deviceId));
+    if (action === "UPLOAD_PROFILE_IMAGE") return json_(uploadEmployeeProfile_(members,name,team,deviceId,body));
+    if (action === "GET_MANAGER_PROFILE_IMAGES") return json_(getManagerProfileImages_(members,body.file_ids));
+    if (action === "GET_TEAM_DATA") {
+      const reportDate = validDate_(body.report_date);
+      const report = getManagerData_(attendance,members,reportDate);
+      return json_({ok:true,records:report.records,members:report.members});
     }
-  </script>
-</body>
-</html>
+    if (action === "GET_MANAGER_DATA") {
+      const reportDate = validDate_(body.report_date);
+      return json_(getManagerData_(attendance,members,reportDate));
+    }
+    if (action === "GET_ALL_ATTENDANCE") return json_({ok:true,records:readAttendance_(attendance)});
+    if (action === "GET_DEVICE_REQUESTS") return json_({ok:true,devices:readDevices_(members)});
+    if (action === "RESET_EMPLOYEE_APP") {
+      const id = String(body.device_id || "").trim();
+      if (!id) return json_({ok:false,error:"A Device ID is required."});
+      const row = findMemberDeviceRow_(members,id);
+      if (!row) return json_({ok:false,error:"The selected employee device was not found."});
+      const oldPhoto = String(members.getRange(row,5).getDisplayValue() || "").trim();
+      // Keep the member row and Device ID as a reset marker until the employee app
+      // receives the command. Attendance rows are deliberately untouched.
+      members.getRange(row,4).setValue("RESET_REQUIRED");
+      members.getRange(row,5).clearContent();
+      if (oldPhoto) { try { DriveApp.getFileById(oldPhoto).setTrashed(true); } catch (photoErr) { console.warn("Could not remove reset profile photo: " + photoErr); } }
+      SpreadsheetApp.flush();
+      return json_({ok:true,message:"Employee app reset queued.",deviceId:id,status:"RESET_REQUIRED"});
+    }
+    if (action === "DELETE_REJECTED_DEVICE") {
+      const id = String(body.device_id || "").trim();
+      if (!id) return json_({ok:false,error:"A Device ID is required."});
+      const row = findMemberDeviceRow_(members,id);
+      if (!row) return json_({ok:false,error:"The selected device registration was not found."});
+      const selected = members.getRange(row,1,1,5).getDisplayValues()[0];
+      const selectedName = String(selected[0] || "").trim();
+      const selectedStatus = String(selected[3] || "").trim().toUpperCase();
+      if (selectedStatus !== "REJECTED")
+        return json_({ok:false,error:"Only a REJECTED device registration can be removed."});
+      const last = members.getLastRow();
+      const values = last >= 2 ? members.getRange(2,1,last-1,4).getDisplayValues() : [];
+      const duplicateCount = values.filter(r => String(r[0] || "").trim().toLowerCase() === selectedName.toLowerCase()).length;
+      if (duplicateCount < 2)
+        return json_({ok:false,error:"This employee does not have duplicate name entries. The device row was not removed."});
+      const oldPhoto = String(selected[4] || "").trim();
+      members.deleteRow(row);
+      if (oldPhoto) {
+        try { DriveApp.getFileById(oldPhoto).setTrashed(true); }
+        catch (photoErr) { console.warn("Could not trash rejected device profile photo: " + photoErr); }
+      }
+      SpreadsheetApp.flush();
+      return json_({ok:true,message:"Rejected duplicate device row removed.",deviceId:id,employeeName:selectedName});
+    }
+    if (action === "SET_DEVICE_STATUS") {
+      const id = String(body.device_id || "").trim();
+      const status = String(body.device_status || "").trim().toUpperCase();
+      if (!id || ["APPROVED","REJECTED","PENDING"].indexOf(status)<0)
+        return json_({ok:false,error:"A valid Device ID and status are required."});
+      const row = findMemberDeviceRow_(members,id);
+      if (!row) return json_({ok:false,error:"Device registration was not found."});
+      members.getRange(row,4).setValue(status);
+      return json_({ok:true,message:"Device status updated.",deviceStatus:status});
+    }
+
+    const now = new Date();
+    const today = Utilities.formatDate(now,TIME_ZONE,"yyyy-MM-dd");
+    const clock = Utilities.formatDate(now,TIME_ZONE,"hh:mm:ss a");
+    const updated = Utilities.formatDate(now,TIME_ZONE,"yyyy-MM-dd HH:mm:ss");
+    const rows = readAttendance_(attendance);
+
+    if (action === "TIME_IN") {
+      const active = rows.some(r => r.employeeName === name && r.deviceId === deviceId && r.timeIn && !r.timeOut);
+      if (active) return json_({ok:false,error:"You already have an active TIME IN. Please TIME OUT first."});
+      const arrangement = String(body.work_arrangement || "").trim();
+      if (["Onsite","Work From Home"].indexOf(arrangement)<0)
+        return json_({ok:false,error:"Select Onsite or Work From Home before TIME IN."});
+      attendance.appendRow([today,name,team,deviceId,clock,"",updated,"",arrangement]);
+      return json_({ok:true,message:"TIME IN recorded successfully.",timeIn:clock,date:today,lastUpdated:updated});
+    }
+
+    if (action === "TIME_OUT") {
+      let target = 0, source = null;
+      for (let i=rows.length-1;i>=0;i--) {
+        const r=rows[i];
+        if (r.employeeName===name && r.deviceId===deviceId && r.timeIn && !r.timeOut) { target=r._row; source=r; break; }
+      }
+      if (!target) return json_({ok:false,error:"No attendance record with a missing TIME OUT was found."});
+      const start = parseAttendanceDate_(source.date,source.timeIn);
+      const elapsed = now.getTime()-start.getTime();
+      if (!start || !isFinite(elapsed) || elapsed<0) return json_({ok:false,error:"Invalid attendance date/time."});
+      const totalHours = Math.round((elapsed/3600000)*100)/100;
+      const timeOut = today===source.date ? clock : clock+" ("+Utilities.formatDate(now,TIME_ZONE,"MMM d")+")";
+      attendance.getRange(target,6,1,4).setValues([[timeOut,updated,totalHours,source.workArrangement || ""]]);
+      attendance.getRange(target,8).setNumberFormat("0.00");
+      return json_({ok:true,message:"TIME OUT recorded successfully.",timeIn:source.timeIn,timeOut:timeOut,totalHours:totalHours,date:source.date,lastUpdated:updated});
+    }
+    return json_({ok:false,error:"Unhandled action."});
+  } catch (err) {
+    return json_({ok:false,error:String(err && err.message ? err.message : err)});
+  } finally {
+    if (locked) { try { lock.releaseLock(); } catch (e) {} }
+  }
+}
+
+function validManager_(body) {
+  const props=PropertiesService.getScriptProperties();
+  const expectedUser=props.getProperty("MANAGER_USERNAME") || "admin";
+  const expectedPass=props.getProperty("MANAGER_PASSWORD") || "admin";
+  return String(body.manager_username || "")===expectedUser && String(body.manager_password || "")===expectedPass;
+}
+function validDate_(value) {
+  const d=String(value || "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) throw new Error("Invalid report date. Use YYYY-MM-DD.");
+  return d;
+}
+function getAttendanceSheet_() {
+  const ss=SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sh=ss.getSheetByName(ATTENDANCE_SHEET);
+  if (!sh) sh=ss.insertSheet(ATTENDANCE_SHEET);
+  if (sh.getLastRow()===0) sh.getRange(1,1,1,ATTENDANCE_HEADERS.length).setValues([ATTENDANCE_HEADERS]);
+  else {
+    const old=sh.getRange(1,1,1,Math.max(sh.getLastColumn(),ATTENDANCE_HEADERS.length)).getDisplayValues()[0];
+    ATTENDANCE_HEADERS.forEach((h,i)=>{if (!String(old[i]||"").trim()) sh.getRange(1,i+1).setValue(h);});
+  }
+  sh.setFrozenRows(1); return sh;
+}
+function getMembersSheet_() {
+  const ss=SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sh=ss.getSheetByName(MEMBERS_SHEET);
+  if (!sh) sh=ss.insertSheet(MEMBERS_SHEET);
+  if (sh.getLastRow()===0) sh.getRange(1,1,1,5).setValues([["Name","Team","Device ID","Device Status","Profile Picture File ID"]]);
+  else {
+    MEMBER_HEADERS.forEach((h,i)=>{if (!String(sh.getRange(1,i+1).getDisplayValue()||"").trim()) sh.getRange(1,i+1).setValue(h);});
+    if (!String(sh.getRange(1,5).getDisplayValue()||"").trim()) sh.getRange(1,5).setValue("Profile Picture File ID");
+  }
+  sh.setFrozenRows(1); return sh;
+}
+function registerDevice_(sh,name,team,id) {
+  const last=sh.getLastRow();
+  if (last>=2) {
+    const vals=sh.getRange(2,1,last-1,Math.max(5,sh.getLastColumn())).getDisplayValues();
+    for(let i=0;i<vals.length;i++) {
+      const r=vals[i];
+      if(String(r[2]||"").trim()!==id) continue;
+      const row=i+2;
+      const status=String(r[3]||"PENDING").trim().toUpperCase();
+      if(status==="RESET_REQUIRED") {
+        sh.getRange(row,1,1,5).setValues([["","",id,"RESET_CLEARED",""]]);
+        SpreadsheetApp.flush();
+        return {ok:false,status:"RESET_REQUIRED",resetRequired:true,
+          message:"A manager reset is waiting for this device.",
+          error:"Your manager reset this registration. The app will return to setup."};
+      }
+      if(status==="RESET_CLEARED") {
+        sh.getRange(row,1,1,5).setValues([[name,team,id,"PENDING",""]]);
+        SpreadsheetApp.flush();
+        return {ok:false,status:"PENDING",resetApplied:true,
+          message:"New registration submitted and waiting for manager approval.",
+          error:"Your new registration is waiting for manager approval."};
+      }
+      const sameIdentity=String(r[0]||"").trim().toLowerCase()===name.toLowerCase() && String(r[1]||"").trim().toLowerCase()===team.toLowerCase();
+      if(!sameIdentity) return {ok:false,status:status,error:"This Device ID is already associated with another employee. Contact the manager to reset it first."};
+      return {ok:status==="APPROVED",status:status,error:status==="REJECTED"?"This device registration was rejected.":"This device is waiting for manager approval."};
+    }
+  }
+  sh.appendRow([name,team,id,"PENDING",""]);
+  return {ok:false,status:"PENDING",error:"Device registration submitted and waiting for manager approval."};
+}
+function findMemberDeviceRow_(sh,id) {
+  if(sh.getLastRow()<2) return 0;
+  const vals=sh.getRange(2,1,sh.getLastRow()-1,4).getDisplayValues();
+  for(let i=0;i<vals.length;i++) if(vals[i][2]===id) return i+2;
+  return 0;
+}
+function readDevices_(sh) {
+  const out=[]; if(sh.getLastRow()<2) return out;
+  const vals=sh.getRange(2,1,sh.getLastRow()-1,Math.max(5,sh.getLastColumn())).getDisplayValues();
+  vals.forEach(r=>{
+    if(r[0]&&r[1]) out.push({
+      name:r[0], team:r[1], deviceId:r[2], deviceStatus:r[3]||"PENDING",
+      profilePictureFileId:String(r[4]||"").trim()
+    });
+  });
+  return out;
+}
+function readMembers_(sh) {
+  const out=[],seen={}; if(sh.getLastRow()<2) return out;
+  const width=Math.max(5,sh.getLastColumn());
+  const vals=sh.getRange(2,1,sh.getLastRow()-1,width).getDisplayValues();
+  vals.forEach(r=>{
+    const name=String(r[0]||"").trim(),team=String(r[1]||"").trim();
+    if(!name||!team) return;
+    const key=name.toLowerCase()+"|"+team.toLowerCase();
+    if(!seen[key]) {seen[key]=true;out.push({name:name,team:team,profilePictureFileId:String(r[4]||"").trim()});}
+    else if(!out.find(x=>x.name.toLowerCase()+"|"+x.team.toLowerCase()===key).profilePictureFileId && r[4]) {
+      out.find(x=>x.name.toLowerCase()+"|"+x.team.toLowerCase()===key).profilePictureFileId=String(r[4]).trim();
+    }
+  }); return out;
+}
+
+function readAttendance_(sh) {
+  const out=[]; if(sh.getLastRow()<2) return out;
+  const vals=sh.getRange(2,1,sh.getLastRow()-1,9).getDisplayValues();
+  vals.forEach((r,i)=>{if(!r[0]&&!r[1]) return;out.push({date:r[0],employeeName:r[1],team:r[2],deviceId:r[3],timeIn:r[4],timeOut:r[5],lastUpdated:r[6],totalHours:r[7]===""?null:Number(r[7]),workArrangement:r[8]||"",_row:i+2});});
+  return out;
+}
+function getManagerData_(attendance,membersSheet,reportDate) {
+  const all=readAttendance_(attendance);
+  const records=all.filter(r=>r.date===reportDate);
+  const members=readMembers_(membersSheet);
+  return {ok:true,reportDate:reportDate,members:members,records:records,allRecords:all,devices:readDevices_(membersSheet),memberCount:members.length,serverTime:Utilities.formatDate(new Date(),TIME_ZONE,"yyyy-MM-dd HH:mm:ss")};
+}
+function getEmployeeData_(sh,name,team,id) {
+  const records=readAttendance_(sh).filter(r=>r.employeeName===name && r.deviceId===id).map(r=>({date:r.date,employeeName:r.employeeName,team:r.team,deviceId:r.deviceId,timeIn:r.timeIn,timeOut:r.timeOut,lastUpdated:r.lastUpdated,totalHours:r.totalHours,workArrangement:r.workArrangement}));
+  records.reverse();
+  const openRecord=records.find(r=>r.timeIn&&!r.timeOut)||null;
+  const members=getMembersSheet_();
+  const memberRow=findMemberDeviceRow_(members,id);
+  const fileId=memberRow ? String(members.getRange(memberRow,5).getDisplayValue()||"").trim() : "";
+  let profileImageBase64="";
+  if(fileId) { try { profileImageBase64=Utilities.base64Encode(DriveApp.getFileById(fileId).getBlob().getBytes()); } catch(e) {} }
+  return {ok:true,employee:{name:name,team:team,deviceId:id},profilePictureFileId:fileId,profileImageBase64:profileImageBase64,records:records.slice(0,500),openRecord:openRecord,summary:{recordCount:records.length,completedDays:records.filter(r=>r.timeIn&&r.timeOut).length,incompleteDays:records.filter(r=>r.timeIn&&!r.timeOut).length,totalRecordedHours:records.reduce((s,r)=>s+(Number(r.totalHours)||0),0)},serverTime:Utilities.formatDate(new Date(),TIME_ZONE,"yyyy-MM-dd HH:mm:ss")};
+}
+
+function uploadEmployeeProfile_(members,name,team,id,body) {
+  const row=findMemberDeviceRow_(members,id);
+  if(!row) return {ok:false,error:"This employee device is not registered."};
+  const status=String(members.getRange(row,4).getDisplayValue()||"").trim().toUpperCase();
+  const registeredName=String(members.getRange(row,1).getDisplayValue()||"").trim();
+  const registeredTeam=String(members.getRange(row,2).getDisplayValue()||"").trim();
+  if(status!=="APPROVED" || registeredName!==name || registeredTeam!==team)
+    return {ok:false,error:"Only the approved employee device can update this profile picture."};
+
+  const encoded=String(body.image_base64||"").replace(/^data:image\/jpeg;base64,/i,"").replace(/\s/g,"");
+  if(!encoded || encoded.length>180000) return {ok:false,error:"The profile image is empty or too large. Choose a smaller image."};
+  const mime=String(body.mime_type||"").toLowerCase();
+  if(mime!=="image/jpeg") return {ok:false,error:"Only optimized JPEG profile pictures are accepted."};
+  let bytes;
+  try { bytes=Utilities.base64Decode(encoded); }
+  catch(e) { return {ok:false,error:"The uploaded image data is invalid. Please choose the image again."}; }
+  if(bytes.length>120*1024) return {ok:false,error:"Profile picture must be 120 KB or smaller."};
+
+  const oldId=String(members.getRange(row,5).getDisplayValue()||"").trim();
+  const folder=getProfileFolder_();
+  const blob=Utilities.newBlob(bytes,"image/jpeg","employee-profile-"+id+".jpg");
+  const file=folder.createFile(blob);
+  file.setDescription("Private employee profile picture for registered device " + id);
+
+  members.getRange(row,5).setValue(file.getId());
+  SpreadsheetApp.flush();
+
+  if(oldId && oldId!==file.getId()) {
+    try { DriveApp.getFileById(oldId).setTrashed(true); } catch(e) { console.warn("Could not trash previous profile image: " + e); }
+  }
+  return {ok:true,message:"Profile picture saved for this Device ID.",profilePictureFileId:file.getId(),deviceId:id};
+}
+
+function getProfileFolder_() {
+  const props=PropertiesService.getScriptProperties();
+  let id=props.getProperty("PROFILE_PHOTOS_FOLDER_ID");
+  if(id) { try { return DriveApp.getFolderById(id); } catch(e) {} }
+  const folder=DriveApp.createFolder("Attendance Tracker Profile Photos");
+  props.setProperty("PROFILE_PHOTOS_FOLDER_ID",folder.getId());
+  return folder;
+}
+
+function getManagerProfileImages_(members,fileIds) {
+  const requested=Array.isArray(fileIds)?fileIds.slice(0,150):[];
+  const allowed={};
+  const last=members.getLastRow();
+  if(last>=2) {
+    const vals=members.getRange(2,1,last-1,Math.max(5,members.getLastColumn())).getDisplayValues();
+    vals.forEach(r=>{if(r[4]) allowed[String(r[4]).trim()]=true;});
+  }
+  const images={};
+  requested.forEach(id=>{
+    const fileId=String(id||"").trim();
+    if(!fileId || !allowed[fileId]) return;
+    try { images[fileId]=Utilities.base64Encode(DriveApp.getFileById(fileId).getBlob().getBytes()); } catch(e) {}
+  });
+  return {ok:true,profileImages:images};
+}
+function parseAttendanceDate_(dateText,timeText) {
+  const d=Utilities.parseDate(String(dateText)+" "+String(timeText),TIME_ZONE,"yyyy-MM-dd hh:mm:ss a");
+  return d;
+}
+
+function authorizeProfileDriveAccess() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const members = ss.getSheetByName(MEMBERS_SHEET);
+  if (!members) throw new Error('Members sheet was not found: ' + MEMBERS_SHEET);
+  if (members.getLastColumn() < 5) {
+    members.getRange(1, 5).setValue('Profile Picture File ID');
+    SpreadsheetApp.flush();
+  }
+  Logger.log('Spreadsheet access OK: ' + ss.getName());
+
+  const folder = getProfileFolder_();
+  const testBlob = Utilities.newBlob(
+    'Attendance Tracker Drive authorization test',
+    'text/plain',
+    'attendance-drive-auth-test.txt'
+  );
+  const testFile = folder.createFile(testBlob);
+  DriveApp.getFileById(testFile.getId()).setTrashed(true);
+
+  Logger.log('Drive folder access OK: ' + folder.getName());
+  Logger.log('Drive file create/trash permission OK.');
+  Logger.log('PROFILE AUTHORIZATION CHECK PASSED');
+  return 'PROFILE AUTHORIZATION CHECK PASSED';
+}
+
+function doGet() { return json_({ok:true,service:"Attendance Tracker v3.7.3",message:"Web App is running. Send MANAGER_LOGIN to verify manager credentials."}); }
+function json_(obj) { return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON); }
