@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #111019; color: white; padding: 20px; }
+    .container { max-width: 400px; margin: 0 auto; background: #201D2B; padding: 25px; border-radius: 8px; }
+    input, select, button { width: 100%; padding: 12px; margin: 8px 0 16px 0; border-radius: 4px; box-sizing: border-box; border: 1px solid #3B344C; background: #111019; color: white; }
+    button { background-color: #16A36A; color: white; font-weight: bold; border: none; cursor: pointer; }
+    button:hover { opacity: 0.9; }
+    .btn-out { background-color: #DC3545; margin-top: 5px; }
+    #status { margin-top: 15px; color: #FBBF24; font-size: 14px; text-align: center; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 style="text-align: center; color: #B99AF7;">Attendance Portal</h2>
+    
+    <label>Employee Name</label>
+    <input type="text" id="empName" placeholder="e.g. John Doe">
+    
+    <label>Team</label>
+    <input type="text" id="team" placeholder="e.g. Sales">
+    
+    <label>Device ID</label>
+    <input type="text" id="deviceId" placeholder="Create a unique ID (e.g. JohnPhone1)">
+    
+    <label>Work Arrangement</label>
+    <select id="arrangement">
+      <option value="Onsite">Onsite</option>
+      <option value="Work From Home">Work From Home</option>
+    </select>
+    
+    <button onclick="sendData('TIME_IN')">TIME IN</button>
+    <button class="btn-out" onclick="sendData('TIME_OUT')">TIME OUT</button>
+    
+    <div id="status">Ready to record attendance.</div>
+  </div>
+
+  <script>
+    // REPLACE THIS URL WITH YOUR LIVE GOOGLE APPS SCRIPT URL
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
+
+    async function sendData(action) {
+      const name = document.getElementById('empName').value.trim();
+      const team = document.getElementById('team').value.trim();
+      const device = document.getElementById('deviceId').value.trim();
+      const arrangement = document.getElementById('arrangement').value;
+      const statusDiv = document.getElementById('status');
+
+      if (!name || !team || !device) {
+        statusDiv.innerText = "Error: Please fill in your Name, Team, and Device ID.";
+        return;
+      }
+
+      statusDiv.innerText = "Processing " + action + "... please wait.";
+      statusDiv.style.color = "#38BDF8";
+
+      const payload = {
+        action: action,
+        employee_name: name,
+        team: team,
+        device_id: device,
+        work_arrangement: arrangement
+      };
+
+      try {
+        // We use text/plain to avoid strict browser security blocks (CORS) when talking to Google Scripts
+        const response = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await response.json();
+        
+        if (result.ok) {
+            statusDiv.style.color = "#34D399";
+            statusDiv.innerText = result.message;
+        } else {
+            statusDiv.style.color = "#F87171";
+            statusDiv.innerText = "Error: " + result.error;
+        }
+      } catch (error) {
+        statusDiv.style.color = "#F87171";
+        statusDiv.innerText = "Failed to connect to the server. Check your Google URL.";
+      }
+    }
+  </script>
+</body>
+</html>
