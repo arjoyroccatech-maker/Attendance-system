@@ -13,134 +13,216 @@
       --purple: #B99AF7;
       --green: #16A36A;
       --red: #DC3545;
+      --highlight: #302A40;
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: var(--bg);
       color: var(--text);
       margin: 0;
-      padding: 20px;
+      padding: 0;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
     }
-    .container {
-      width: 100%;
-      max-width: 500px;
+    /* Header */
+    .header {
+      width: 100%; background-color: #171522; padding: 15px 20px; 
+      box-sizing: border-box; border-bottom: 1px solid var(--highlight);
+      display: flex; justify-content: space-between; align-items: center;
     }
+    .header h1 { margin: 0; font-size: 18px; color: var(--purple); }
+    .header .subtitle { font-size: 11px; color: var(--muted); }
+    
+    /* Navigation */
+    .nav {
+      display: flex; gap: 10px; margin: 20px 0; width: 90%; max-width: 800px;
+    }
+    .nav-btn {
+      background-color: var(--bg); color: var(--muted); border: 1px solid var(--highlight);
+      padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1;
+    }
+    .nav-btn.active { background-color: var(--highlight); color: var(--text); border-color: var(--purple); }
+    
+    /* Main Content */
+    .container { width: 90%; max-width: 800px; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
     .card {
-      background-color: var(--panel);
-      padding: 24px;
-      border-radius: 8px;
-      border: 1px solid #302A40;
-      margin-bottom: 20px;
+      background-color: var(--panel); padding: 24px; border-radius: 8px;
+      border: 1px solid var(--highlight); margin-bottom: 20px;
     }
-    h2 { margin-top: 0; color: var(--purple); font-size: 20px; }
-    label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px; color: var(--muted); text-transform: uppercase; }
+    h2 { margin-top: 0; color: var(--text); font-size: 18px; }
+    label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 6px; color: var(--purple); text-transform: uppercase; }
     input, select {
       width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 4px;
-      background-color: #191723; border: 1px solid #302A40; color: white;
+      background-color: #191723; border: 1px solid var(--highlight); color: white;
       box-sizing: border-box; font-size: 14px;
     }
     input:focus, select:focus { outline: none; border-color: var(--purple); }
+    
+    /* Buttons */
     .btn {
-      width: 100%; padding: 14px; font-size: 14px; font-weight: bold;
-      border: none; border-radius: 4px; cursor: pointer; margin-bottom: 10px;
+      width: 100%; padding: 16px; font-size: 15px; font-weight: bold;
+      border: none; border-radius: 6px; cursor: pointer; margin-bottom: 10px;
       color: white; transition: 0.2s;
     }
     .btn-in { background-color: var(--green); }
-    .btn-in:hover { background-color: #128757; }
     .btn-out { background-color: var(--red); }
-    .btn-out:hover { background-color: #B02A37; }
-    .btn-refresh { background-color: #302A40; margin-top: 10px; }
-    .btn-refresh:hover { background-color: #493A67; }
-    #status { font-size: 13px; text-align: center; font-weight: bold; margin-top: 10px; min-height: 20px; color: #38BDF8; }
+    .btn-refresh { background-color: var(--highlight); margin-top: 10px; }
     
-    /* History Table */
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #302A40; }
+    /* Stats Grid */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;
+    }
+    .stat-card {
+      background-color: var(--highlight); padding: 15px; border-radius: 6px; border-left: 4px solid var(--purple);
+    }
+    .stat-title { font-size: 10px; font-weight: bold; color: var(--muted); margin-bottom: 5px; }
+    .stat-value { font-size: 24px; font-weight: bold; color: white; }
+
+    #status { font-size: 13px; text-align: center; font-weight: bold; margin-top: 10px; color: #38BDF8; }
+    
+    /* Table */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 12px 8px; border-bottom: 1px solid var(--highlight); }
     th { color: var(--purple); font-size: 11px; text-transform: uppercase; }
-    td { color: var(--text); }
   </style>
 </head>
 <body>
 
+  <div class="header">
+    <div>
+      <h1>ATTENDANCE</h1>
+      <div class="subtitle">EMPLOYEE PORTAL</div>
+    </div>
+    <div id="header-name" style="font-weight: bold; font-size: 14px;">Setup Required</div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchTab('dashboard')">⌂ Dashboard</button>
+    <button class="nav-btn" onclick="switchTab('history')">▤ History</button>
+    <button class="nav-btn" onclick="switchTab('setup')">⚙ Setup</button>
+  </div>
+
   <div class="container">
-    <div class="card">
-      <h2>Employee Setup</h2>
-      <label>Employee Name</label>
-      <input type="text" id="empName" placeholder="e.g. John Doe" oninput="saveSettings()">
-      
-      <label>Team / Department</label>
-      <input type="text" id="team" placeholder="e.g. Sales" oninput="saveSettings()">
-    </div>
+    
+    <!-- DASHBOARD TAB -->
+    <div id="dashboard" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-card" style="border-left-color: #38BDF8;">
+          <div class="stat-title">TOTAL RECORDED HOURS</div>
+          <div class="stat-value" id="stat-hours">--</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #34D399;">
+          <div class="stat-title">COMPLETED DAYS</div>
+          <div class="stat-value" id="stat-days">--</div>
+        </div>
+      </div>
 
-    <div class="card">
-      <h2>Record Attendance</h2>
-      <label>Work Arrangement</label>
-      <select id="arrangement" onchange="saveSettings()">
-        <option value="Onsite">Onsite</option>
-        <option value="Work From Home">Work From Home</option>
-      </select>
+      <div class="card">
+        <h2>Record Attendance</h2>
+        <label>Work Arrangement</label>
+        <select id="arrangement" onchange="saveSettings()">
+          <option value="Onsite">Onsite</option>
+          <option value="Work From Home">Work From Home</option>
+        </select>
 
-      <button class="btn btn-in" onclick="sendData('TIME_IN')">TIME IN</button>
-      <button class="btn btn-out" onclick="sendData('TIME_OUT')">TIME OUT</button>
-      
-      <div id="status">Ready.</div>
-    </div>
-
-    <div class="card">
-      <h2>Recent History</h2>
-      <button class="btn btn-refresh" onclick="fetchHistory()">↻ REFRESH HISTORY</button>
-      <div style="overflow-x: auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Time In</th>
-              <th>Time Out</th>
-            </tr>
-          </thead>
-          <tbody id="historyTable">
-            <tr><td colspan="3" style="text-align:center; color:#AAA4B8;">No records loaded.</td></tr>
-          </tbody>
-        </table>
+        <button class="btn btn-in" onclick="sendData('TIME_IN')">TIME IN</button>
+        <button class="btn btn-out" onclick="sendData('TIME_OUT')">TIME OUT</button>
+        
+        <div id="status">Ready.</div>
+        <button class="btn btn-refresh" onclick="fetchData()">↻ Sync with Google Sheets</button>
       </div>
     </div>
+
+    <!-- HISTORY TAB -->
+    <div id="history" class="tab-content">
+      <div class="card">
+        <h2>Attendance History</h2>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Hours</th>
+              </tr>
+            </thead>
+            <tbody id="historyTable">
+              <tr><td colspan="4" style="text-align:center; color:var(--muted);">No records loaded. Sync required.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETUP TAB -->
+    <div id="setup" class="tab-content">
+      <div class="card">
+        <h2>Employee Profile</h2>
+        <label>Employee Name</label>
+        <input type="text" id="empName" placeholder="e.g. John Doe" oninput="saveSettings()">
+        
+        <label>Team / Department</label>
+        <input type="text" id="team" placeholder="e.g. Sales" oninput="saveSettings()">
+        
+        <p style="font-size: 11px; color: var(--muted);">Your Device ID is securely generated in the background. Ensure your name matches your Google Sheet exactly.</p>
+      </div>
+    </div>
+
   </div>
 
   <script>
     // =========================================================================
     // 1. PASTE YOUR GOOGLE APPS SCRIPT URL HERE
     // =========================================================================
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxZxXqtW1_Olqvux2zHJN_cTeG0bpBHypvcv2LH4bjvXoBsJv4KJdtTTQuFIGYDdHcl2w/exec";
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec;
 
-    // Auto-generate a device ID in the background (Mimics Python behavior)
+    // Initialize Device ID
     let deviceId = localStorage.getItem('deviceId');
     if (!deviceId) {
       deviceId = 'web-' + Math.random().toString(36).substring(2, 11);
       localStorage.setItem('deviceId', deviceId);
     }
 
-    // Load saved name and team automatically
+    // Load Settings
     document.getElementById('empName').value = localStorage.getItem('empName') || '';
     document.getElementById('team').value = localStorage.getItem('team') || '';
     document.getElementById('arrangement').value = localStorage.getItem('arrangement') || 'Onsite';
+    updateHeader();
 
     function saveSettings() {
       localStorage.setItem('empName', document.getElementById('empName').value.trim());
       localStorage.setItem('team', document.getElementById('team').value.trim());
       localStorage.setItem('arrangement', document.getElementById('arrangement').value);
+      updateHeader();
+    }
+
+    function updateHeader() {
+      const name = localStorage.getItem('empName');
+      document.getElementById('header-name').innerText = name ? name : "Setup Required";
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+      if (tabId === 'history') fetchData();
     }
 
     async function sendData(action) {
-      const name = document.getElementById('empName').value.trim();
-      const team = document.getElementById('team').value.trim();
-      const arrangement = document.getElementById('arrangement').value;
+      const name = localStorage.getItem('empName');
+      const team = localStorage.getItem('team');
+      const arrangement = localStorage.getItem('arrangement');
       const statusDiv = document.getElementById('status');
 
       if (!name || !team) {
-        statusDiv.innerText = "Error: Please enter your Name and Team first.";
+        statusDiv.innerText = "Error: Complete your profile in the Setup tab first.";
         statusDiv.style.color = "#F87171";
+        switchTab('setup');
         return;
       }
 
@@ -155,13 +237,12 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
-        
         const result = await response.json();
         
         if (result.ok) {
             statusDiv.style.color = "#34D399";
             statusDiv.innerText = result.message;
-            fetchHistory(); // Auto-update history on success
+            fetchData(); 
         } else {
             statusDiv.style.color = "#F87171";
             statusDiv.innerText = "Error: " + result.error;
@@ -172,14 +253,16 @@
       }
     }
 
-    async function fetchHistory() {
-      const name = document.getElementById('empName').value.trim();
-      const team = document.getElementById('team').value.trim();
+    async function fetchData() {
+      const name = localStorage.getItem('empName');
+      const team = localStorage.getItem('team');
       const tableBody = document.getElementById('historyTable');
+      const statusDiv = document.getElementById('status');
       
       if (!name || !team || GOOGLE_URL === "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") return;
 
-      tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Loading...</td></tr>`;
+      statusDiv.innerText = "Syncing with Google Sheets...";
+      statusDiv.style.color = "#AAA4B8";
 
       const payload = { action: 'GET_DATA', employee_name: name, team, device_id: deviceId };
 
@@ -189,29 +272,42 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
-        
         const result = await response.json();
         
-        if (result.ok && result.records && result.records.length > 0) {
-          tableBody.innerHTML = '';
-          result.records.forEach(record => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${record.date || '—'}</td>
-              <td>${record.timeIn || '—'}</td>
-              <td>${record.timeOut || '—'}</td>
-            `;
-            tableBody.appendChild(tr);
-          });
-        } else {
-          tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#AAA4B8;">No attendance history found.</td></tr>`;
+        if (result.ok) {
+          statusDiv.innerText = "Synced successfully.";
+          statusDiv.style.color = "#34D399";
+          
+          // Update Dashboard Stats
+          if(result.summary) {
+            document.getElementById('stat-hours').innerText = result.summary.totalRecordedHours ? result.summary.totalRecordedHours.toFixed(1) : '0';
+            document.getElementById('stat-days').innerText = result.summary.completedDays || '0';
+          }
+
+          // Update History Table
+          if (result.records && result.records.length > 0) {
+            tableBody.innerHTML = '';
+            result.records.slice(0, 10).forEach(record => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td>${record.date || '—'}</td>
+                <td>${record.timeIn || '—'}</td>
+                <td>${record.timeOut || '—'}</td>
+                <td>${record.totalHours ? record.totalHours + 'h' : '—'}</td>
+              `;
+              tableBody.appendChild(tr);
+            });
+          } else {
+            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--muted);">No attendance history found.</td></tr>`;
+          }
         }
       } catch (error) {
-        tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#F87171;">Failed to load history.</td></tr>`;
+        statusDiv.innerText = "Failed to sync data.";
+        statusDiv.style.color = "#F87171";
       }
     }
 
-    window.onload = fetchHistory;
+    window.onload = () => { if(localStorage.getItem('empName')) fetchData(); };
   </script>
 </body>
 </html>
