@@ -1,72 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Attendance Tracker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Tracker | Employee Portal</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #111019; color: white; padding: 20px; }
-    .container { max-width: 400px; margin: 0 auto; background: #201D2B; padding: 25px; border-radius: 8px; }
-    input, select, button { width: 100%; padding: 12px; margin: 8px 0 16px 0; border-radius: 4px; box-sizing: border-box; border: 1px solid #3B344C; background: #111019; color: white; }
-    button { background-color: #16A36A; color: white; font-weight: bold; border: none; cursor: pointer; }
-    button:hover { opacity: 0.9; }
-    .btn-out { background-color: #DC3545; margin-top: 5px; }
-    #status { margin-top: 15px; color: #FBBF24; font-size: 14px; text-align: center; font-weight: bold; }
+    :root {
+      --bg: #111019;
+      --panel: #201D2B;
+      --text: #F7F5FB;
+      --muted: #AAA4B8;
+      --purple: #B99AF7;
+      --green: #16A36A;
+      --red: #DC3545;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+    .card {
+      background-color: var(--panel);
+      padding: 24px;
+      border-radius: 8px;
+      border: 1px solid #302A40;
+      margin-bottom: 20px;
+    }
+    h2 { margin-top: 0; color: var(--purple); font-size: 20px; }
+    label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px; color: var(--muted); text-transform: uppercase; }
+    input, select {
+      width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 4px;
+      background-color: #191723; border: 1px solid #302A40; color: white;
+      box-sizing: border-box; font-size: 14px;
+    }
+    input:focus, select:focus { outline: none; border-color: var(--purple); }
+    .btn {
+      width: 100%; padding: 14px; font-size: 14px; font-weight: bold;
+      border: none; border-radius: 4px; cursor: pointer; margin-bottom: 10px;
+      color: white; transition: 0.2s;
+    }
+    .btn-in { background-color: var(--green); }
+    .btn-in:hover { background-color: #128757; }
+    .btn-out { background-color: var(--red); }
+    .btn-out:hover { background-color: #B02A37; }
+    .btn-refresh { background-color: #302A40; margin-top: 10px; }
+    .btn-refresh:hover { background-color: #493A67; }
+    #status { font-size: 13px; text-align: center; font-weight: bold; margin-top: 10px; min-height: 20px; color: #38BDF8; }
+    
+    /* History Table */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #302A40; }
+    th { color: var(--purple); font-size: 11px; text-transform: uppercase; }
+    td { color: var(--text); }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <h2 style="text-align: center; color: #B99AF7;">Attendance Portal</h2>
-    
-    <label>Employee Name</label>
-    <input type="text" id="empName" placeholder="e.g. John Doe">
-    
-    <label>Team</label>
-    <input type="text" id="team" placeholder="e.g. Sales">
-    
-    <label>Device ID</label>
-    <input type="text" id="deviceId" placeholder="Create a unique ID (e.g. JohnPhone1)">
-    
-    <label>Work Arrangement</label>
-    <select id="arrangement">
-      <option value="Onsite">Onsite</option>
-      <option value="Work From Home">Work From Home</option>
-    </select>
-    
-    <button onclick="sendData('TIME_IN')">TIME IN</button>
-    <button class="btn-out" onclick="sendData('TIME_OUT')">TIME OUT</button>
-    
-    <div id="status">Ready to record attendance.</div>
+    <div class="card">
+      <h2>Employee Setup</h2>
+      <label>Employee Name</label>
+      <input type="text" id="empName" placeholder="e.g. John Doe" oninput="saveSettings()">
+      
+      <label>Team / Department</label>
+      <input type="text" id="team" placeholder="e.g. Sales" oninput="saveSettings()">
+    </div>
+
+    <div class="card">
+      <h2>Record Attendance</h2>
+      <label>Work Arrangement</label>
+      <select id="arrangement" onchange="saveSettings()">
+        <option value="Onsite">Onsite</option>
+        <option value="Work From Home">Work From Home</option>
+      </select>
+
+      <button class="btn btn-in" onclick="sendData('TIME_IN')">TIME IN</button>
+      <button class="btn btn-out" onclick="sendData('TIME_OUT')">TIME OUT</button>
+      
+      <div id="status">Ready.</div>
+    </div>
+
+    <div class="card">
+      <h2>Recent History</h2>
+      <button class="btn btn-refresh" onclick="fetchHistory()">↻ REFRESH HISTORY</button>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time In</th>
+              <th>Time Out</th>
+            </tr>
+          </thead>
+          <tbody id="historyTable">
+            <tr><td colspan="3" style="text-align:center; color:#AAA4B8;">No records loaded.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script>
-    // REPLACE THIS URL WITH YOUR LIVE GOOGLE APPS SCRIPT URL
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycby_l67KJOiMks__3VHXXJAlI9kGMXQtW40-HRKoG5E_kqLCWe8DzRRqUvcLLgv7MZ8k/exec";
+    // =========================================================================
+    // 1. PASTE YOUR GOOGLE APPS SCRIPT URL HERE
+    // =========================================================================
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxZxXqtW1_Olqvux2zHJN_cTeG0bpBHypvcv2LH4bjvXoBsJv4KJdtTTQuFIGYDdHcl2w/exec";
+
+    // Auto-generate a device ID in the background (Mimics Python behavior)
+    let deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+      deviceId = 'web-' + Math.random().toString(36).substring(2, 11);
+      localStorage.setItem('deviceId', deviceId);
+    }
+
+    // Load saved name and team automatically
+    document.getElementById('empName').value = localStorage.getItem('empName') || '';
+    document.getElementById('team').value = localStorage.getItem('team') || '';
+    document.getElementById('arrangement').value = localStorage.getItem('arrangement') || 'Onsite';
+
+    function saveSettings() {
+      localStorage.setItem('empName', document.getElementById('empName').value.trim());
+      localStorage.setItem('team', document.getElementById('team').value.trim());
+      localStorage.setItem('arrangement', document.getElementById('arrangement').value);
+    }
 
     async function sendData(action) {
       const name = document.getElementById('empName').value.trim();
       const team = document.getElementById('team').value.trim();
-      const device = document.getElementById('deviceId').value.trim();
       const arrangement = document.getElementById('arrangement').value;
       const statusDiv = document.getElementById('status');
 
-      if (!name || !team || !device) {
-        statusDiv.innerText = "Error: Please fill in your Name, Team, and Device ID.";
+      if (!name || !team) {
+        statusDiv.innerText = "Error: Please enter your Name and Team first.";
+        statusDiv.style.color = "#F87171";
         return;
       }
 
-      statusDiv.innerText = "Processing " + action + "... please wait.";
+      statusDiv.innerText = `Submitting ${action.replace('_', ' ')}...`;
       statusDiv.style.color = "#38BDF8";
 
-      const payload = {
-        action: action,
-        employee_name: name,
-        team: team,
-        device_id: device,
-        work_arrangement: arrangement
-      };
+      const payload = { action, employee_name: name, team, device_id: deviceId, work_arrangement: arrangement };
 
       try {
-        // We use text/plain to avoid strict browser security blocks (CORS) when talking to Google Scripts
         const response = await fetch(GOOGLE_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -78,15 +161,57 @@
         if (result.ok) {
             statusDiv.style.color = "#34D399";
             statusDiv.innerText = result.message;
+            fetchHistory(); // Auto-update history on success
         } else {
             statusDiv.style.color = "#F87171";
             statusDiv.innerText = "Error: " + result.error;
         }
       } catch (error) {
         statusDiv.style.color = "#F87171";
-        statusDiv.innerText = "Failed to connect to the server. Check your Google URL.";
+        statusDiv.innerText = "Connection failed. Check your internet or Google URL.";
       }
     }
+
+    async function fetchHistory() {
+      const name = document.getElementById('empName').value.trim();
+      const team = document.getElementById('team').value.trim();
+      const tableBody = document.getElementById('historyTable');
+      
+      if (!name || !team || GOOGLE_URL === "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") return;
+
+      tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Loading...</td></tr>`;
+
+      const payload = { action: 'GET_DATA', employee_name: name, team, device_id: deviceId };
+
+      try {
+        const response = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await response.json();
+        
+        if (result.ok && result.records && result.records.length > 0) {
+          tableBody.innerHTML = '';
+          result.records.forEach(record => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${record.date || '—'}</td>
+              <td>${record.timeIn || '—'}</td>
+              <td>${record.timeOut || '—'}</td>
+            `;
+            tableBody.appendChild(tr);
+          });
+        } else {
+          tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#AAA4B8;">No attendance history found.</td></tr>`;
+        }
+      } catch (error) {
+        tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#F87171;">Failed to load history.</td></tr>`;
+      }
+    }
+
+    window.onload = fetchHistory;
   </script>
 </body>
 </html>
