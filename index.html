@@ -140,7 +140,7 @@
     .time-display span { font-size: 24px; font-weight: 700; margin-left: 5px; }
     .date-display { font-size: 18px; color: var(--text-muted); font-weight: 500; margin-top: 10px; }
 
-    .button-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; }
+    .button-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 14px; }
     .btn-pill {
       flex: 1; max-width: 300px; padding: 18px 24px; border-radius: 50px;
       display: flex; align-items: center; justify-content: center; gap: 15px;
@@ -155,6 +155,29 @@
     .bg-green { background: linear-gradient(135deg, #10A350, #0c8240); }
     .bg-red { background: linear-gradient(135deg, #D3252E, #a61c23); }
 
+    /* Email OTP Fallback Link & Box */
+    .otp-fallback-link {
+      font-size: 13px; color: var(--text-muted); font-weight: 500;
+      cursor: pointer; display: inline-block; margin-top: 6px;
+      transition: color 0.15s;
+    }
+    .otp-fallback-link:hover { color: #111; text-decoration: underline; }
+
+    #otp-section {
+      max-width: 360px; margin: 0 auto; padding: 20px;
+      background: #F8F9FA; border-radius: 16px; border: 1px solid var(--border);
+      display: none;
+    }
+    #otp-section h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 700; }
+    #otp-info-text { font-size: 13px; color: var(--text-muted); margin: 0 0 16px 0; }
+    #otp-code-input {
+      width: 100%; padding: 12px; font-size: 24px; font-weight: 700;
+      text-align: center; letter-spacing: 6px; border-radius: 8px;
+      border: 1px solid #ced4da; box-sizing: border-box; margin-bottom: 12px;
+      font-family: 'Inter', sans-serif;
+    }
+    #otp-status-msg { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
+
     /* Bottom Status Bar */
     .status-bar { border-top: 1px solid var(--border); display: flex; background: #FAFAFA; }
     .status-col { flex: 1; padding: 22px 28px; display: flex; align-items: center; gap: 15px; text-align: left; }
@@ -165,7 +188,6 @@
     .status-value { font-size: 15px; font-weight: 700; color: #111; font-variant-numeric: tabular-nums; }
     .timer-highlight { color: var(--brand-red); font-weight: 800; }
     
-    /* Compact Select so chevron sits cleanly beside the label */
     .status-select { 
       font-size: 15px; font-weight: 700; color: #111; border: none; background: transparent; 
       font-family: 'Inter', sans-serif; cursor: pointer; padding: 0 18px 0 0; outline: none;
@@ -180,7 +202,7 @@
     /* QR State inside Kiosk */
     #qrcode-container { margin: 10px auto; padding: 20px; background: white; border-radius: 16px; display: inline-block; border: 1px solid var(--border); }
     .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 600; color: var(--brand-green); margin-top: 15px; font-size: 15px;}
-    .cancel-link { font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; margin-top: 20px; display: inline-block; }
+    .cancel-link { font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; margin-top: 16px; display: inline-block; }
     
     .spinner { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid currentColor; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; }
     .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: #111; margin: 40px auto; display: block; }
@@ -337,6 +359,17 @@
               Time Out
             </button>
           </div>
+          <span class="otp-fallback-link" onclick="startEmailOTP()">Can't scan QR? Use Email OTP</span>
+        </div>
+
+        <!-- Email OTP Section -->
+        <div id="otp-section">
+          <h3>Email Verification</h3>
+          <p id="otp-info-text">Sending 6-digit code to your registered email...</p>
+          <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="6" id="otp-code-input" placeholder="000000" disabled>
+          <button class="btn-save" id="otp-verify-btn" onclick="submitEmailOTP()" disabled>Verify OTP</button>
+          <div id="otp-status-msg"></div>
+          <span class="cancel-link" onclick="cancelOTP()">Cancel</span>
         </div>
 
         <!-- QR Display -->
@@ -397,6 +430,123 @@
     // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
     // =========================================================================
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
+
+    // --- PERSISTENT MOBILE DEVICE TOKEN (1-TO-1 BINDING) ---
+    function getOrCreateMobileDeviceId() {
+      let devId = localStorage.getItem('boundMobileDeviceId');
+      if (!devId) {
+        const randPart = Math.floor(100000 + Math.random() * 900000);
+        const charPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+        devId = `PHONE-${randPart}-${charPart}`;
+        localStorage.setItem('boundMobileDeviceId', devId);
+      }
+      return devId;
+    }
+
+    // --- EMAIL OTP FALLBACK LOGIC ---
+    async function startEmailOTP() {
+      const actionSection = document.getElementById('action-section');
+      const otpSection = document.getElementById('otp-section');
+      const infoText = document.getElementById('otp-info-text');
+      const otpInput = document.getElementById('otp-code-input');
+      const verifyBtn = document.getElementById('otp-verify-btn');
+      const statusMsg = document.getElementById('otp-status-msg');
+
+      actionSection.style.display = 'none';
+      otpSection.style.display = 'block';
+      infoText.innerText = "Sending 6-digit code to your registered email...";
+      otpInput.value = "";
+      otpInput.disabled = true;
+      verifyBtn.disabled = true;
+      statusMsg.innerText = "";
+
+      try {
+        const response = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "SEND_OTP",
+            employee_name: localStorage.getItem('empName'),
+            team: localStorage.getItem('team')
+          })
+        });
+        const result = await response.json();
+
+        if (result.ok) {
+          infoText.innerText = result.message + " (valid for 3 mins)";
+          otpInput.disabled = false;
+          verifyBtn.disabled = false;
+          otpInput.focus();
+        } else {
+          infoText.innerText = "Unable to send OTP.";
+          statusMsg.style.color = "var(--brand-red)";
+          statusMsg.innerText = "❌ " + result.error;
+        }
+      } catch (err) {
+        infoText.innerText = "Connection failed.";
+        statusMsg.style.color = "var(--brand-red)";
+        statusMsg.innerText = "❌ Could not reach server.";
+      }
+    }
+
+    function cancelOTP() {
+      document.getElementById('otp-section').style.display = 'none';
+      document.getElementById('action-section').style.display = 'block';
+    }
+
+    async function submitEmailOTP() {
+      const otpCode = document.getElementById('otp-code-input').value.trim();
+      const statusMsg = document.getElementById('otp-status-msg');
+      const verifyBtn = document.getElementById('otp-verify-btn');
+      const targetAction = (currentShiftState === 'ACTIVE') ? 'TIME_OUT' : 'TIME_IN';
+
+      if (otpCode.length !== 6) {
+        statusMsg.style.color = "var(--brand-red)";
+        statusMsg.innerText = "Please enter the 6-digit code.";
+        return;
+      }
+
+      verifyBtn.disabled = true;
+      statusMsg.style.color = "#111";
+      statusMsg.innerText = "Verifying OTP...";
+
+      if (targetAction === 'TIME_IN') {
+        localStorage.setItem('localShiftStart', Date.now().toString());
+      }
+
+      try {
+        const response = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "VERIFY_OTP",
+            target_action: targetAction,
+            otp_code: otpCode,
+            employee_name: localStorage.getItem('empName'),
+            team: localStorage.getItem('team'),
+            work_arrangement: document.getElementById('arrangement').value
+          })
+        });
+        const result = await response.json();
+
+        if (result.ok) {
+          statusMsg.style.color = "var(--brand-green)";
+          statusMsg.innerText = "✅ " + result.message;
+          setTimeout(() => {
+            document.getElementById('otp-section').style.display = 'none';
+            fetchLiveStatus(false);
+          }, 1200);
+        } else {
+          statusMsg.style.color = "var(--brand-red)";
+          statusMsg.innerText = "❌ " + result.error;
+          verifyBtn.disabled = false;
+        }
+      } catch (err) {
+        statusMsg.style.color = "var(--brand-red)";
+        statusMsg.innerText = "❌ Connection error.";
+        verifyBtn.disabled = false;
+      }
+    }
 
     // --- PROFILE PHOTO LOGIC ---
     function applyProfilePhoto(dataUrl, fileId) {
@@ -501,7 +651,7 @@
                 action: "UPLOAD_PHOTO",
                 employee_name: localStorage.getItem('empName'),
                 team: localStorage.getItem('team'),
-                device_id: "Mobile-QR-Auth",
+                device_id: "Kiosk-Upload",
                 image_base64: base64String,
                 mime_type: "image/jpeg"
               })
@@ -544,7 +694,7 @@
             action: "GET_DATA",
             employee_name: empName,
             team: empTeam,
-            device_id: "Mobile-QR-Auth"
+            device_id: getOrCreateMobileDeviceId()
           })
         });
         const result = await response.json();
@@ -601,7 +751,6 @@
       const dateEl = document.getElementById('date-display');
       if (dateEl) dateEl.innerText = now.toLocaleDateString('en-US', options);
 
-      // Update inline timer inside Today's Status
       if (window.shiftStartTime && !isNaN(window.shiftStartTime.getTime())) {
         const diffMs = Math.max(0, now - window.shiftStartTime);
         const hrs = Math.floor(diffMs / (1000 * 60 * 60));
@@ -646,7 +795,7 @@
             action: "GET_DATA",
             employee_name: localStorage.getItem('empName'),
             team: localStorage.getItem('team'),
-            device_id: "Mobile-QR-Auth"
+            device_id: "Kiosk-Sync"
           })
         });
         
@@ -699,6 +848,7 @@
       
       document.getElementById('kiosk-loading').style.display = 'none';
       document.getElementById('qr-section').style.display = 'none';
+      document.getElementById('otp-section').style.display = 'none';
       document.getElementById('action-section').style.display = 'block';
 
       if (result.openRecord) {
@@ -729,6 +879,9 @@
         document.getElementById('device-error').classList.add('active-card');
         document.getElementById('error-message').innerText = "Security Block: Verification must be done on a mobile device.";
       } else {
+        // Ensure this phone has its persistent Device ID ready before submission
+        getOrCreateMobileDeviceId();
+
         document.getElementById('phone-auth').classList.add('active-card');
         const actionText = urlParams.get('action').replace('_', ' ');
         const empName = urlParams.get('name');
@@ -831,14 +984,17 @@
 
       submitBtn.disabled = true;
       submitBtn.style.opacity = "0.5";
-      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:#111;"></div> Sending to Server...';
+      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:#111;"></div> Verifying Device & Submitting...';
       statusDiv.style.color = "#111";
+
+      // Send this specific phone's unique bound Device ID
+      const mobileDeviceId = getOrCreateMobileDeviceId();
 
       const payload = {
         action: urlParams.get('action'),
         employee_name: urlParams.get('name'),
         team: urlParams.get('team'),
-        device_id: "Mobile-QR-Auth",
+        device_id: mobileDeviceId,
         work_arrangement: urlParams.get('arr')
       };
 
@@ -855,7 +1011,7 @@
             statusDiv.innerText = "✅ SUCCESS! " + result.message;
         } else {
             statusDiv.style.color = "var(--brand-red)";
-            statusDiv.innerText = "❌ ERROR: " + result.error;
+            statusDiv.innerText = "🚫 " + result.error;
             submitBtn.disabled = false;
             submitBtn.style.opacity = "1";
         }
