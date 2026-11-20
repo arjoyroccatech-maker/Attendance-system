@@ -49,16 +49,29 @@
     }
     #qrcode-container img { display: block; }
     #scan-status { font-size: 16px; font-weight: bold; margin-top: 15px; }
+    
+    /* Error Card Styles */
+    .error-icon { font-size: 40px; margin-bottom: 10px; }
+    #device-error h2 { color: var(--red); }
   </style>
 </head>
 <body>
+
+  <!-- ==========================================
+       ERROR MODE: WRONG DEVICE DETECTED
+       ========================================== -->
+  <div id="device-error" class="card">
+    <div class="error-icon">🚫</div>
+    <h2>Access Denied</h2>
+    <p id="error-message" style="color: #F7F5FB; font-weight: bold;">Device not allowed.</p>
+  </div>
 
   <!-- ==========================================
        LAPTOP MODE 1: FIRST TIME REGISTRATION
        ========================================== -->
   <div id="laptop-setup" class="card">
     <h2>Laptop Registration</h2>
-    <p>Register your details. This laptop will be permanently remembered as yours.</p>
+    <p>Register your details. This exact laptop will be permanently locked as your generator.</p>
     <label>Employee Name</label>
     <input type="text" id="empName" placeholder="e.g. John Doe">
     <label>Team / Department</label>
@@ -115,41 +128,51 @@
     <div id="scan-status"></div>
   </div>
 
-
   <script>
     // =========================================================================
-    // YOUR GOOGLE APPS SCRIPT URL IS ALREADY INSERTED HERE
+    // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
     // =========================================================================
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
 
-    // Read URL to figure out if we are on the Phone or Laptop
+    // 1. Check what type of device the user is on
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // 2. Read URL to figure out if we are scanning or at the main site
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
+    // 3. ENFORCE DEVICE RULES
     if (mode === 'scan') {
-      // ---------------------------------------------------------
-      // SCENARIO A: PHONE SCANNER MODE
-      // ---------------------------------------------------------
-      document.getElementById('phone-auth').classList.add('active-card');
-      
-      const actionText = urlParams.get('action').replace('_', ' ');
-      const empName = urlParams.get('name');
-      document.getElementById('phone-greeting').innerText = `${actionText} for ${empName}`;
+      // SCENARIO A: The user is trying to authenticate a QR code
+      if (!isMobile) {
+        // Block: They are trying to open a scan link on a computer
+        document.getElementById('device-error').classList.add('active-card');
+        document.getElementById('error-message').innerText = "Security Block: This verification form must be scanned and opened on a mobile phone, not a computer.";
+      } else {
+        // Allow: Phone is opening the scan link
+        document.getElementById('phone-auth').classList.add('active-card');
+        const actionText = urlParams.get('action').replace('_', ' ');
+        const empName = urlParams.get('name');
+        document.getElementById('phone-greeting').innerText = `${actionText} for ${empName}`;
+      }
 
     } else {
-      // ---------------------------------------------------------
-      // SCENARIO B: LAPTOP MODE
-      // ---------------------------------------------------------
-      const savedName = localStorage.getItem('empName');
-      const authCode = localStorage.getItem('authCode');
-
-      if (savedName && authCode) {
-        // Already registered -> Show QR Kiosk
-        document.getElementById('laptop-kiosk').classList.add('active-card');
-        document.getElementById('welcome-text').innerText = "Hello, " + savedName;
+      // SCENARIO B: The user is opening the main website to register/kiosk
+      if (isMobile) {
+        // Block: They are trying to open the kiosk on a phone
+        document.getElementById('device-error').classList.add('active-card');
+        document.getElementById('error-message').innerText = "Access Denied: The Registration Form and QR Kiosk can only be accessed from a laptop or desktop computer.";
       } else {
-        // First time -> Show Registration
-        document.getElementById('laptop-setup').classList.add('active-card');
+        // Allow: Computer is opening the kiosk
+        const savedName = localStorage.getItem('empName');
+        const authCode = localStorage.getItem('authCode');
+
+        if (savedName && authCode) {
+          document.getElementById('laptop-kiosk').classList.add('active-card');
+          document.getElementById('welcome-text').innerText = "Hello, " + savedName;
+        } else {
+          document.getElementById('laptop-setup').classList.add('active-card');
+        }
       }
     }
 
@@ -163,14 +186,12 @@
         return;
       }
 
-      // Generate a random 4-digit code
       const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
       
       localStorage.setItem('empName', name);
       localStorage.setItem('team', team);
       localStorage.setItem('authCode', newAuthCode);
       
-      // Hide setup, show code reveal
       document.getElementById('laptop-setup').classList.remove('active-card');
       document.getElementById('laptop-reveal').classList.add('active-card');
       document.getElementById('auth-code-display').innerText = newAuthCode;
@@ -184,14 +205,12 @@
     function generateQR(actionType) {
       const name = localStorage.getItem('empName');
       const team = localStorage.getItem('team');
-      const code = localStorage.getItem('authCode'); // Secret code passed to phone URL
+      const code = localStorage.getItem('authCode'); 
       const arrangement = document.getElementById('arrangement').value;
 
-      // Build URL for the phone to open
       const currentWebsite = window.location.origin + window.location.pathname;
       const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&code=${encodeURIComponent(code)}`;
 
-      // Generate QR Code image
       const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
       
       document.getElementById('qr-image').src = qrImageUrl;
@@ -216,7 +235,6 @@
         return;
       }
 
-      // Code is correct, send to Google Sheets
       statusDiv.innerText = "Verifying... sending to Google Sheets.";
       statusDiv.style.color = "#38BDF8";
 
