@@ -4,75 +4,111 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Attendance System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg: #111019; --panel: #201D2B; --text: #F7F5FB; 
-      --muted: #AAA4B8; --purple: #B99AF7; --green: #16A36A; 
-      --red: #DC3545; --highlight: #302A40;
+      --bg: #0F172A;
+      --card-bg: #1E293B;
+      --border: #334155;
+      --text-main: #F8FAFC; 
+      --text-muted: #94A3B8;
+      --brand: #6366F1;
+      --brand-hover: #4F46E5;
+      --success: #10B981;
+      --success-hover: #059669;
+      --danger: #F43F5E;
+      --danger-hover: #E11D48;
     }
+    
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg); color: var(--text);
-      margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 90vh;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg); color: var(--text-main);
+      margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; 
+      min-height: 90vh; box-sizing: border-box;
     }
+    
     .card {
-      background-color: var(--panel); padding: 30px; border-radius: 12px;
-      border: 1px solid var(--highlight); width: 100%; max-width: 400px; text-align: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: none;
+      background-color: var(--card-bg); padding: 40px 30px; border-radius: 20px;
+      border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.02);
+      display: none; animation: fadeIn 0.4s ease-out;
     }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
     .active-card { display: block; }
-    h2 { margin-top: 0; color: var(--purple); font-size: 22px; }
-    p { color: var(--muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
-    label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 6px; color: var(--muted); text-align: left; text-transform: uppercase; }
+    
+    h2 { margin-top: 0; color: var(--text-main); font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+    p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+    label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); text-align: left; text-transform: uppercase; letter-spacing: 0.05em; }
+    
     input, select {
-      width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 6px;
-      background-color: #191723; border: 1px solid var(--highlight); color: white;
-      box-sizing: border-box; font-size: 16px;
+      width: 100%; padding: 14px 16px; margin-bottom: 24px; border-radius: 10px;
+      background-color: var(--bg); border: 1px solid var(--border); color: var(--text-main);
+      box-sizing: border-box; font-size: 15px; font-family: 'Inter', sans-serif; transition: all 0.2s;
     }
-    input:focus, select:focus { outline: none; border-color: var(--purple); }
+    
+    input:focus, select:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+    
+    /* NEW: Disabled state styling for the grayed-out look */
+    select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: #1E293B;
+    }
+    
     .btn {
-      width: 100%; padding: 16px; font-size: 15px; font-weight: bold;
-      border: none; border-radius: 6px; cursor: pointer; margin-bottom: 10px;
-      color: white; transition: 0.2s;
+      width: 100%; padding: 16px; font-size: 15px; font-weight: 600; border: none; border-radius: 10px; 
+      cursor: pointer; margin-bottom: 12px; color: white; transition: background-color 0.2s, transform 0.1s;
+      font-family: 'Inter', sans-serif; letter-spacing: 0.02em;
     }
-    .btn-save { background-color: var(--purple); color: #111019; }
-    .btn-in { background-color: var(--green); }
-    .btn-out { background-color: var(--red); }
+    
+    .btn:active { transform: scale(0.98); }
+    .btn-save { background-color: var(--brand); }
+    .btn-save:hover { background-color: var(--brand-hover); }
+    .btn-in { background-color: var(--success); }
+    .btn-in:hover { background-color: var(--success-hover); }
+    .btn-out { background-color: var(--danger); }
+    .btn-out:hover { background-color: var(--danger-hover); }
     
     #auth-code-display {
-      font-size: 36px; font-weight: bold; color: #38BDF8; letter-spacing: 4px;
-      background: #111019; padding: 15px; border-radius: 8px; margin-bottom: 20px;
+      font-size: 42px; font-weight: 700; color: var(--brand); letter-spacing: 8px; background: var(--bg); 
+      padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid var(--border);
     }
     
     #qrcode-container {
-      margin-top: 10px; padding: 15px; background: white; border-radius: 8px; display: inline-block;
+      margin-top: 10px; padding: 20px; background: white; border-radius: 16px; 
+      display: inline-block; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
     }
     #qrcode-container img { display: block; }
-    #scan-status { font-size: 16px; font-weight: bold; margin-top: 15px; }
+    #scan-status { font-size: 15px; font-weight: 600; margin-top: 15px; }
     
-    .error-icon { font-size: 40px; margin-bottom: 10px; }
-    #device-error h2 { color: var(--red); }
+    .error-icon { font-size: 48px; margin-bottom: 16px; }
+    #device-error h2 { color: var(--danger); }
 
     .spinner {
-      border: 3px solid rgba(255, 255, 255, 0.1);
-      border-top: 3px solid var(--purple);
-      border-radius: 50%;
-      width: 16px; height: 16px;
-      animation: spin 1s linear infinite;
-      display: inline-block; vertical-align: middle; margin-right: 8px;
+      border: 3px solid rgba(255, 255, 255, 0.1); border-top: 3px solid var(--text-main);
+      border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite;
+      display: inline-block; vertical-align: middle;
+    }
+    .spinner-large {
+      width: 32px; height: 32px; border-width: 4px; border-top-color: var(--brand);
+      margin: 20px auto; display: block;
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    .link-action {
-      font-size: 12px; color: var(--muted); text-decoration: underline; 
-      cursor: pointer; margin-top: 15px; display: inline-block; transition: 0.2s;
-    }
-    .link-action:hover { color: var(--text); }
     
-    .waiting-text {
-      color: #38BDF8; font-size: 14px; font-weight: bold; margin-top: 15px;
-      display: flex; justify-content: center; align-items: center;
-    }
+    .link-action { font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; margin-top: 20px; display: inline-block; transition: 0.2s; }
+    .link-action:hover { color: var(--text-main); }
+    
+    .waiting-text { display: flex; justify-content: center; align-items: center; gap: 8px; color: var(--brand); font-size: 14px; font-weight: 600; margin-top: 20px; }
+    .waiting-text .spinner { border-top-color: var(--brand); width: 16px; height: 16px; border-width: 2px; }
   </style>
 </head>
 <body>
@@ -83,31 +119,31 @@
   <div id="device-error" class="card">
     <div class="error-icon">🚫</div>
     <h2>Access Denied</h2>
-    <p id="error-message" style="color: #F7F5FB; font-weight: bold;">Device not allowed.</p>
+    <p id="error-message" style="color: var(--text-main); font-weight: 500;">Device not allowed.</p>
   </div>
 
   <!-- ==========================================
        LAPTOP MODE 1: FIRST TIME REGISTRATION
        ========================================== -->
   <div id="laptop-setup" class="card">
-    <h2>Laptop Registration</h2>
-    <p>Register your details. This exact laptop will be permanently locked as your generator.</p>
+    <h2>Device Setup</h2>
+    <p>Register to permanently lock this device as your attendance kiosk.</p>
     <label>Employee Name</label>
-    <input type="text" id="empName" placeholder="e.g. John Doe">
+    <input type="text" id="empName" placeholder="e.g. John Doe" autocomplete="off">
     <label>Team / Department</label>
-    <input type="text" id="team" placeholder="e.g. Sales">
-    <button class="btn btn-save" onclick="registerLaptop()">REGISTER & GET CODE</button>
+    <input type="text" id="team" placeholder="e.g. Sales" autocomplete="off">
+    <button class="btn btn-save" onclick="registerLaptop()">Secure Device & Continue</button>
   </div>
 
   <!-- ==========================================
        LAPTOP MODE 2: REVEAL AUTHENTICATION CODE
        ========================================== -->
   <div id="laptop-reveal" class="card">
-    <h2>Registration Saved!</h2>
-    <p>Here is your permanent Authentication Code.</p>
+    <h2>Registration Complete</h2>
+    <p>Your permanent Mobile Authentication Code is ready.</p>
     <div id="auth-code-display">0000</div>
-    <p style="color: #F87171;">⚠️ Write this down or memorize it!</p>
-    <button class="btn btn-in" onclick="goToDashboard()">I REMEMBER IT, CONTINUE</button>
+    <p style="color: var(--danger); font-weight: 500;">⚠️ Save this code! You will need it to scan.</p>
+    <button class="btn btn-in" onclick="goToDashboard()">I Have It, Continue</button>
   </div>
 
   <!-- ==========================================
@@ -116,8 +152,11 @@
   <div id="laptop-kiosk" class="card">
     <h2 id="welcome-text">Welcome</h2>
     
+    <!-- Central Loading State -->
+    <div id="kiosk-loading"><div class="spinner-large"></div></div>
+    
     <!-- Action Forms -->
-    <div id="action-section" style="display: none;">
+    <div id="action-section" style="display: none; margin-top: 24px;">
       <div id="arrangement-container">
         <label>Work Arrangement</label>
         <select id="arrangement">
@@ -125,15 +164,15 @@
           <option value="Work From Home">Work From Home</option>
         </select>
       </div>
-      <button id="btn-time-in" class="btn btn-in" onclick="generateQR('TIME_IN')" style="display: none;">GENERATE TIME IN QR</button>
-      <button id="btn-time-out" class="btn btn-out" onclick="generateQR('TIME_OUT')" style="display: none;">GENERATE TIME OUT QR</button>
+      <button id="btn-time-in" class="btn btn-in" onclick="generateQR('TIME_IN')" style="display: none;">Generate Time In QR</button>
+      <button id="btn-time-out" class="btn btn-out" onclick="generateQR('TIME_OUT')" style="display: none;">Generate Time Out QR</button>
     </div>
 
-    <!-- QR Code Display (Hidden by default) -->
+    <!-- QR Code Display -->
     <div id="qr-section" style="display: none;">
       <div id="qrcode-container"><img id="qr-image" src="" alt="QR Code"></div>
-      <div class="waiting-text" id="qr-waiting-text"><div class="spinner"></div> Waiting for mobile...</div>
-      <span class="link-action" onclick="cancelQR()" style="color: #F87171;">Cancel</span>
+      <div class="waiting-text" id="qr-waiting-text"><div class="spinner"></div> Awaiting verification...</div>
+      <span class="link-action" onclick="cancelQR()">Cancel</span>
     </div>
   </div>
 
@@ -141,16 +180,19 @@
        PHONE MODE: AUTHENTICATION FORM
        ========================================== -->
   <div id="phone-auth" class="card">
-    <h2>Attendance Verification</h2>
-    <p id="phone-greeting">Time In for Employee</p>
-    <label>Enter Your 4-Digit Auth Code</label>
-    <input type="number" id="enteredCode" placeholder="____" style="text-align: center; font-size: 24px; letter-spacing: 4px;">
-    <button class="btn btn-save" id="submit-btn" onclick="verifyAndSubmit()">SUBMIT ATTENDANCE</button>
+    <h2>Verify Attendance</h2>
+    <p id="phone-greeting" style="font-weight: 500;">Time In for Employee</p>
+    <label>Authentication Code</label>
+    <input type="number" id="enteredCode" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;">
+    <button class="btn btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
     <div id="scan-status"></div>
   </div>
 
   <script>
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
+    // =========================================================================
+    // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
+    // =========================================================================
+    const GOOGLE_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const urlParams = new URLSearchParams(window.location.search);
@@ -163,11 +205,11 @@
       const btnIn = document.getElementById('btn-time-in');
       const btnOut = document.getElementById('btn-time-out');
       const actionSection = document.getElementById('action-section');
-      const qrSection = document.getElementById('qr-section');
+      const loadingState = document.getElementById('kiosk-loading');
 
       if (!isSilentPolling) {
         actionSection.style.display = 'none';
-        qrSection.style.display = 'none';
+        loadingState.style.display = 'block';
       }
 
       try {
@@ -185,7 +227,7 @@
         const result = await response.json();
         
         if (result.ok) {
-          let newShiftState = result.openRecord ? 'ACTIVE' : 'READY_TO_IN';
+          let newShiftState = result.openRecord ? 'ACTIVE' : 'CHECKED_OUT';
 
           if (isSilentPolling && newShiftState !== currentShiftState) {
              clearInterval(qrPollingInterval); 
@@ -193,7 +235,7 @@
              
              const waitText = document.getElementById('qr-waiting-text');
              waitText.innerHTML = '✅ Verified Successfully!';
-             waitText.style.color = "#34D399";
+             waitText.style.color = 'var(--success)';
              
              setTimeout(() => renderUIState(result), 1500);
              return;
@@ -206,6 +248,7 @@
         }
       } catch (error) {
         if (!isSilentPolling) {
+          loadingState.style.display = 'none';
           actionSection.style.display = 'block';
           btnIn.style.display = 'block';
           btnOut.style.display = 'block';
@@ -217,16 +260,26 @@
       const btnIn = document.getElementById('btn-time-in');
       const btnOut = document.getElementById('btn-time-out');
       const arrContainer = document.getElementById('arrangement-container');
+      const arrSelect = document.getElementById('arrangement');
       
-      document.getElementById('action-section').style.display = 'block';
+      document.getElementById('kiosk-loading').style.display = 'none';
       document.getElementById('qr-section').style.display = 'none';
+      document.getElementById('action-section').style.display = 'block';
+
+      // Always show the container
+      arrContainer.style.display = 'block';
 
       if (result.openRecord) {
-        arrContainer.style.display = 'none'; 
+        // ACTIVE SHIFT: Time Out Mode
+        if (result.openRecord.workArrangement) {
+          arrSelect.value = result.openRecord.workArrangement;
+        }
+        arrSelect.disabled = true; // Gray out and lock the dropdown
         btnIn.style.display = 'none';
         btnOut.style.display = 'block';      
       } else {
-        arrContainer.style.display = 'block'; 
+        // CHECKED OUT: Time In Mode
+        arrSelect.disabled = false; // Unlock the dropdown for a new shift
         btnIn.style.display = 'block';        
         btnOut.style.display = 'none';
       }
@@ -235,7 +288,7 @@
     if (mode === 'scan') {
       if (!isMobile) {
         document.getElementById('device-error').classList.add('active-card');
-        document.getElementById('error-message').innerText = "Security Block: This verification form must be scanned and opened on a mobile phone, not a computer.";
+        document.getElementById('error-message').innerText = "Security Block: Verification must be done on a mobile device.";
       } else {
         document.getElementById('phone-auth').classList.add('active-card');
         const actionText = urlParams.get('action').replace('_', ' ');
@@ -245,15 +298,14 @@
     } else {
       if (isMobile) {
         document.getElementById('device-error').classList.add('active-card');
-        document.getElementById('error-message').innerText = "Access Denied: The Registration Form and QR Kiosk can only be accessed from a laptop or desktop computer.";
+        document.getElementById('error-message').innerText = "Access Denied: Kiosk access is restricted to desktop devices.";
       } else {
         const savedName = localStorage.getItem('empName');
         const authCode = localStorage.getItem('authCode');
 
         if (savedName && authCode) {
           document.getElementById('laptop-kiosk').classList.add('active-card');
-          document.getElementById('welcome-text').innerText = "HELLO, " + savedName;
-          
+          document.getElementById('welcome-text').innerText = "HELLO, " + savedName.toUpperCase();
           fetchLiveStatus(false); 
         } else {
           document.getElementById('laptop-setup').classList.add('active-card');
@@ -264,7 +316,7 @@
     function registerLaptop() {
       const name = document.getElementById('empName').value.trim();
       const team = document.getElementById('team').value.trim();
-      if (!name || !team) return alert("Please enter both Name and Team.");
+      if (!name || !team) return alert("Please complete all fields.");
       const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
       localStorage.setItem('empName', name);
       localStorage.setItem('team', team);
@@ -295,8 +347,8 @@
       document.getElementById('qr-image').src = qrImageUrl;
       
       const waitText = document.getElementById('qr-waiting-text');
-      waitText.innerHTML = '<div class="spinner"></div> Waiting for mobile...';
-      waitText.style.color = '#38BDF8';
+      waitText.innerHTML = '<div class="spinner"></div> Awaiting verification...';
+      waitText.style.color = 'var(--brand)';
 
       document.getElementById('action-section').style.display = 'none';
       document.getElementById('qr-section').style.display = 'block';
@@ -313,19 +365,19 @@
 
       if (!enteredCode) {
         statusDiv.innerText = "Please enter your code.";
-        statusDiv.style.color = "#F87171";
+        statusDiv.style.color = "var(--danger)";
         return;
       }
       if (enteredCode !== expectedCode) {
         statusDiv.innerText = "❌ Incorrect Authentication Code.";
-        statusDiv.style.color = "#F87171";
+        statusDiv.style.color = "var(--danger)";
         return;
       }
 
       submitBtn.disabled = true;
       submitBtn.style.opacity = "0.5";
-      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:#38BDF8;"></div> Sending to Sheets...';
-      statusDiv.style.color = "#38BDF8";
+      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:var(--brand);"></div> Sending to Server...';
+      statusDiv.style.color = "var(--text-main)";
 
       const payload = {
         action: urlParams.get('action'),
@@ -344,16 +396,16 @@
         const result = await response.json();
         
         if (result.ok) {
-            statusDiv.style.color = "#34D399";
+            statusDiv.style.color = "var(--success)";
             statusDiv.innerText = "✅ SUCCESS! " + result.message;
         } else {
-            statusDiv.style.color = "#F87171";
+            statusDiv.style.color = "var(--danger)";
             statusDiv.innerText = "❌ ERROR: " + result.error;
             submitBtn.disabled = false;
             submitBtn.style.opacity = "1";
         }
       } catch (error) {
-        statusDiv.style.color = "#F87171";
+        statusDiv.style.color = "var(--danger)";
         statusDiv.innerText = "Connection failed. Check your internet.";
         submitBtn.disabled = false;
         submitBtn.style.opacity = "1";
