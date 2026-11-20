@@ -96,7 +96,6 @@
     .avatar svg { width: 40px; height: 40px; fill: #6C757D; }
     .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
 
-    /* Hover Overlay ("Add Photo" or "Change") */
     .avatar-overlay {
       position: absolute; inset: 0; border-radius: 50%;
       background: rgba(0, 0, 0, 0.55); color: white;
@@ -106,7 +105,6 @@
     }
     .avatar-wrapper:hover .avatar-overlay { opacity: 1; }
 
-    /* Corner Camera Badge */
     .camera-badge {
       position: absolute; bottom: 0; right: 0;
       width: 24px; height: 24px; border-radius: 50%;
@@ -116,7 +114,6 @@
     }
     .camera-badge svg { width: 12px; height: 12px; fill: white; }
 
-    /* Upload Spinner Overlay */
     .avatar-loading {
       position: absolute; inset: 0; border-radius: 50%;
       background: rgba(255, 255, 255, 0.85);
@@ -196,8 +193,42 @@
     .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: #111; margin: 40px auto; display: block; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* Phone UI overrides */
-    #phone-auth { max-width: 400px; padding: 40px; }
+    /* --- PHONE AUTH WITH OVERLAPPING PROFILE CIRCLE --- */
+    #phone-auth {
+      max-width: 400px;
+      padding: 40px 32px;
+      overflow: visible; /* Allows circle to overlap half outside the top edge */
+      margin-top: 45px;  /* Gives room above the card so avatar isn't clipped */
+      position: relative;
+    }
+
+    .phone-avatar-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background-color: #E9ECEF;
+      border: 4px solid #FFFFFF;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      margin: -85px auto 18px auto; /* Pulls half outside (45px) and half inside (45px) */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+    .phone-avatar-circle svg {
+      width: 46px;
+      height: 46px;
+      fill: #6C757D;
+    }
+    .phone-avatar-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
     .masked-input { -webkit-text-security: disc; text-security: disc; }
   </style>
 </head>
@@ -339,8 +370,13 @@
       </div>
     </div>
 
-    <!-- PHONE AUTH -->
+    <!-- PHONE AUTH (With Half-Outside / Half-Inside Circular Avatar) -->
     <div id="phone-auth" class="card setup-card">
+      <div class="phone-avatar-circle">
+        <svg id="phone-default-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <img id="phone-profile-img" src="" alt="Profile Photo" onerror="handlePhoneImageError()">
+      </div>
+
       <h2 style="font-size:22px;">Verify Attendance</h2>
       <p id="phone-greeting" style="font-weight: 500; color:#111;">Time In for Employee</p>
       <label style="text-align:center;">Authentication Code</label>
@@ -369,7 +405,6 @@
       const hintEl = document.getElementById('photo-action-hint');
 
       if (fileId) {
-        // Use Google Drive thumbnail endpoint for fast, reliable image rendering
         imgEl.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w250`;
         imgEl.style.display = 'block';
         svgEl.style.display = 'none';
@@ -387,10 +422,28 @@
       }
     }
 
+    function applyPhoneProfilePhoto(fileId) {
+      const imgEl = document.getElementById('phone-profile-img');
+      const svgEl = document.getElementById('phone-default-svg');
+
+      if (fileId) {
+        imgEl.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w250`;
+        imgEl.style.display = 'block';
+        svgEl.style.display = 'none';
+      } else {
+        imgEl.style.display = 'none';
+        svgEl.style.display = 'block';
+      }
+    }
+
     function handleImageError() {
-      // Revert cleanly to default avatar if Drive image fails to load
       document.getElementById('profile-photo-img').style.display = 'none';
       document.getElementById('default-avatar-svg').style.display = 'block';
+    }
+
+    function handlePhoneImageError() {
+      document.getElementById('phone-profile-img').style.display = 'none';
+      document.getElementById('phone-default-svg').style.display = 'block';
     }
 
     function triggerPhotoUpload() {
@@ -404,7 +457,6 @@
       const loader = document.getElementById('avatar-loading-spinner');
       loader.style.display = 'flex';
 
-      // Resize & compress image on canvas before uploading to Google Drive
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
@@ -452,7 +504,7 @@
             alert("Connection error while uploading photo.");
           } finally {
             loader.style.display = 'none';
-            event.target.value = ""; // Reset input so same file can be re-selected
+            event.target.value = "";
           }
         };
         img.src = e.target.result;
@@ -555,7 +607,6 @@
         const result = await response.json();
         
         if (result.ok) {
-          // Sync profile photo from Google Drive / Members Sheet
           if (!isSilentPolling) {
             applyProfilePhoto(result.profileFileId || "");
           }
@@ -640,7 +691,10 @@
         document.getElementById('phone-auth').classList.add('active-card');
         const actionText = urlParams.get('action').replace('_', ' ');
         const empName = urlParams.get('name');
+        const photoId = urlParams.get('photo') || "";
+        
         document.getElementById('phone-greeting').innerText = `${actionText} for ${empName}`;
+        applyPhoneProfilePhoto(photoId);
       }
     } else {
       if (isMobile) {
@@ -654,7 +708,6 @@
           document.getElementById('laptop-kiosk').classList.add('active-card');
           document.getElementById('kiosk-name').innerText = savedName.toUpperCase();
           
-          // Load cached photo immediately while syncing fresh data
           const cachedPhoto = localStorage.getItem('profileFileId');
           if (cachedPhoto) applyProfilePhoto(cachedPhoto);
 
@@ -690,6 +743,7 @@
       const name = localStorage.getItem('empName');
       const team = localStorage.getItem('team');
       const code = localStorage.getItem('authCode'); 
+      const photoId = localStorage.getItem('profileFileId') || "";
       const arrangement = document.getElementById('arrangement').value;
 
       if (actionType === 'TIME_IN') {
@@ -697,7 +751,7 @@
       }
 
       const currentWebsite = window.location.origin + window.location.pathname;
-      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&code=${encodeURIComponent(code)}`;
+      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&code=${encodeURIComponent(code)}&photo=${encodeURIComponent(photoId)}`;
       const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
       
       document.getElementById('qr-image').src = qrImageUrl;
