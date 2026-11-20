@@ -74,12 +74,13 @@
     .setup-card h2 { margin-top: 0; font-size: 24px; font-weight: 700; }
     .setup-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
     .setup-card label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); text-align: left; }
-    .setup-card input { width: 100%; padding: 14px 16px; margin-bottom: 24px; border-radius: 8px; border: 1px solid #ced4da; box-sizing: border-box; font-size: 15px; font-family: 'Inter', sans-serif; }
+    .setup-card input { width: 100%; padding: 14px 16px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ced4da; box-sizing: border-box; font-size: 15px; font-family: 'Inter', sans-serif; }
     .setup-card input:focus { outline: none; border-color: #333; }
     
     #auth-code-display { font-size: 42px; font-weight: 800; color: #111; letter-spacing: 12px; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid #e9ecef; }
     
     .btn-save { width: 100%; padding: 16px; font-size: 15px; font-weight: 600; background: #111; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* --- KIOSK UI & INTERACTIVE PROFILE PHOTO --- */
     .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 30px; }
@@ -287,15 +288,28 @@
       <p id="error-message">Device not allowed.</p>
     </div>
 
-    <!-- REGISTRATION -->
+    <!-- INITIAL REGISTRATION (Includes Email for OTP) -->
     <div id="laptop-setup" class="card setup-card">
       <h2>Device Setup</h2>
-      <p>Register to permanently lock this device as your kiosk.</p>
+      <p>Register your profile to permanently lock this device as your kiosk.</p>
       <label>Employee Name</label>
       <input type="text" id="empName" placeholder="e.g. John Doe" autocomplete="off">
       <label>Team / Department</label>
       <input type="text" id="team" placeholder="e.g. Sales" autocomplete="off">
-      <button class="btn-save" onclick="registerLaptop()">Secure Device & Continue</button>
+      <label>Work Email (For Backup OTP)</label>
+      <input type="email" id="empEmail" placeholder="e.g. john.doe@company.com" autocomplete="off">
+      <button class="btn-save" id="btn-register-laptop" onclick="registerLaptop()">Secure Device & Continue</button>
+    </div>
+
+    <!-- COMPLETE MISSING EMAIL PROMPT (For Existing Accounts Without Email) -->
+    <div id="laptop-email-complete" class="card setup-card">
+      <h2>Complete Registration</h2>
+      <p>Please add your email address to enable backup Email OTP verification.</p>
+      <label>Registered Employee</label>
+      <input type="text" id="missingEmailEmpName" disabled style="background:#f8f9fa; color:#6c757d;">
+      <label>Work Email Address</label>
+      <input type="email" id="missingEmailInput" placeholder="e.g. john.doe@company.com" autocomplete="off">
+      <button class="btn-save" id="btn-save-missing-email" onclick="saveMissingEmail()">Save Email & Continue</button>
     </div>
 
     <!-- CODE REVEAL -->
@@ -803,6 +817,16 @@
         
         if (result.ok) {
           if (!isSilentPolling) {
+            // Check if employee has an email registered in Members sheet
+            if (!result.email) {
+              document.getElementById('laptop-kiosk').classList.remove('active-card');
+              document.getElementById('laptop-email-complete').classList.add('active-card');
+              document.getElementById('missingEmailEmpName').value = localStorage.getItem('empName');
+              return;
+            } else {
+              localStorage.setItem('empEmail', result.email);
+            }
+
             applyProfilePhoto(result.profileDataUrl || "", result.profileFileId || "");
           }
 
@@ -820,7 +844,7 @@
              waitText.innerHTML = '✅ Verified Successfully!';
              waitText.style.color = 'var(--brand-green)';
              
-             setTimeout(() => renderUIState(result), 1500);
+             setTimeout(() => renderUIState(result), 1200);
              return;
           }
 
@@ -879,7 +903,6 @@
         document.getElementById('device-error').classList.add('active-card');
         document.getElementById('error-message').innerText = "Security Block: Verification must be done on a mobile device.";
       } else {
-        // Ensure this phone has its persistent Device ID ready before submission
         getOrCreateMobileDeviceId();
 
         document.getElementById('phone-auth').classList.add('active-card');
@@ -916,17 +939,89 @@
       }
     }
 
-    function registerLaptop() {
+    async function registerLaptop() {
       const name = document.getElementById('empName').value.trim();
       const team = document.getElementById('team').value.trim();
-      if (!name || !team) return alert("Please complete all fields.");
-      const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
-      localStorage.setItem('empName', name);
-      localStorage.setItem('team', team);
-      localStorage.setItem('authCode', newAuthCode);
-      document.getElementById('laptop-setup').classList.remove('active-card');
-      document.getElementById('laptop-reveal').classList.add('active-card');
-      document.getElementById('auth-code-display').innerText = newAuthCode;
+      const email = document.getElementById('empEmail').value.trim();
+      const btn = document.getElementById('btn-register-laptop');
+
+      if (!name || !team || !email) return alert("Please complete all fields including your email.");
+      if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
+
+      btn.disabled = true;
+      btn.innerText = "Saving Profile...";
+
+      try {
+        const response = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "REGISTER_MEMBER",
+            employee_name: name,
+            team: team,
+            email: email
+          })
+        });
+        const result = await response.json();
+
+        if (!result.ok) {
+          alert("Registration error: " + result.error);
+          btn.disabled = false;
+          btn.innerText = "Secure Device & Continue";
+          return;
+        }
+
+        const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
+        localStorage.setItem('empName', name);
+        localStorage.setItem('team', team);
+        localStorage.setItem('empEmail', email);
+        localStorage.setItem('authCode', newAuthCode);
+
+        document.getElementById('laptop-setup').classList.remove('active-card');
+        document.getElementById('laptop-reveal').classList.add('active-card');
+        document.getElementById('auth-code-display').innerText = newAuthCode;
+      } catch (err) {
+        alert("Connection failed while saving registration. Please try again.");
+        btn.disabled = false;
+        btn.innerText = "Secure Device & Continue";
+      }
+    }
+
+    async function saveMissingEmail() {
+      const email = document.getElementById('missingEmailInput').value.trim();
+      const btn = document.getElementById('btn-save-missing-email');
+
+      if (!email || email.indexOf("@") < 1) return alert("Please enter a valid email address.");
+
+      btn.disabled = true;
+      btn.innerText = "Saving Email...";
+
+      try {
+        const response = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "REGISTER_MEMBER",
+            employee_name: localStorage.getItem('empName'),
+            team: localStorage.getItem('team'),
+            email: email
+          })
+        });
+        const result = await response.json();
+
+        if (result.ok) {
+          localStorage.setItem('empEmail', email);
+          window.location.reload();
+        } else {
+          alert("Error: " + result.error);
+          btn.disabled = false;
+          btn.innerText = "Save Email & Continue";
+        }
+      } catch (err) {
+        alert("Connection error. Please try again.");
+        btn.disabled = false;
+        btn.innerText = "Save Email & Continue";
+      }
     }
 
     function goToDashboard() { window.location.reload(); }
@@ -962,7 +1057,7 @@
       document.getElementById('qr-section').style.display = 'block';
 
       clearInterval(qrPollingInterval);
-      qrPollingInterval = setInterval(() => fetchLiveStatus(true), 3500);
+      qrPollingInterval = setInterval(() => fetchLiveStatus(true), 2500);
     }
 
     async function verifyAndSubmit() {
@@ -987,7 +1082,6 @@
       statusDiv.innerHTML = '<div class="spinner" style="border-top-color:#111;"></div> Verifying Device & Submitting...';
       statusDiv.style.color = "#111";
 
-      // Send this specific phone's unique bound Device ID
       const mobileDeviceId = getOrCreateMobileDeviceId();
 
       const payload = {
