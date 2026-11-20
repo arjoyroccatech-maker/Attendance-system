@@ -30,6 +30,7 @@
       box-sizing: border-box; font-size: 16px;
     }
     input:focus, select:focus { outline: none; border-color: var(--purple); }
+    select:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn {
       width: 100%; padding: 16px; font-size: 15px; font-weight: bold;
       border: none; border-radius: 6px; cursor: pointer; margin-bottom: 10px;
@@ -54,7 +55,7 @@
     .error-icon { font-size: 40px; margin-bottom: 10px; }
     #device-error h2 { color: var(--red); }
 
-    /* Reset Link for Soft Memory */
+    /* Reset Link */
     .reset-link { 
       font-size: 12px; 
       color: var(--muted); 
@@ -115,9 +116,9 @@
     </select>
 
     <button id="btn-time-in" class="btn btn-in" onclick="generateQR('TIME_IN')">GENERATE TIME IN QR</button>
-    <button id="btn-time-out" class="btn btn-out" onclick="generateQR('TIME_OUT')">GENERATE TIME OUT QR</button>
+    <button id="btn-time-out" class="btn btn-out" onclick="generateQR('TIME_OUT')" style="display: none;">GENERATE TIME OUT QR</button>
     
-    <span class="reset-link" onclick="resetButtons()">Need to change your action?</span>
+    <span class="reset-link" onclick="resetButtons()">Reset buttons</span>
 
     <div id="qrcode-wrapper" style="display: none;">
       <div id="qrcode-container">
@@ -145,69 +146,60 @@
     // =========================================================================
     // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
     // =========================================================================
-    const GOOGLE_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
 
-    // 1. Check what type of device the user is on
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    // 2. Read URL to figure out if we are scanning or at the main site
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
-    // Soft Memory UI Update
+    // Strict Toggle Logic
     function loadButtonState() {
       const lastAction = localStorage.getItem('lastAction');
       const btnIn = document.getElementById('btn-time-in');
       const btnOut = document.getElementById('btn-time-out');
-      
-      // Reset both buttons first
-      btnIn.style.display = 'block';
-      btnOut.style.display = 'block';
+      const arrangementSelect = document.getElementById('arrangement');
 
       if (lastAction === 'TIME_IN') {
-        btnIn.style.display = 'none'; // Hide Time In if they just logged in
-      } else if (lastAction === 'TIME_OUT') {
-        btnOut.style.display = 'none'; // Hide Time Out if they just logged out
+        // Logged in: Hide Time In, Show Time Out, Disable Dropdown
+        btnIn.style.display = 'none';
+        btnOut.style.display = 'block';
+        arrangementSelect.disabled = true;
+      } else {
+        // Logged out (or empty): Show Time In, Hide Time Out, Enable Dropdown
+        btnIn.style.display = 'block';
+        btnOut.style.display = 'none';
+        arrangementSelect.disabled = false;
       }
     }
 
-    // 3. ENFORCE DEVICE RULES & ROUTING
     if (mode === 'scan') {
-      // SCENARIO A: The user is trying to authenticate a QR code
       if (!isMobile) {
-        // Block: Trying to open a scan link on a computer
         document.getElementById('device-error').classList.add('active-card');
         document.getElementById('error-message').innerText = "Security Block: This verification form must be scanned and opened on a mobile phone, not a computer.";
       } else {
-        // Allow: Phone is opening the scan link
         document.getElementById('phone-auth').classList.add('active-card');
         const actionText = urlParams.get('action').replace('_', ' ');
         const empName = urlParams.get('name');
         document.getElementById('phone-greeting').innerText = `${actionText} for ${empName}`;
       }
-
     } else {
-      // SCENARIO B: The user is opening the main website to register/kiosk
       if (isMobile) {
-        // Block: Trying to open the kiosk on a phone
         document.getElementById('device-error').classList.add('active-card');
         document.getElementById('error-message').innerText = "Access Denied: The Registration Form and QR Kiosk can only be accessed from a laptop or desktop computer.";
       } else {
-        // Allow: Computer is opening the kiosk
         const savedName = localStorage.getItem('empName');
         const authCode = localStorage.getItem('authCode');
 
         if (savedName && authCode) {
           document.getElementById('laptop-kiosk').classList.add('active-card');
           document.getElementById('welcome-text').innerText = "Hello, " + savedName;
-          loadButtonState(); // Apply the soft memory logic
+          loadButtonState(); 
         } else {
           document.getElementById('laptop-setup').classList.add('active-card');
         }
       }
     }
 
-    // --- LAPTOP: REGISTRATION ---
     function registerLaptop() {
       const name = document.getElementById('empName').value.trim();
       const team = document.getElementById('team').value.trim();
@@ -232,24 +224,19 @@
       window.location.reload();
     }
 
-    // --- LAPTOP: RESET BUTTONS ---
     function resetButtons() {
       localStorage.removeItem('lastAction');
       loadButtonState();
       document.getElementById('qrcode-wrapper').style.display = 'none';
     }
 
-    // --- LAPTOP: GENERATE QR ---
     function generateQR(actionType) {
       const name = localStorage.getItem('empName');
       const team = localStorage.getItem('team');
       const code = localStorage.getItem('authCode'); 
       const arrangement = document.getElementById('arrangement').value;
 
-      // Save this action so the app remembers it next time
       localStorage.setItem('lastAction', actionType);
-      
-      // Immediately update the UI
       loadButtonState();
 
       const currentWebsite = window.location.origin + window.location.pathname;
@@ -261,7 +248,6 @@
       document.getElementById('qrcode-wrapper').style.display = 'block';
     }
 
-    // --- PHONE: VERIFY AND SUBMIT ---
     async function verifyAndSubmit() {
       const enteredCode = document.getElementById('enteredCode').value.trim();
       const expectedCode = urlParams.get('code');
