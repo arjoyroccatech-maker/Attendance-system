@@ -81,13 +81,56 @@
     
     .btn-save { width: 100%; padding: 16px; font-size: 15px; font-weight: 600; background: #111; color: white; border: none; border-radius: 8px; cursor: pointer; }
 
-    /* --- KIOSK UI --- */
+    /* --- KIOSK UI & INTERACTIVE PROFILE PHOTO --- */
     .welcome-section { display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 30px; }
-    .avatar { width: 70px; height: 70px; background: #E9ECEF; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+    
+    .avatar-wrapper {
+      position: relative; width: 76px; height: 76px; cursor: pointer;
+    }
+    .avatar {
+      width: 100%; height: 100%; background: #E9ECEF; border-radius: 50%;
+      display: flex; justify-content: center; align-items: center;
+      overflow: hidden; border: 2px solid #E2E8F0; transition: border-color 0.2s;
+    }
+    .avatar-wrapper:hover .avatar { border-color: #111; }
     .avatar svg { width: 40px; height: 40px; fill: #6C757D; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
+
+    /* Hover Overlay ("Add Photo" or "Change") */
+    .avatar-overlay {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: rgba(0, 0, 0, 0.55); color: white;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+      opacity: 0; transition: opacity 0.2s; pointer-events: none;
+    }
+    .avatar-wrapper:hover .avatar-overlay { opacity: 1; }
+
+    /* Corner Camera Badge */
+    .camera-badge {
+      position: absolute; bottom: 0; right: 0;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #111; color: white; border: 2px solid white;
+      display: flex; justify-content: center; align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .camera-badge svg { width: 12px; height: 12px; fill: white; }
+
+    /* Upload Spinner Overlay */
+    .avatar-loading {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.85);
+      display: none; justify-content: center; align-items: center;
+    }
+
     .welcome-text { text-align: left; }
     .welcome-text .small { font-size: 15px; color: var(--text-muted); font-weight: 500; }
     .welcome-text .name { font-size: 24px; font-weight: 800; color: #111; letter-spacing: -0.5px; }
+    .photo-action-hint {
+      font-size: 11px; font-weight: 600; color: var(--brand-green);
+      cursor: pointer; display: inline-block; margin-top: 3px;
+    }
+    .photo-action-hint:hover { text-decoration: underline; }
 
     .clock-section { margin-bottom: 30px; }
     .time-display { font-size: 72px; font-weight: 800; color: #111; line-height: 1; letter-spacing: -2px; }
@@ -210,11 +253,28 @@
     <div id="laptop-kiosk" class="card">
       <div class="card-padding">
         
+        <!-- Hidden File Input for Profile Image Upload -->
+        <input type="file" id="photo-upload-input" accept="image/*" style="display: none;" onchange="handlePhotoSelected(event)">
+
         <div class="welcome-section">
-          <div class="avatar"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+          <div class="avatar-wrapper" onclick="triggerPhotoUpload()" title="Click to add or change profile photo">
+            <div class="avatar">
+              <svg id="default-avatar-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              <img id="profile-photo-img" src="" alt="Profile Photo" onerror="handleImageError()">
+            </div>
+            <div class="avatar-overlay" id="avatar-overlay-text">Add Photo</div>
+            <div class="camera-badge">
+              <svg viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </div>
+            <div class="avatar-loading" id="avatar-loading-spinner">
+              <div class="spinner" style="border-top-color:#111;"></div>
+            </div>
+          </div>
+
           <div class="welcome-text">
             <span class="small">Welcome!</span><br>
-            <span class="name" id="kiosk-name">EMPLOYEE NAME</span>
+            <span class="name" id="kiosk-name">EMPLOYEE NAME</span><br>
+            <span class="photo-action-hint" id="photo-action-hint" onclick="triggerPhotoUpload()">+ Add Profile Photo</span>
           </div>
         </div>
 
@@ -301,7 +361,106 @@
     // =========================================================================
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
 
-    // --- SMART TIME PARSER (Handles full dates, time-only strings, or local fallback) ---
+    // --- PROFILE PHOTO LOGIC ---
+    function applyProfilePhoto(fileId) {
+      const imgEl = document.getElementById('profile-photo-img');
+      const svgEl = document.getElementById('default-avatar-svg');
+      const overlayEl = document.getElementById('avatar-overlay-text');
+      const hintEl = document.getElementById('photo-action-hint');
+
+      if (fileId) {
+        // Use Google Drive thumbnail endpoint for fast, reliable image rendering
+        imgEl.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w250`;
+        imgEl.style.display = 'block';
+        svgEl.style.display = 'none';
+        overlayEl.innerText = 'Change';
+        hintEl.innerText = 'Change Photo';
+        hintEl.style.color = 'var(--text-muted)';
+        localStorage.setItem('profileFileId', fileId);
+      } else {
+        imgEl.style.display = 'none';
+        svgEl.style.display = 'block';
+        overlayEl.innerText = 'Add Photo';
+        hintEl.innerText = '+ Add Profile Photo';
+        hintEl.style.color = 'var(--brand-green)';
+        localStorage.removeItem('profileFileId');
+      }
+    }
+
+    function handleImageError() {
+      // Revert cleanly to default avatar if Drive image fails to load
+      document.getElementById('profile-photo-img').style.display = 'none';
+      document.getElementById('default-avatar-svg').style.display = 'block';
+    }
+
+    function triggerPhotoUpload() {
+      document.getElementById('photo-upload-input').click();
+    }
+
+    function handlePhotoSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const loader = document.getElementById('avatar-loading-spinner');
+      loader.style.display = 'flex';
+
+      // Resize & compress image on canvas before uploading to Google Drive
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = async function() {
+          const canvas = document.createElement('canvas');
+          const MAX_SIZE = 400;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+          } else {
+            if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          const base64String = dataUrl.split(',')[1];
+
+          try {
+            const response = await fetch(GOOGLE_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({
+                action: "UPLOAD_PHOTO",
+                employee_name: localStorage.getItem('empName'),
+                team: localStorage.getItem('team'),
+                device_id: "Mobile-QR-Auth",
+                image_base64: base64String,
+                mime_type: "image/jpeg"
+              })
+            });
+
+            const result = await response.json();
+            if (result.ok && result.fileId) {
+              applyProfilePhoto(result.fileId);
+            } else {
+              alert("Photo upload failed: " + (result.error || "Unknown error"));
+            }
+          } catch (err) {
+            alert("Connection error while uploading photo.");
+          } finally {
+            loader.style.display = 'none';
+            event.target.value = ""; // Reset input so same file can be re-selected
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // --- SMART TIME PARSER ---
     function parseShiftTime(rawTimeIn) {
       if (rawTimeIn) {
         let parsed = new Date(rawTimeIn);
@@ -319,10 +478,7 @@
 
           const now = new Date();
           const todayShift = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hrs, mins, secs);
-          
-          if (todayShift > now) {
-            todayShift.setDate(todayShift.getDate() - 1);
-          }
+          if (todayShift > now) todayShift.setDate(todayShift.getDate() - 1);
           return todayShift;
         }
       }
@@ -332,14 +488,12 @@
         const localDate = new Date(parseInt(savedLocal, 10));
         if (!isNaN(localDate.getTime())) return localDate;
       }
-
       return new Date();
     }
 
     // --- LIVE CLOCK AND SHIFT TIMER LOGIC ---
     function updateClock() {
       const now = new Date();
-      
       let hours = now.getHours(); let minutes = now.getMinutes();
       const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12; hours = hours ? hours : 12;
@@ -401,6 +555,11 @@
         const result = await response.json();
         
         if (result.ok) {
+          // Sync profile photo from Google Drive / Members Sheet
+          if (!isSilentPolling) {
+            applyProfilePhoto(result.profileFileId || "");
+          }
+
           let newShiftState = result.openRecord ? 'ACTIVE' : 'CHECKED_OUT';
 
           if (isSilentPolling && newShiftState !== currentShiftState) {
@@ -494,6 +653,11 @@
         if (savedName && authCode) {
           document.getElementById('laptop-kiosk').classList.add('active-card');
           document.getElementById('kiosk-name').innerText = savedName.toUpperCase();
+          
+          // Load cached photo immediately while syncing fresh data
+          const cachedPhoto = localStorage.getItem('profileFileId');
+          if (cachedPhoto) applyProfilePhoto(cachedPhoto);
+
           fetchLiveStatus(false); 
         } else {
           document.getElementById('laptop-setup').classList.add('active-card');
