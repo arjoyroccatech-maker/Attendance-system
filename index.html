@@ -299,16 +299,14 @@
     // =========================================================================
     // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
     // =========================================================================
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
+    const GOOGLE_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
     // --- SMART TIME PARSER (Handles full dates, time-only strings, or local fallback) ---
     function parseShiftTime(rawTimeIn) {
       if (rawTimeIn) {
-        // 1. Try direct parsing (works for ISO strings or full Date+Time strings)
         let parsed = new Date(rawTimeIn);
         if (!isNaN(parsed.getTime())) return parsed;
 
-        // 2. If Sheet sent time-only (e.g., "08:30:15 AM" or "14:20:00"), attach today's date
         const timeMatch = String(rawTimeIn).trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?$/i);
         if (timeMatch) {
           let hrs = parseInt(timeMatch[1], 10);
@@ -322,7 +320,6 @@
           const now = new Date();
           const todayShift = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hrs, mins, secs);
           
-          // If it's an overnight shift (start time is ahead of current clock), subtract 1 day
           if (todayShift > now) {
             todayShift.setDate(todayShift.getDate() - 1);
           }
@@ -330,21 +327,19 @@
         }
       }
 
-      // 3. Fallback to browser's saved clock-in timestamp
       const savedLocal = localStorage.getItem('localShiftStart');
       if (savedLocal) {
         const localDate = new Date(parseInt(savedLocal, 10));
         if (!isNaN(localDate.getTime())) return localDate;
       }
 
-      return new Date(); // Last resort fallback
+      return new Date();
     }
 
     // --- LIVE CLOCK AND SHIFT TIMER LOGIC ---
     function updateClock() {
       const now = new Date();
       
-      // Update Main Clock
       let hours = now.getHours(); let minutes = now.getMinutes();
       const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12; hours = hours ? hours : 12;
@@ -357,7 +352,6 @@
       const dateEl = document.getElementById('date-display');
       if (dateEl) dateEl.innerText = now.toLocaleDateString('en-US', options);
 
-      // Update Shift Duration Timer
       if (window.shiftStartTime && !isNaN(window.shiftStartTime.getTime())) {
         const diffMs = Math.max(0, now - window.shiftStartTime);
         const hrs = Math.floor(diffMs / (1000 * 60 * 60));
@@ -413,7 +407,6 @@
              clearInterval(qrPollingInterval); 
              currentShiftState = newShiftState; 
              
-             // Save exact verification timestamp locally if they just clocked in
              if (newShiftState === 'ACTIVE' && !localStorage.getItem('localShiftStart')) {
                localStorage.setItem('localShiftStart', Date.now().toString());
              }
@@ -454,7 +447,6 @@
       document.getElementById('action-section').style.display = 'block';
 
       if (result.openRecord) {
-        // 🟢 ACTIVE SHIFT (Time Out Form)
         statusText.innerText = "Active Shift";
         if (result.openRecord.workArrangement) {
           arrSelect.value = result.openRecord.workArrangement;
@@ -463,18 +455,15 @@
         btnIn.style.display = 'none';
         btnOut.style.display = 'flex'; 
 
-        // Always start and show the timer using the smart parser
         window.shiftStartTime = parseShiftTime(result.openRecord.timeIn);
         timerContainer.style.display = 'flex';
-        updateClock(); // Force immediate display without waiting 1 second
+        updateClock();
       } else {
-        // ⚪ CHECKED OUT (Time In Form)
         statusText.innerText = "Not Yet Clocked In";
         arrSelect.disabled = false;
         btnIn.style.display = 'flex';        
         btnOut.style.display = 'none';
         
-        // Hide and clear the timer
         timerContainer.style.display = 'none';
         window.shiftStartTime = null;
         localStorage.removeItem('localShiftStart');
@@ -539,7 +528,6 @@
       const code = localStorage.getItem('authCode'); 
       const arrangement = document.getElementById('arrangement').value;
 
-      // Save tentative start time when generating TIME_IN QR
       if (actionType === 'TIME_IN') {
         localStorage.setItem('localShiftStart', Date.now().toString());
       }
