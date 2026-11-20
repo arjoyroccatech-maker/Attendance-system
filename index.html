@@ -67,7 +67,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .card-padding { padding: 40px; }
+    .card-padding { padding: 44px 40px 36px 40px; }
 
     /* --- SETUP CARDS --- */
     .setup-card { max-width: 450px; padding: 40px; }
@@ -82,10 +82,16 @@
     .btn-save { width: 100%; padding: 16px; font-size: 15px; font-weight: 600; background: #111; color: white; border: none; border-radius: 8px; cursor: pointer; }
 
     /* --- KIOSK UI & INTERACTIVE PROFILE PHOTO --- */
-    .welcome-section { display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 30px; }
+    .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 30px; }
     
+    .welcome-divider {
+      width: 1px;
+      height: 58px;
+      background-color: #DEE2E6;
+    }
+
     .avatar-wrapper {
-      position: relative; width: 76px; height: 76px; cursor: pointer;
+      position: relative; width: 76px; height: 76px; cursor: pointer; flex-shrink: 0;
     }
     .avatar {
       width: 100%; height: 100%; background: #E9ECEF; border-radius: 50%;
@@ -129,56 +135,43 @@
     }
     .photo-action-hint:hover { text-decoration: underline; }
 
-    .clock-section { margin-bottom: 30px; }
+    .clock-section { margin-bottom: 32px; }
     .time-display { font-size: 72px; font-weight: 800; color: #111; line-height: 1; letter-spacing: -2px; }
     .time-display span { font-size: 24px; font-weight: 700; margin-left: 5px; }
     .date-display { font-size: 18px; color: var(--text-muted); font-weight: 500; margin-top: 10px; }
 
-    /* --- SHIFT TIMER UI --- */
-    .shift-timer-box {
-      background: rgba(211, 37, 46, 0.05); 
-      border: 1px solid rgba(211, 37, 46, 0.2);
-      border-radius: 14px; padding: 16px 24px;
-      margin: 0 auto 28px auto; max-width: 380px;
-      color: var(--text-main);
-      font-weight: 600; font-size: 14px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .shift-timer-box span {
-      font-size: 22px; font-weight: 800;
-      color: var(--brand-red);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 1px;
-    }
-
-    .button-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 35px; }
+    .button-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; }
     .btn-pill {
-      flex: 1; max-width: 250px; padding: 18px; border-radius: 50px;
+      flex: 1; max-width: 300px; padding: 18px 24px; border-radius: 50px;
       display: flex; align-items: center; justify-content: center; gap: 15px;
       font-size: 22px; font-weight: 600; color: white; border: none; cursor: pointer;
-      box-shadow: 0 8px 15px rgba(0,0,0,0.15); transition: transform 0.1s;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.14); transition: transform 0.1s, box-shadow 0.2s;
     }
+    .btn-pill:hover { box-shadow: 0 10px 22px rgba(0,0,0,0.2); }
     .btn-pill:active { transform: scale(0.97); }
     .btn-pill svg { width: 28px; height: 28px; fill: white; }
-    .btn-divider { width: 1px; height: 30px; background: rgba(255,255,255,0.3); }
+    .btn-divider { width: 1px; height: 30px; background: rgba(255,255,255,0.35); }
     
     .bg-green { background: linear-gradient(135deg, #10A350, #0c8240); }
     .bg-red { background: linear-gradient(135deg, #D3252E, #a61c23); }
 
     /* Bottom Status Bar */
     .status-bar { border-top: 1px solid var(--border); display: flex; background: #FAFAFA; }
-    .status-col { flex: 1; padding: 25px; display: flex; align-items: center; gap: 15px; text-align: left; }
+    .status-col { flex: 1; padding: 22px 28px; display: flex; align-items: center; gap: 15px; text-align: left; }
     .status-col:first-child { border-right: 1px solid var(--border); }
-    .status-icon { width: 24px; height: 24px; fill: #495057; }
-    .status-text-wrap { display: flex; flex-direction: column; width: 100%;}
+    .status-icon { width: 24px; height: 24px; fill: #495057; flex-shrink: 0; }
+    .status-text-wrap { display: flex; flex-direction: column; align-items: flex-start; }
     .status-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; }
-    .status-value { font-size: 15px; font-weight: 700; color: #111; }
+    .status-value { font-size: 15px; font-weight: 700; color: #111; font-variant-numeric: tabular-nums; }
+    .timer-highlight { color: var(--brand-red); font-weight: 800; }
     
+    /* Compact Select so chevron sits cleanly beside the label */
     .status-select { 
       font-size: 15px; font-weight: 700; color: #111; border: none; background: transparent; 
-      font-family: 'Inter', sans-serif; cursor: pointer; padding: 0; outline: none; width: 100%;
+      font-family: 'Inter', sans-serif; cursor: pointer; padding: 0 18px 0 0; outline: none;
+      width: auto;
     }
-    .status-select:disabled { cursor: not-allowed; color: #6C757D; -webkit-appearance: none; appearance: none; }
+    .status-select:disabled { cursor: not-allowed; color: #6C757D; -webkit-appearance: none; appearance: none; padding-right: 0; }
 
     /* Footer */
     .footer { background-color: var(--header-bg); color: #888; text-align: center; padding: 15px; font-size: 12px; letter-spacing: 0.5px; }
@@ -227,6 +220,18 @@
       height: 100%;
       object-fit: cover;
       display: none;
+    }
+
+    .phone-badge {
+      display: inline-block;
+      background: #F1F3F5;
+      color: #495057;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      letter-spacing: 0.3px;
     }
 
     .masked-input { -webkit-text-security: disc; text-security: disc; }
@@ -284,7 +289,6 @@
     <div id="laptop-kiosk" class="card">
       <div class="card-padding">
         
-        <!-- Hidden File Input for Profile Image Upload -->
         <input type="file" id="photo-upload-input" accept="image/*" style="display: none;" onchange="handlePhotoSelected(event)">
 
         <div class="welcome-section">
@@ -301,6 +305,8 @@
               <div class="spinner" style="border-top-color:#111;"></div>
             </div>
           </div>
+
+          <div class="welcome-divider"></div>
 
           <div class="welcome-text">
             <span class="small">Welcome!</span><br>
@@ -319,13 +325,6 @@
 
         <!-- Action Buttons -->
         <div id="action-section" style="display: none;">
-          
-          <!-- LIVE TIMER BOX (Shows during Active Shift / Time Out form) -->
-          <div id="shift-timer-container" class="shift-timer-box" style="display: none;">
-            ⏱️ Elapsed Shift Time
-            <span id="shift-duration-text">00:00:00</span>
-          </div>
-
           <div class="button-group">
             <button id="btn-time-in" class="btn-pill bg-green" onclick="generateQR('TIME_IN')">
               <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
@@ -370,17 +369,19 @@
       </div>
     </div>
 
-    <!-- PHONE AUTH (With Half-Outside / Half-Inside Circular Avatar) -->
+    <!-- PHONE AUTH -->
     <div id="phone-auth" class="card setup-card">
       <div class="phone-avatar-circle">
         <svg id="phone-default-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         <img id="phone-profile-img" src="" alt="Profile Photo" onerror="handlePhoneImageError()">
       </div>
 
-      <h2 style="font-size:22px;">Verify Attendance</h2>
-      <p id="phone-greeting" style="font-weight: 500; color:#111;">Time In for Employee</p>
+      <h2 style="font-size:22px; margin-bottom:6px;">Verify Attendance</h2>
+      <p id="phone-greeting" style="font-weight: 600; color:#111; margin-bottom: 10px;">Employee Name</p>
+      <div id="phone-badge" class="phone-badge">TIME IN • Onsite</div>
+
       <label style="text-align:center;">Authentication Code</label>
-      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;">
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" autofocus style="text-align: center; font-size: 28px; letter-spacing: 8px;">
       <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
       <div id="scan-status" style="font-size: 15px; font-weight: 600; margin-top: 15px;"></div>
     </div>
@@ -524,20 +525,16 @@
       reader.readAsDataURL(file);
     }
 
-    // Instant load via Google CDN + silent Base64 fallback
     async function initPhoneProfilePhoto(empName, empTeam, photoId) {
       const cacheKey = `phonePhoto_${empName}`;
       const cached = localStorage.getItem(cacheKey);
       
-      // 1. Show cached Base64 immediately if scanned previously on this phone
       if (cached) {
         applyPhoneProfilePhoto(cached);
       } else if (photoId) {
-        // 2. Load immediately (0s delay) from Google's fast image CDN using the File ID in the QR URL
         applyPhoneProfilePhoto(`https://lh3.googleusercontent.com/d/${photoId}=s250`);
       }
 
-      // 3. Silently refresh from Apps Script in background and cache on phone
       if (!empName || !empTeam) return;
       try {
         const response = await fetch(GOOGLE_URL, {
@@ -589,7 +586,7 @@
       return new Date();
     }
 
-    // --- LIVE CLOCK AND SHIFT TIMER LOGIC ---
+    // --- LIVE CLOCK AND INLINE SHIFT TIMER ---
     function updateClock() {
       const now = new Date();
       let hours = now.getHours(); let minutes = now.getMinutes();
@@ -604,6 +601,7 @@
       const dateEl = document.getElementById('date-display');
       if (dateEl) dateEl.innerText = now.toLocaleDateString('en-US', options);
 
+      // Update inline timer inside Today's Status
       if (window.shiftStartTime && !isNaN(window.shiftStartTime.getTime())) {
         const diffMs = Math.max(0, now - window.shiftStartTime);
         const hrs = Math.floor(diffMs / (1000 * 60 * 60));
@@ -611,8 +609,10 @@
         const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
         
         const pad = (num) => num.toString().padStart(2, '0');
-        const timerEl = document.getElementById('shift-duration-text');
-        if (timerEl) timerEl.innerText = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+        const statusEl = document.getElementById('kiosk-status-text');
+        if (statusEl) {
+          statusEl.innerHTML = `Active Shift • <span class="timer-highlight">${pad(hrs)}:${pad(mins)}:${pad(secs)}</span>`;
+        }
       }
     }
     setInterval(updateClock, 1000); updateClock();
@@ -685,8 +685,8 @@
           statusText.innerText = "Offline";
           loadingState.style.display = 'none';
           actionSection.style.display = 'block';
-          btnIn.style.display = 'block';
-          btnOut.style.display = 'block';
+          btnIn.style.display = 'flex';
+          btnOut.style.display = 'none';
         }
       }
     }
@@ -696,14 +696,12 @@
       const btnOut = document.getElementById('btn-time-out');
       const arrSelect = document.getElementById('arrangement');
       const statusText = document.getElementById('kiosk-status-text');
-      const timerContainer = document.getElementById('shift-timer-container');
       
       document.getElementById('kiosk-loading').style.display = 'none';
       document.getElementById('qr-section').style.display = 'none';
       document.getElementById('action-section').style.display = 'block';
 
       if (result.openRecord) {
-        statusText.innerText = "Active Shift";
         if (result.openRecord.workArrangement) {
           arrSelect.value = result.openRecord.workArrangement;
         }
@@ -712,17 +710,14 @@
         btnOut.style.display = 'flex'; 
 
         window.shiftStartTime = parseShiftTime(result.openRecord.timeIn);
-        timerContainer.style.display = 'flex';
         updateClock();
       } else {
+        window.shiftStartTime = null;
+        localStorage.removeItem('localShiftStart');
         statusText.innerText = "Not Yet Clocked In";
         arrSelect.disabled = false;
         btnIn.style.display = 'flex';        
         btnOut.style.display = 'none';
-        
-        timerContainer.style.display = 'none';
-        window.shiftStartTime = null;
-        localStorage.removeItem('localShiftStart');
       }
     }
 
@@ -738,9 +733,11 @@
         const actionText = urlParams.get('action').replace('_', ' ');
         const empName = urlParams.get('name');
         const empTeam = urlParams.get('team');
+        const arrText = urlParams.get('arr') || 'Onsite';
         const photoId = urlParams.get('photo') || "";
         
-        document.getElementById('phone-greeting').innerText = `${actionText} for ${empName}`;
+        document.getElementById('phone-greeting').innerText = empName;
+        document.getElementById('phone-badge').innerText = `${actionText} • ${arrText}`;
         initPhoneProfilePhoto(empName, empTeam, photoId);
       }
     } else {
