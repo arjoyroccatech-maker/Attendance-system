@@ -53,7 +53,6 @@
     .error-icon { font-size: 40px; margin-bottom: 10px; }
     #device-error h2 { color: var(--red); }
 
-    /* --- NEW LOADING SPINNER & UI --- */
     .spinner {
       border: 3px solid rgba(255, 255, 255, 0.1);
       border-top: 3px solid var(--purple);
@@ -63,13 +62,6 @@
       display: inline-block; vertical-align: middle; margin-right: 8px;
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    
-    .status-box {
-      background: #191723; border: 1px solid var(--highlight);
-      padding: 12px; border-radius: 6px; font-size: 13px;
-      font-weight: bold; margin-bottom: 20px; color: var(--muted);
-      display: flex; justify-content: center; align-items: center;
-    }
 
     .link-action {
       font-size: 12px; color: var(--muted); text-decoration: underline; 
@@ -124,12 +116,7 @@
   <div id="laptop-kiosk" class="card">
     <h2 id="welcome-text">Welcome</h2>
     
-    <!-- Status Bar -->
-    <div id="kiosk-status" class="status-box">
-      <div class="spinner"></div> Syncing with Sheets...
-    </div>
-    
-    <!-- Action Forms (Hidden while generating QR) -->
+    <!-- Action Forms -->
     <div id="action-section" style="display: none;">
       <div id="arrangement-container">
         <label>Work Arrangement</label>
@@ -140,13 +127,12 @@
       </div>
       <button id="btn-time-in" class="btn btn-in" onclick="generateQR('TIME_IN')" style="display: none;">GENERATE TIME IN QR</button>
       <button id="btn-time-out" class="btn btn-out" onclick="generateQR('TIME_OUT')" style="display: none;">GENERATE TIME OUT QR</button>
-      <span class="link-action" onclick="fetchLiveStatus(false)">↻ Refresh Status</span>
     </div>
 
     <!-- QR Code Display (Hidden by default) -->
     <div id="qr-section" style="display: none;">
       <div id="qrcode-container"><img id="qr-image" src="" alt="QR Code"></div>
-      <div class="waiting-text"><div class="spinner"></div> Waiting for mobile...</div>
+      <div class="waiting-text" id="qr-waiting-text"><div class="spinner"></div> Waiting for mobile...</div>
       <span class="link-action" onclick="cancelQR()" style="color: #F87171;">Cancel</span>
     </div>
   </div>
@@ -164,35 +150,24 @@
   </div>
 
   <script>
-    // =========================================================================
-    // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
-    // =========================================================================
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
-    // State Variables for Auto-Refresh Logic
-    let currentShiftState = null; // Will be 'ACTIVE' or 'CHECKED_OUT'
+    let currentShiftState = null; 
     let qrPollingInterval = null;
 
-    // Core function to check status. Can be run visibly or silently in the background
     async function fetchLiveStatus(isSilentPolling = false) {
       const btnIn = document.getElementById('btn-time-in');
       const btnOut = document.getElementById('btn-time-out');
-      const arrContainer = document.getElementById('arrangement-container');
-      const statusBox = document.getElementById('kiosk-status');
       const actionSection = document.getElementById('action-section');
       const qrSection = document.getElementById('qr-section');
 
-      // If this is a manual refresh, show the loading UI
       if (!isSilentPolling) {
         actionSection.style.display = 'none';
         qrSection.style.display = 'none';
-        statusBox.innerHTML = '<div class="spinner"></div> Syncing with Sheets...';
-        statusBox.style.color = "var(--muted)";
-        statusBox.style.borderColor = "var(--highlight)";
       }
 
       try {
@@ -210,26 +185,20 @@
         const result = await response.json();
         
         if (result.ok) {
-          let newShiftState = result.openRecord ? 'ACTIVE' : 'CHECKED_OUT';
+          let newShiftState = result.openRecord ? 'ACTIVE' : 'READY_TO_IN';
 
-          // --- AUTO-REFRESH TRIGGER ---
-          // If we are silently checking while QR is open, and the state changed!
           if (isSilentPolling && newShiftState !== currentShiftState) {
-             clearInterval(qrPollingInterval); // Stop checking
-             currentShiftState = newShiftState; // Update our memory
+             clearInterval(qrPollingInterval); 
+             currentShiftState = newShiftState; 
              
-             // Play a quick success animation then reset the UI
-             statusBox.innerHTML = '✅ Attendance Recorded Successfully!';
-             statusBox.style.color = "#34D399";
-             statusBox.style.borderColor = "#065F46";
-             qrSection.style.display = 'none';
+             const waitText = document.getElementById('qr-waiting-text');
+             waitText.innerHTML = '✅ Verified Successfully!';
+             waitText.style.color = "#34D399";
              
-             // Wait 1.5 seconds, then show the new correct form
              setTimeout(() => renderUIState(result), 1500);
              return;
           }
 
-          // If standard load, just update memory and render
           if (!isSilentPolling) {
             currentShiftState = newShiftState;
             renderUIState(result);
@@ -237,9 +206,6 @@
         }
       } catch (error) {
         if (!isSilentPolling) {
-          statusBox.innerHTML = '⚠️ Offline: Could not reach Google Sheets.';
-          statusBox.style.color = "#F87171";
-          statusBox.style.borderColor = "#7F1D1D";
           actionSection.style.display = 'block';
           btnIn.style.display = 'block';
           btnOut.style.display = 'block';
@@ -247,31 +213,19 @@
       }
     }
 
-    // Helper function to paint the correct buttons based on Sheets data
     function renderUIState(result) {
       const btnIn = document.getElementById('btn-time-in');
       const btnOut = document.getElementById('btn-time-out');
       const arrContainer = document.getElementById('arrangement-container');
-      const statusBox = document.getElementById('kiosk-status');
       
       document.getElementById('action-section').style.display = 'block';
       document.getElementById('qr-section').style.display = 'none';
 
       if (result.openRecord) {
-        // 🟢 ACTIVE SHIFT: Missing a Time Out
-        statusBox.innerHTML = `🟢 Active Shift (${result.openRecord.workArrangement})`;
-        statusBox.style.color = "#34D399";
-        statusBox.style.borderColor = "#065F46";
-        
         arrContainer.style.display = 'none'; 
         btnIn.style.display = 'none';
         btnOut.style.display = 'block';      
       } else {
-        // ⚪ CHECKED OUT: Ready for a new Time In
-        statusBox.innerHTML = `⚪ Checked Out`;
-        statusBox.style.color = "var(--muted)";
-        statusBox.style.borderColor = "var(--highlight)";
-        
         arrContainer.style.display = 'block'; 
         btnIn.style.display = 'block';        
         btnOut.style.display = 'none';
@@ -299,6 +253,7 @@
         if (savedName && authCode) {
           document.getElementById('laptop-kiosk').classList.add('active-card');
           document.getElementById('welcome-text').innerText = "Hello, " + savedName;
+          
           fetchLiveStatus(false); 
         } else {
           document.getElementById('laptop-setup').classList.add('active-card');
@@ -322,7 +277,7 @@
     function goToDashboard() { window.location.reload(); }
 
     function cancelQR() {
-      clearInterval(qrPollingInterval); // Stop checking
+      clearInterval(qrPollingInterval); 
       document.getElementById('qr-section').style.display = 'none';
       document.getElementById('action-section').style.display = 'block';
     }
@@ -339,11 +294,13 @@
       
       document.getElementById('qr-image').src = qrImageUrl;
       
-      // Swap UI
+      const waitText = document.getElementById('qr-waiting-text');
+      waitText.innerHTML = '<div class="spinner"></div> Waiting for mobile...';
+      waitText.style.color = '#38BDF8';
+
       document.getElementById('action-section').style.display = 'none';
       document.getElementById('qr-section').style.display = 'block';
 
-      // Start Auto-Refresh Polling (Check silently every 3.5 seconds)
       clearInterval(qrPollingInterval);
       qrPollingInterval = setInterval(() => fetchLiveStatus(true), 3500);
     }
@@ -365,7 +322,6 @@
         return;
       }
 
-      // Show phone spinner
       submitBtn.disabled = true;
       submitBtn.style.opacity = "0.5";
       statusDiv.innerHTML = '<div class="spinner" style="border-top-color:#38BDF8;"></div> Sending to Sheets...';
