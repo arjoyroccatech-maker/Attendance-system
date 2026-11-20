@@ -301,9 +301,9 @@
       <button class="btn-save" id="btn-register-laptop" onclick="registerLaptop()">Secure Device & Continue</button>
     </div>
 
-    <!-- COMPLETE MISSING EMAIL PROMPT (For Existing Accounts Without Email) -->
+    <!-- UPDATE MISSING EMAIL PROMPT (For Existing Accounts Without Email) -->
     <div id="laptop-email-complete" class="card setup-card">
-      <h2>Complete Registration</h2>
+      <h2>Update Your Email</h2>
       <p>Please add your email address to enable backup Email OTP verification.</p>
       <label>Registered Employee</label>
       <input type="text" id="missingEmailEmpName" disabled style="background:#f8f9fa; color:#6c757d;">
@@ -786,6 +786,7 @@
     const mode = urlParams.get('mode');
 
     let currentShiftState = null; 
+    let expectedTargetState = null;
     let qrPollingInterval = null;
     window.shiftStartTime = null;
 
@@ -817,7 +818,6 @@
         
         if (result.ok) {
           if (!isSilentPolling) {
-            // Check if employee has an email registered in Members sheet
             if (!result.email) {
               document.getElementById('laptop-kiosk').classList.remove('active-card');
               document.getElementById('laptop-email-complete').classList.add('active-card');
@@ -830,11 +830,13 @@
             applyProfilePhoto(result.profileDataUrl || "", result.profileFileId || "");
           }
 
-          let newShiftState = result.openRecord ? 'ACTIVE' : 'CHECKED_OUT';
+          const newShiftState = result.openRecord ? 'ACTIVE' : 'CHECKED_OUT';
 
-          if (isSilentPolling && newShiftState !== currentShiftState) {
+          if (isSilentPolling && expectedTargetState && newShiftState === expectedTargetState) {
              clearInterval(qrPollingInterval); 
-             currentShiftState = newShiftState; 
+             qrPollingInterval = null;
+             currentShiftState = newShiftState;
+             expectedTargetState = null;
              
              if (newShiftState === 'ACTIVE' && !localStorage.getItem('localShiftStart')) {
                localStorage.setItem('localShiftStart', Date.now().toString());
@@ -844,7 +846,7 @@
              waitText.innerHTML = '✅ Verified Successfully!';
              waitText.style.color = 'var(--brand-green)';
              
-             setTimeout(() => renderUIState(result), 1200);
+             setTimeout(() => renderUIState(result), 1000);
              return;
           }
 
@@ -1028,6 +1030,8 @@
 
     function cancelQR() {
       clearInterval(qrPollingInterval); 
+      qrPollingInterval = null;
+      expectedTargetState = null;
       document.getElementById('qr-section').style.display = 'none';
       document.getElementById('action-section').style.display = 'block';
     }
@@ -1038,6 +1042,8 @@
       const code = localStorage.getItem('authCode'); 
       const photoId = localStorage.getItem('profileFileId') || "";
       const arrangement = document.getElementById('arrangement').value;
+
+      expectedTargetState = (actionType === 'TIME_IN') ? 'ACTIVE' : 'CHECKED_OUT';
 
       if (actionType === 'TIME_IN') {
         localStorage.setItem('localShiftStart', Date.now().toString());
@@ -1057,7 +1063,7 @@
       document.getElementById('qr-section').style.display = 'block';
 
       clearInterval(qrPollingInterval);
-      qrPollingInterval = setInterval(() => fetchLiveStatus(true), 2500);
+      qrPollingInterval = setInterval(() => fetchLiveStatus(true), 2000);
     }
 
     async function verifyAndSubmit() {
