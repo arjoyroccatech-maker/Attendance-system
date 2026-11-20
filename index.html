@@ -45,7 +45,7 @@
     }
     
     #qrcode-container {
-      margin-top: 20px; padding: 15px; background: white; border-radius: 8px; display: inline-block;
+      margin-top: 10px; padding: 15px; background: white; border-radius: 8px; display: inline-block;
     }
     #qrcode-container img { display: block; }
     #scan-status { font-size: 16px; font-weight: bold; margin-top: 15px; }
@@ -53,15 +53,34 @@
     .error-icon { font-size: 40px; margin-bottom: 10px; }
     #device-error h2 { color: var(--red); }
 
-    /* Live Status Text */
-    #kiosk-status {
-      color: #38BDF8; font-weight: bold; font-size: 13px; margin-bottom: 15px;
+    /* --- NEW LOADING SPINNER & UI --- */
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid var(--purple);
+      border-radius: 50%;
+      width: 16px; height: 16px;
+      animation: spin 1s linear infinite;
+      display: inline-block; vertical-align: middle; margin-right: 8px;
     }
-    .refresh-link {
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    .status-box {
+      background: #191723; border: 1px solid var(--highlight);
+      padding: 12px; border-radius: 6px; font-size: 13px;
+      font-weight: bold; margin-bottom: 20px; color: var(--muted);
+      display: flex; justify-content: center; align-items: center;
+    }
+
+    .link-action {
       font-size: 12px; color: var(--muted); text-decoration: underline; 
-      cursor: pointer; margin-top: 15px; display: inline-block; 
+      cursor: pointer; margin-top: 15px; display: inline-block; transition: 0.2s;
     }
-    .refresh-link:hover { color: var(--text); }
+    .link-action:hover { color: var(--text); }
+    
+    .waiting-text {
+      color: #38BDF8; font-size: 14px; font-weight: bold; margin-top: 15px;
+      display: flex; justify-content: center; align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -104,27 +123,31 @@
        ========================================== -->
   <div id="laptop-kiosk" class="card">
     <h2 id="welcome-text">Welcome</h2>
-    <div id="kiosk-status">Checking Google Sheets...</div>
     
-    <!-- We wrap this in a container so we can hide the whole thing during Time Out -->
-    <div id="arrangement-container">
-      <label>Work Arrangement</label>
-      <select id="arrangement">
-        <option value="Onsite">Onsite</option>
-        <option value="Work From Home">Work From Home</option>
-      </select>
+    <!-- Status Bar -->
+    <div id="kiosk-status" class="status-box">
+      <div class="spinner"></div> Syncing with Sheets...
+    </div>
+    
+    <!-- Action Forms (Hidden while generating QR) -->
+    <div id="action-section" style="display: none;">
+      <div id="arrangement-container">
+        <label>Work Arrangement</label>
+        <select id="arrangement">
+          <option value="Onsite">Onsite</option>
+          <option value="Work From Home">Work From Home</option>
+        </select>
+      </div>
+      <button id="btn-time-in" class="btn btn-in" onclick="generateQR('TIME_IN')" style="display: none;">GENERATE TIME IN QR</button>
+      <button id="btn-time-out" class="btn btn-out" onclick="generateQR('TIME_OUT')" style="display: none;">GENERATE TIME OUT QR</button>
+      <span class="link-action" onclick="fetchLiveStatus(false)">↻ Refresh Status</span>
     </div>
 
-    <button id="btn-time-in" class="btn btn-in" onclick="generateQR('TIME_IN')" style="display: none;">GENERATE TIME IN QR</button>
-    <button id="btn-time-out" class="btn btn-out" onclick="generateQR('TIME_OUT')" style="display: none;">GENERATE TIME OUT QR</button>
-    
-    <span class="refresh-link" onclick="fetchLiveStatus()">↻ Refresh Status</span>
-
-    <div id="qrcode-wrapper" style="display: none;">
-      <div id="qrcode-container">
-        <img id="qr-image" src="" alt="QR Code">
-      </div>
-      <p style="margin-top: 15px; color: var(--purple); font-weight: bold; font-size: 16px;">Scan with your phone camera</p>
+    <!-- QR Code Display (Hidden by default) -->
+    <div id="qr-section" style="display: none;">
+      <div id="qrcode-container"><img id="qr-image" src="" alt="QR Code"></div>
+      <div class="waiting-text"><div class="spinner"></div> Waiting for mobile...</div>
+      <span class="link-action" onclick="cancelQR()" style="color: #F87171;">Cancel</span>
     </div>
   </div>
 
@@ -134,11 +157,9 @@
   <div id="phone-auth" class="card">
     <h2>Attendance Verification</h2>
     <p id="phone-greeting">Time In for Employee</p>
-    
     <label>Enter Your 4-Digit Auth Code</label>
     <input type="number" id="enteredCode" placeholder="____" style="text-align: center; font-size: 24px; letter-spacing: 4px;">
-    
-    <button class="btn btn-save" onclick="verifyAndSubmit()">SUBMIT ATTENDANCE</button>
+    <button class="btn btn-save" id="submit-btn" onclick="verifyAndSubmit()">SUBMIT ATTENDANCE</button>
     <div id="scan-status"></div>
   </div>
 
@@ -152,21 +173,27 @@
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
-    // Fetch actual status from Google Sheets
-    async function fetchLiveStatus() {
+    // State Variables for Auto-Refresh Logic
+    let currentShiftState = null; // Will be 'ACTIVE' or 'CHECKED_OUT'
+    let qrPollingInterval = null;
+
+    // Core function to check status. Can be run visibly or silently in the background
+    async function fetchLiveStatus(isSilentPolling = false) {
       const btnIn = document.getElementById('btn-time-in');
       const btnOut = document.getElementById('btn-time-out');
       const arrContainer = document.getElementById('arrangement-container');
-      const statusText = document.getElementById('kiosk-status');
+      const statusBox = document.getElementById('kiosk-status');
+      const actionSection = document.getElementById('action-section');
+      const qrSection = document.getElementById('qr-section');
 
-      // Hide everything while checking
-      btnIn.style.display = 'none';
-      btnOut.style.display = 'none';
-      arrContainer.style.display = 'none'; 
-      document.getElementById('qrcode-wrapper').style.display = 'none';
-      
-      statusText.innerText = "Syncing with Google Sheets...";
-      statusText.style.color = "#AAA4B8";
+      // If this is a manual refresh, show the loading UI
+      if (!isSilentPolling) {
+        actionSection.style.display = 'none';
+        qrSection.style.display = 'none';
+        statusBox.innerHTML = '<div class="spinner"></div> Syncing with Sheets...';
+        statusBox.style.color = "var(--muted)";
+        statusBox.style.borderColor = "var(--highlight)";
+      }
 
       try {
         const response = await fetch(GOOGLE_URL, {
@@ -183,30 +210,71 @@
         const result = await response.json();
         
         if (result.ok) {
-          if (result.openRecord) {
-            // 🟢 ACTIVE SHIFT: Missing a Time Out
-            // Tell the user what they chose earlier
-            statusText.innerText = "🟢 Status: Active Shift (" + result.openRecord.workArrangement + ")";
-            statusText.style.color = "#34D399";
-            
-            arrContainer.style.display = 'none'; // Hide Onsite/WFH dropdown completely
-            btnOut.style.display = 'block';      // Only show TIME OUT
-          } else {
-            // ⚪ CHECKED OUT: Ready for a new Time In
-            statusText.innerText = "⚪ Status: Checked Out";
-            statusText.style.color = "#AAA4B8";
-            
-            arrContainer.style.display = 'block'; // Show Onsite/WFH dropdown
-            btnIn.style.display = 'block';        // Only show TIME IN
+          let newShiftState = result.openRecord ? 'ACTIVE' : 'CHECKED_OUT';
+
+          // --- AUTO-REFRESH TRIGGER ---
+          // If we are silently checking while QR is open, and the state changed!
+          if (isSilentPolling && newShiftState !== currentShiftState) {
+             clearInterval(qrPollingInterval); // Stop checking
+             currentShiftState = newShiftState; // Update our memory
+             
+             // Play a quick success animation then reset the UI
+             statusBox.innerHTML = '✅ Attendance Recorded Successfully!';
+             statusBox.style.color = "#34D399";
+             statusBox.style.borderColor = "#065F46";
+             qrSection.style.display = 'none';
+             
+             // Wait 1.5 seconds, then show the new correct form
+             setTimeout(() => renderUIState(result), 1500);
+             return;
+          }
+
+          // If standard load, just update memory and render
+          if (!isSilentPolling) {
+            currentShiftState = newShiftState;
+            renderUIState(result);
           }
         }
       } catch (error) {
-        statusText.innerText = "⚠️ Offline: Could not reach Google Sheets.";
-        statusText.style.color = "#F87171";
-        // Fallback: show everything so they aren't blocked from trying
-        arrContainer.style.display = 'block';
-        btnIn.style.display = 'block';
-        btnOut.style.display = 'block';
+        if (!isSilentPolling) {
+          statusBox.innerHTML = '⚠️ Offline: Could not reach Google Sheets.';
+          statusBox.style.color = "#F87171";
+          statusBox.style.borderColor = "#7F1D1D";
+          actionSection.style.display = 'block';
+          btnIn.style.display = 'block';
+          btnOut.style.display = 'block';
+        }
+      }
+    }
+
+    // Helper function to paint the correct buttons based on Sheets data
+    function renderUIState(result) {
+      const btnIn = document.getElementById('btn-time-in');
+      const btnOut = document.getElementById('btn-time-out');
+      const arrContainer = document.getElementById('arrangement-container');
+      const statusBox = document.getElementById('kiosk-status');
+      
+      document.getElementById('action-section').style.display = 'block';
+      document.getElementById('qr-section').style.display = 'none';
+
+      if (result.openRecord) {
+        // 🟢 ACTIVE SHIFT: Missing a Time Out
+        statusBox.innerHTML = `🟢 Active Shift (${result.openRecord.workArrangement})`;
+        statusBox.style.color = "#34D399";
+        statusBox.style.borderColor = "#065F46";
+        
+        arrContainer.style.display = 'none'; 
+        btnIn.style.display = 'none';
+        btnOut.style.display = 'block';      
+      } else {
+        // ⚪ CHECKED OUT: Ready for a new Time In
+        statusBox.innerHTML = `⚪ Checked Out`;
+        statusBox.style.color = "var(--muted)";
+        statusBox.style.borderColor = "var(--highlight)";
+        
+        arrContainer.style.display = 'block'; 
+        btnIn.style.display = 'block';        
+        btnOut.style.display = 'none';
       }
     }
 
@@ -231,9 +299,7 @@
         if (savedName && authCode) {
           document.getElementById('laptop-kiosk').classList.add('active-card');
           document.getElementById('welcome-text').innerText = "Hello, " + savedName;
-          
-          // Trigger the Google Sheets sync on load
-          fetchLiveStatus(); 
+          fetchLiveStatus(false); 
         } else {
           document.getElementById('laptop-setup').classList.add('active-card');
         }
@@ -243,25 +309,22 @@
     function registerLaptop() {
       const name = document.getElementById('empName').value.trim();
       const team = document.getElementById('team').value.trim();
-      
-      if (!name || !team) {
-        alert("Please enter both Name and Team.");
-        return;
-      }
-
+      if (!name || !team) return alert("Please enter both Name and Team.");
       const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
-      
       localStorage.setItem('empName', name);
       localStorage.setItem('team', team);
       localStorage.setItem('authCode', newAuthCode);
-      
       document.getElementById('laptop-setup').classList.remove('active-card');
       document.getElementById('laptop-reveal').classList.add('active-card');
       document.getElementById('auth-code-display').innerText = newAuthCode;
     }
 
-    function goToDashboard() {
-      window.location.reload();
+    function goToDashboard() { window.location.reload(); }
+
+    function cancelQR() {
+      clearInterval(qrPollingInterval); // Stop checking
+      document.getElementById('qr-section').style.display = 'none';
+      document.getElementById('action-section').style.display = 'block';
     }
 
     function generateQR(actionType) {
@@ -272,31 +335,40 @@
 
       const currentWebsite = window.location.origin + window.location.pathname;
       const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&code=${encodeURIComponent(code)}`;
-
       const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
       
       document.getElementById('qr-image').src = qrImageUrl;
-      document.getElementById('qrcode-wrapper').style.display = 'block';
+      
+      // Swap UI
+      document.getElementById('action-section').style.display = 'none';
+      document.getElementById('qr-section').style.display = 'block';
+
+      // Start Auto-Refresh Polling (Check silently every 3.5 seconds)
+      clearInterval(qrPollingInterval);
+      qrPollingInterval = setInterval(() => fetchLiveStatus(true), 3500);
     }
 
     async function verifyAndSubmit() {
       const enteredCode = document.getElementById('enteredCode').value.trim();
       const expectedCode = urlParams.get('code');
       const statusDiv = document.getElementById('scan-status');
+      const submitBtn = document.getElementById('submit-btn');
 
       if (!enteredCode) {
         statusDiv.innerText = "Please enter your code.";
         statusDiv.style.color = "#F87171";
         return;
       }
-
       if (enteredCode !== expectedCode) {
         statusDiv.innerText = "❌ Incorrect Authentication Code.";
         statusDiv.style.color = "#F87171";
         return;
       }
 
-      statusDiv.innerText = "Verifying... sending to Google Sheets.";
+      // Show phone spinner
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = "0.5";
+      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:#38BDF8;"></div> Sending to Sheets...';
       statusDiv.style.color = "#38BDF8";
 
       const payload = {
@@ -313,7 +385,6 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
-        
         const result = await response.json();
         
         if (result.ok) {
@@ -322,10 +393,14 @@
         } else {
             statusDiv.style.color = "#F87171";
             statusDiv.innerText = "❌ ERROR: " + result.error;
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
         }
       } catch (error) {
         statusDiv.style.color = "#F87171";
         statusDiv.innerText = "Connection failed. Check your internet.";
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = "1";
       }
     }
   </script>
