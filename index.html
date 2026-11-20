@@ -138,6 +138,12 @@
 
     /* Phone UI overrides */
     #phone-auth { max-width: 400px; padding: 40px; }
+    
+    /* Force bullet points in the input box */
+    .masked-input {
+      -webkit-text-security: disc;
+      text-security: disc;
+    }
   </style>
 </head>
 <body>
@@ -260,8 +266,8 @@
       <p id="phone-greeting" style="font-weight: 500; color:#111;">Time In for Employee</p>
       <label style="text-align:center;">Authentication Code</label>
       
-      <!-- THIS IS THE UPDATED LINE: type="password" inputmode="numeric" maxlength="4" -->
-      <input type="password" inputmode="numeric" maxlength="4" id="enteredCode" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;">
+      <!-- UPDATED FOR BULLETS + NUMPAD -->
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;">
       
       <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
       <div id="scan-status" style="font-size: 15px; font-weight: 600; margin-top: 15px;"></div>
