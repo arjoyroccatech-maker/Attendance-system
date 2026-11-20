@@ -89,24 +89,25 @@
     .welcome-text .small { font-size: 15px; color: var(--text-muted); font-weight: 500; }
     .welcome-text .name { font-size: 24px; font-weight: 800; color: #111; letter-spacing: -0.5px; }
 
-    .clock-section { margin-bottom: 35px; }
+    .clock-section { margin-bottom: 30px; }
     .time-display { font-size: 72px; font-weight: 800; color: #111; line-height: 1; letter-spacing: -2px; }
     .time-display span { font-size: 24px; font-weight: 700; margin-left: 5px; }
     .date-display { font-size: 18px; color: var(--text-muted); font-weight: 500; margin-top: 10px; }
 
-    /* --- NEW SHIFT TIMER UI --- */
+    /* --- SHIFT TIMER UI --- */
     .shift-timer-box {
-      background: rgba(211, 37, 46, 0.04); 
-      border: 1px solid rgba(211, 37, 46, 0.15);
-      border-radius: 12px; padding: 16px 24px;
-      margin-bottom: 25px; color: var(--text-main);
+      background: rgba(211, 37, 46, 0.05); 
+      border: 1px solid rgba(211, 37, 46, 0.2);
+      border-radius: 14px; padding: 16px 24px;
+      margin: 0 auto 28px auto; max-width: 380px;
+      color: var(--text-main);
       font-weight: 600; font-size: 14px;
       display: flex; justify-content: space-between; align-items: center;
     }
     .shift-timer-box span {
       font-size: 22px; font-weight: 800;
       color: var(--brand-red);
-      font-variant-numeric: tabular-nums; /* Prevents text from shaking while ticking */
+      font-variant-numeric: tabular-nums;
       letter-spacing: 1px;
     }
 
@@ -228,9 +229,9 @@
         <!-- Action Buttons -->
         <div id="action-section" style="display: none;">
           
-          <!-- LIVE TIMER BOX (Shows only during Time Out) -->
+          <!-- LIVE TIMER BOX (Shows during Active Shift / Time Out form) -->
           <div id="shift-timer-container" class="shift-timer-box" style="display: none;">
-            ⏱️ Shift Duration
+            ⏱️ Elapsed Shift Time
             <span id="shift-duration-text">00:00:00</span>
           </div>
 
@@ -283,9 +284,7 @@
       <h2 style="font-size:22px;">Verify Attendance</h2>
       <p id="phone-greeting" style="font-weight: 500; color:#111;">Time In for Employee</p>
       <label style="text-align:center;">Authentication Code</label>
-      
       <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;">
-      
       <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
       <div id="scan-status" style="font-size: 15px; font-weight: 600; margin-top: 15px;"></div>
     </div>
@@ -301,6 +300,45 @@
     // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
     // =========================================================================
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
+
+    // --- SMART TIME PARSER (Handles full dates, time-only strings, or local fallback) ---
+    function parseShiftTime(rawTimeIn) {
+      if (rawTimeIn) {
+        // 1. Try direct parsing (works for ISO strings or full Date+Time strings)
+        let parsed = new Date(rawTimeIn);
+        if (!isNaN(parsed.getTime())) return parsed;
+
+        // 2. If Sheet sent time-only (e.g., "08:30:15 AM" or "14:20:00"), attach today's date
+        const timeMatch = String(rawTimeIn).trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+        if (timeMatch) {
+          let hrs = parseInt(timeMatch[1], 10);
+          const mins = parseInt(timeMatch[2], 10);
+          const secs = timeMatch[3] ? parseInt(timeMatch[3], 10) : 0;
+          const period = timeMatch[4] ? timeMatch[4].toUpperCase() : null;
+
+          if (period === 'PM' && hrs < 12) hrs += 12;
+          if (period === 'AM' && hrs === 12) hrs = 0;
+
+          const now = new Date();
+          const todayShift = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hrs, mins, secs);
+          
+          // If it's an overnight shift (start time is ahead of current clock), subtract 1 day
+          if (todayShift > now) {
+            todayShift.setDate(todayShift.getDate() - 1);
+          }
+          return todayShift;
+        }
+      }
+
+      // 3. Fallback to browser's saved clock-in timestamp
+      const savedLocal = localStorage.getItem('localShiftStart');
+      if (savedLocal) {
+        const localDate = new Date(parseInt(savedLocal, 10));
+        if (!isNaN(localDate.getTime())) return localDate;
+      }
+
+      return new Date(); // Last resort fallback
+    }
 
     // --- LIVE CLOCK AND SHIFT TIMER LOGIC ---
     function updateClock() {
@@ -319,18 +357,16 @@
       const dateEl = document.getElementById('date-display');
       if (dateEl) dateEl.innerText = now.toLocaleDateString('en-US', options);
 
-      // Update Shift Duration Timer (Only when shiftStartTime exists)
+      // Update Shift Duration Timer
       if (window.shiftStartTime && !isNaN(window.shiftStartTime.getTime())) {
-        const diffMs = now - window.shiftStartTime;
-        if (diffMs >= 0) {
-          const hrs = Math.floor(diffMs / (1000 * 60 * 60));
-          const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-          const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
-          
-          const pad = (num) => num.toString().padStart(2, '0');
-          const timerEl = document.getElementById('shift-duration-text');
-          if(timerEl) timerEl.innerText = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
-        }
+        const diffMs = Math.max(0, now - window.shiftStartTime);
+        const hrs = Math.floor(diffMs / (1000 * 60 * 60));
+        const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+        
+        const pad = (num) => num.toString().padStart(2, '0');
+        const timerEl = document.getElementById('shift-duration-text');
+        if (timerEl) timerEl.innerText = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
       }
     }
     setInterval(updateClock, 1000); updateClock();
@@ -342,7 +378,7 @@
 
     let currentShiftState = null; 
     let qrPollingInterval = null;
-    window.shiftStartTime = null; // Global memory for the timer
+    window.shiftStartTime = null;
 
     async function fetchLiveStatus(isSilentPolling = false) {
       const btnIn = document.getElementById('btn-time-in');
@@ -377,6 +413,11 @@
              clearInterval(qrPollingInterval); 
              currentShiftState = newShiftState; 
              
+             // Save exact verification timestamp locally if they just clocked in
+             if (newShiftState === 'ACTIVE' && !localStorage.getItem('localShiftStart')) {
+               localStorage.setItem('localShiftStart', Date.now().toString());
+             }
+
              const waitText = document.getElementById('qr-waiting-text');
              waitText.innerHTML = '✅ Verified Successfully!';
              waitText.style.color = 'var(--brand-green)';
@@ -413,32 +454,30 @@
       document.getElementById('action-section').style.display = 'block';
 
       if (result.openRecord) {
-        // 🟢 ACTIVE SHIFT
+        // 🟢 ACTIVE SHIFT (Time Out Form)
         statusText.innerText = "Active Shift";
         if (result.openRecord.workArrangement) {
           arrSelect.value = result.openRecord.workArrangement;
         }
-        arrSelect.disabled = true; // Gray out dropdown
+        arrSelect.disabled = true;
         btnIn.style.display = 'none';
         btnOut.style.display = 'flex'; 
 
-        // Start the elapsed timer if the backend gave us the timeIn stamp
-        if (result.openRecord.timeIn) {
-          window.shiftStartTime = new Date(result.openRecord.timeIn);
-          if (!isNaN(window.shiftStartTime)) {
-            timerContainer.style.display = 'flex';
-          }
-        }
+        // Always start and show the timer using the smart parser
+        window.shiftStartTime = parseShiftTime(result.openRecord.timeIn);
+        timerContainer.style.display = 'flex';
+        updateClock(); // Force immediate display without waiting 1 second
       } else {
-        // ⚪ CHECKED OUT
+        // ⚪ CHECKED OUT (Time In Form)
         statusText.innerText = "Not Yet Clocked In";
-        arrSelect.disabled = false; // Unlock dropdown
+        arrSelect.disabled = false;
         btnIn.style.display = 'flex';        
         btnOut.style.display = 'none';
         
-        // Hide and reset the timer
+        // Hide and clear the timer
         timerContainer.style.display = 'none';
         window.shiftStartTime = null;
+        localStorage.removeItem('localShiftStart');
       }
     }
 
@@ -499,6 +538,11 @@
       const team = localStorage.getItem('team');
       const code = localStorage.getItem('authCode'); 
       const arrangement = document.getElementById('arrangement').value;
+
+      // Save tentative start time when generating TIME_IN QR
+      if (actionType === 'TIME_IN') {
+        localStorage.setItem('localShiftStart', Date.now().toString());
+      }
 
       const currentWebsite = window.location.origin + window.location.pathname;
       const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&code=${encodeURIComponent(code)}`;
