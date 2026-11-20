@@ -69,7 +69,7 @@
 
     .card-padding { padding: 40px; }
 
-    /* --- SETUP CARDS (Login/Reveal) --- */
+    /* --- SETUP CARDS --- */
     .setup-card { max-width: 450px; padding: 40px; }
     .setup-card h2 { margin-top: 0; font-size: 24px; font-weight: 700; }
     .setup-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
@@ -93,6 +93,22 @@
     .time-display { font-size: 72px; font-weight: 800; color: #111; line-height: 1; letter-spacing: -2px; }
     .time-display span { font-size: 24px; font-weight: 700; margin-left: 5px; }
     .date-display { font-size: 18px; color: var(--text-muted); font-weight: 500; margin-top: 10px; }
+
+    /* --- NEW SHIFT TIMER UI --- */
+    .shift-timer-box {
+      background: rgba(211, 37, 46, 0.04); 
+      border: 1px solid rgba(211, 37, 46, 0.15);
+      border-radius: 12px; padding: 16px 24px;
+      margin-bottom: 25px; color: var(--text-main);
+      font-weight: 600; font-size: 14px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .shift-timer-box span {
+      font-size: 22px; font-weight: 800;
+      color: var(--brand-red);
+      font-variant-numeric: tabular-nums; /* Prevents text from shaking while ticking */
+      letter-spacing: 1px;
+    }
 
     .button-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 35px; }
     .btn-pill {
@@ -138,12 +154,7 @@
 
     /* Phone UI overrides */
     #phone-auth { max-width: 400px; padding: 40px; }
-    
-    /* Force bullet points in the input box */
-    .masked-input {
-      -webkit-text-security: disc;
-      text-security: disc;
-    }
+    .masked-input { -webkit-text-security: disc; text-security: disc; }
   </style>
 </head>
 <body>
@@ -216,6 +227,13 @@
 
         <!-- Action Buttons -->
         <div id="action-section" style="display: none;">
+          
+          <!-- LIVE TIMER BOX (Shows only during Time Out) -->
+          <div id="shift-timer-container" class="shift-timer-box" style="display: none;">
+            ⏱️ Shift Duration
+            <span id="shift-duration-text">00:00:00</span>
+          </div>
+
           <div class="button-group">
             <button id="btn-time-in" class="btn-pill bg-green" onclick="generateQR('TIME_IN')">
               <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
@@ -266,7 +284,6 @@
       <p id="phone-greeting" style="font-weight: 500; color:#111;">Time In for Employee</p>
       <label style="text-align:center;">Authentication Code</label>
       
-      <!-- UPDATED FOR BULLETS + NUMPAD -->
       <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;">
       
       <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
@@ -285,9 +302,11 @@
     // =========================================================================
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
 
-    // --- LIVE CLOCK LOGIC ---
+    // --- LIVE CLOCK AND SHIFT TIMER LOGIC ---
     function updateClock() {
       const now = new Date();
+      
+      // Update Main Clock
       let hours = now.getHours(); let minutes = now.getMinutes();
       const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12; hours = hours ? hours : 12;
@@ -299,6 +318,20 @@
       const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
       const dateEl = document.getElementById('date-display');
       if (dateEl) dateEl.innerText = now.toLocaleDateString('en-US', options);
+
+      // Update Shift Duration Timer (Only when shiftStartTime exists)
+      if (window.shiftStartTime && !isNaN(window.shiftStartTime.getTime())) {
+        const diffMs = now - window.shiftStartTime;
+        if (diffMs >= 0) {
+          const hrs = Math.floor(diffMs / (1000 * 60 * 60));
+          const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+          const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+          
+          const pad = (num) => num.toString().padStart(2, '0');
+          const timerEl = document.getElementById('shift-duration-text');
+          if(timerEl) timerEl.innerText = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+        }
+      }
     }
     setInterval(updateClock, 1000); updateClock();
 
@@ -309,6 +342,7 @@
 
     let currentShiftState = null; 
     let qrPollingInterval = null;
+    window.shiftStartTime = null; // Global memory for the timer
 
     async function fetchLiveStatus(isSilentPolling = false) {
       const btnIn = document.getElementById('btn-time-in');
@@ -372,26 +406,39 @@
       const btnOut = document.getElementById('btn-time-out');
       const arrSelect = document.getElementById('arrangement');
       const statusText = document.getElementById('kiosk-status-text');
+      const timerContainer = document.getElementById('shift-timer-container');
       
       document.getElementById('kiosk-loading').style.display = 'none';
       document.getElementById('qr-section').style.display = 'none';
       document.getElementById('action-section').style.display = 'block';
 
       if (result.openRecord) {
-        // ACTIVE SHIFT
+        // 🟢 ACTIVE SHIFT
         statusText.innerText = "Active Shift";
         if (result.openRecord.workArrangement) {
           arrSelect.value = result.openRecord.workArrangement;
         }
         arrSelect.disabled = true; // Gray out dropdown
         btnIn.style.display = 'none';
-        btnOut.style.display = 'flex';      
+        btnOut.style.display = 'flex'; 
+
+        // Start the elapsed timer if the backend gave us the timeIn stamp
+        if (result.openRecord.timeIn) {
+          window.shiftStartTime = new Date(result.openRecord.timeIn);
+          if (!isNaN(window.shiftStartTime)) {
+            timerContainer.style.display = 'flex';
+          }
+        }
       } else {
-        // CHECKED OUT
+        // ⚪ CHECKED OUT
         statusText.innerText = "Not Yet Clocked In";
         arrSelect.disabled = false; // Unlock dropdown
         btnIn.style.display = 'flex';        
         btnOut.style.display = 'none';
+        
+        // Hide and reset the timer
+        timerContainer.style.display = 'none';
+        window.shiftStartTime = null;
       }
     }
 
