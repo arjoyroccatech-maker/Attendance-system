@@ -259,7 +259,10 @@
       <h2 style="font-size:22px;">Verify Attendance</h2>
       <p id="phone-greeting" style="font-weight: 500; color:#111;">Time In for Employee</p>
       <label style="text-align:center;">Authentication Code</label>
-      <input type="number" id="enteredCode" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;">
+      
+      <!-- THIS IS THE UPDATED LINE: type="password" inputmode="numeric" maxlength="4" -->
+      <input type="password" inputmode="numeric" maxlength="4" id="enteredCode" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;">
+      
       <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
       <div id="scan-status" style="font-size: 15px; font-weight: 600; margin-top: 15px;"></div>
     </div>
