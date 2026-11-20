@@ -53,6 +53,17 @@
     /* Error Card Styles */
     .error-icon { font-size: 40px; margin-bottom: 10px; }
     #device-error h2 { color: var(--red); }
+
+    /* Reset Link for Soft Memory */
+    .reset-link { 
+      font-size: 12px; 
+      color: var(--muted); 
+      text-decoration: underline; 
+      cursor: pointer; 
+      margin-top: 15px; 
+      display: inline-block; 
+    }
+    .reset-link:hover { color: var(--text); }
   </style>
 </head>
 <body>
@@ -103,9 +114,11 @@
       <option value="Work From Home">Work From Home</option>
     </select>
 
-    <button class="btn btn-in" onclick="generateQR('TIME_IN')">GENERATE TIME IN QR</button>
-    <button class="btn btn-out" onclick="generateQR('TIME_OUT')">GENERATE TIME OUT QR</button>
+    <button id="btn-time-in" class="btn btn-in" onclick="generateQR('TIME_IN')">GENERATE TIME IN QR</button>
+    <button id="btn-time-out" class="btn btn-out" onclick="generateQR('TIME_OUT')">GENERATE TIME OUT QR</button>
     
+    <span class="reset-link" onclick="resetButtons()">Need to change your action?</span>
+
     <div id="qrcode-wrapper" style="display: none;">
       <div id="qrcode-container">
         <img id="qr-image" src="" alt="QR Code">
@@ -132,7 +145,7 @@
     // =========================================================================
     // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
     // =========================================================================
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
+    const GOOGLE_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
     // 1. Check what type of device the user is on
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -141,11 +154,28 @@
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
-    // 3. ENFORCE DEVICE RULES
+    // Soft Memory UI Update
+    function loadButtonState() {
+      const lastAction = localStorage.getItem('lastAction');
+      const btnIn = document.getElementById('btn-time-in');
+      const btnOut = document.getElementById('btn-time-out');
+      
+      // Reset both buttons first
+      btnIn.style.display = 'block';
+      btnOut.style.display = 'block';
+
+      if (lastAction === 'TIME_IN') {
+        btnIn.style.display = 'none'; // Hide Time In if they just logged in
+      } else if (lastAction === 'TIME_OUT') {
+        btnOut.style.display = 'none'; // Hide Time Out if they just logged out
+      }
+    }
+
+    // 3. ENFORCE DEVICE RULES & ROUTING
     if (mode === 'scan') {
       // SCENARIO A: The user is trying to authenticate a QR code
       if (!isMobile) {
-        // Block: They are trying to open a scan link on a computer
+        // Block: Trying to open a scan link on a computer
         document.getElementById('device-error').classList.add('active-card');
         document.getElementById('error-message').innerText = "Security Block: This verification form must be scanned and opened on a mobile phone, not a computer.";
       } else {
@@ -159,7 +189,7 @@
     } else {
       // SCENARIO B: The user is opening the main website to register/kiosk
       if (isMobile) {
-        // Block: They are trying to open the kiosk on a phone
+        // Block: Trying to open the kiosk on a phone
         document.getElementById('device-error').classList.add('active-card');
         document.getElementById('error-message').innerText = "Access Denied: The Registration Form and QR Kiosk can only be accessed from a laptop or desktop computer.";
       } else {
@@ -170,6 +200,7 @@
         if (savedName && authCode) {
           document.getElementById('laptop-kiosk').classList.add('active-card');
           document.getElementById('welcome-text').innerText = "Hello, " + savedName;
+          loadButtonState(); // Apply the soft memory logic
         } else {
           document.getElementById('laptop-setup').classList.add('active-card');
         }
@@ -201,12 +232,25 @@
       window.location.reload();
     }
 
+    // --- LAPTOP: RESET BUTTONS ---
+    function resetButtons() {
+      localStorage.removeItem('lastAction');
+      loadButtonState();
+      document.getElementById('qrcode-wrapper').style.display = 'none';
+    }
+
     // --- LAPTOP: GENERATE QR ---
     function generateQR(actionType) {
       const name = localStorage.getItem('empName');
       const team = localStorage.getItem('team');
       const code = localStorage.getItem('authCode'); 
       const arrangement = document.getElementById('arrangement').value;
+
+      // Save this action so the app remembers it next time
+      localStorage.setItem('lastAction', actionType);
+      
+      // Immediately update the UI
+      loadButtonState();
 
       const currentWebsite = window.location.origin + window.location.pathname;
       const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&code=${encodeURIComponent(code)}`;
