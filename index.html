@@ -3,233 +3,230 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Attendance Tracker | Employee Portal</title>
+  <title>QR Attendance System</title>
   <style>
     :root {
-      --bg: #111019;
-      --panel: #201D2B;
-      --text: #F7F5FB;
-      --muted: #AAA4B8;
-      --purple: #B99AF7;
-      --green: #16A36A;
-      --red: #DC3545;
-      --highlight: #302A40;
+      --bg: #111019; --panel: #201D2B; --text: #F7F5FB; 
+      --muted: #AAA4B8; --purple: #B99AF7; --green: #16A36A; 
+      --red: #DC3545; --highlight: #302A40;
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      background-color: var(--bg); color: var(--text);
+      margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 90vh;
     }
-    /* Header */
-    .header {
-      width: 100%; background-color: #171522; padding: 15px 20px; 
-      box-sizing: border-box; border-bottom: 1px solid var(--highlight);
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .header h1 { margin: 0; font-size: 18px; color: var(--purple); }
-    .header .subtitle { font-size: 11px; color: var(--muted); }
-    
-    /* Navigation */
-    .nav {
-      display: flex; gap: 10px; margin: 20px 0; width: 90%; max-width: 800px;
-    }
-    .nav-btn {
-      background-color: var(--bg); color: var(--muted); border: 1px solid var(--highlight);
-      padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1;
-    }
-    .nav-btn.active { background-color: var(--highlight); color: var(--text); border-color: var(--purple); }
-    
-    /* Main Content */
-    .container { width: 90%; max-width: 800px; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
     .card {
-      background-color: var(--panel); padding: 24px; border-radius: 8px;
-      border: 1px solid var(--highlight); margin-bottom: 20px;
+      background-color: var(--panel); padding: 30px; border-radius: 12px;
+      border: 1px solid var(--highlight); width: 100%; max-width: 400px; text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: none;
     }
-    h2 { margin-top: 0; color: var(--text); font-size: 18px; }
-    label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 6px; color: var(--purple); text-transform: uppercase; }
+    .active-card { display: block; }
+    h2 { margin-top: 0; color: var(--purple); font-size: 22px; }
+    p { color: var(--muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
+    label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 6px; color: var(--muted); text-align: left; text-transform: uppercase; }
     input, select {
-      width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 4px;
+      width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 6px;
       background-color: #191723; border: 1px solid var(--highlight); color: white;
-      box-sizing: border-box; font-size: 14px;
+      box-sizing: border-box; font-size: 16px;
     }
     input:focus, select:focus { outline: none; border-color: var(--purple); }
-    
-    /* Buttons */
     .btn {
       width: 100%; padding: 16px; font-size: 15px; font-weight: bold;
       border: none; border-radius: 6px; cursor: pointer; margin-bottom: 10px;
       color: white; transition: 0.2s;
     }
+    .btn-save { background-color: var(--purple); color: #111019; }
     .btn-in { background-color: var(--green); }
     .btn-out { background-color: var(--red); }
-    .btn-refresh { background-color: var(--highlight); margin-top: 10px; }
     
-    /* Stats Grid */
-    .stats-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;
+    #auth-code-display {
+      font-size: 36px; font-weight: bold; color: #38BDF8; letter-spacing: 4px;
+      background: #111019; padding: 15px; border-radius: 8px; margin-bottom: 20px;
     }
-    .stat-card {
-      background-color: var(--highlight); padding: 15px; border-radius: 6px; border-left: 4px solid var(--purple);
-    }
-    .stat-title { font-size: 10px; font-weight: bold; color: var(--muted); margin-bottom: 5px; }
-    .stat-value { font-size: 24px; font-weight: bold; color: white; }
-
-    #status { font-size: 13px; text-align: center; font-weight: bold; margin-top: 10px; color: #38BDF8; }
     
-    /* Table */
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { text-align: left; padding: 12px 8px; border-bottom: 1px solid var(--highlight); }
-    th { color: var(--purple); font-size: 11px; text-transform: uppercase; }
+    #qrcode-container {
+      margin-top: 20px; padding: 15px; background: white; border-radius: 8px; display: inline-block;
+    }
+    #qrcode-container img { display: block; }
+    #scan-status { font-size: 16px; font-weight: bold; margin-top: 15px; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div>
-      <h1>ATTENDANCE</h1>
-      <div class="subtitle">EMPLOYEE PORTAL</div>
-    </div>
-    <div id="header-name" style="font-weight: bold; font-size: 14px;">Setup Required</div>
+  <!-- ==========================================
+       LAPTOP MODE 1: FIRST TIME REGISTRATION
+       ========================================== -->
+  <div id="laptop-setup" class="card">
+    <h2>Laptop Registration</h2>
+    <p>Register your details. This laptop will be permanently remembered as yours.</p>
+    <label>Employee Name</label>
+    <input type="text" id="empName" placeholder="e.g. John Doe">
+    <label>Team / Department</label>
+    <input type="text" id="team" placeholder="e.g. Sales">
+    <button class="btn btn-save" onclick="registerLaptop()">REGISTER & GET CODE</button>
   </div>
 
-  <div class="nav">
-    <button class="nav-btn active" onclick="switchTab('dashboard')">⌂ Dashboard</button>
-    <button class="nav-btn" onclick="switchTab('history')">▤ History</button>
-    <button class="nav-btn" onclick="switchTab('setup')">⚙ Setup</button>
+  <!-- ==========================================
+       LAPTOP MODE 2: REVEAL AUTHENTICATION CODE
+       ========================================== -->
+  <div id="laptop-reveal" class="card">
+    <h2>Registration Saved!</h2>
+    <p>Here is your permanent Authentication Code. You will need to type this on your phone when you scan the QR code.</p>
+    <div id="auth-code-display">0000</div>
+    <p style="color: #F87171;">⚠️ Write this down or memorize it!</p>
+    <button class="btn btn-in" onclick="goToDashboard()">I REMEMBER IT, CONTINUE</button>
   </div>
 
-  <div class="container">
+  <!-- ==========================================
+       LAPTOP MODE 3: DAILY QR KIOSK
+       ========================================== -->
+  <div id="laptop-kiosk" class="card">
+    <h2 id="welcome-text">Welcome</h2>
+    <p>Select your work arrangement and generate a QR code to scan with your phone.</p>
     
-    <!-- DASHBOARD TAB -->
-    <div id="dashboard" class="tab-content active">
-      <div class="stats-grid">
-        <div class="stat-card" style="border-left-color: #38BDF8;">
-          <div class="stat-title">TOTAL RECORDED HOURS</div>
-          <div class="stat-value" id="stat-hours">--</div>
-        </div>
-        <div class="stat-card" style="border-left-color: #34D399;">
-          <div class="stat-title">COMPLETED DAYS</div>
-          <div class="stat-value" id="stat-days">--</div>
-        </div>
-      </div>
+    <label>Work Arrangement</label>
+    <select id="arrangement">
+      <option value="Onsite">Onsite</option>
+      <option value="Work From Home">Work From Home</option>
+    </select>
 
-      <div class="card">
-        <h2>Record Attendance</h2>
-        <label>Work Arrangement</label>
-        <select id="arrangement" onchange="saveSettings()">
-          <option value="Onsite">Onsite</option>
-          <option value="Work From Home">Work From Home</option>
-        </select>
-
-        <button class="btn btn-in" onclick="sendData('TIME_IN')">TIME IN</button>
-        <button class="btn btn-out" onclick="sendData('TIME_OUT')">TIME OUT</button>
-        
-        <div id="status">Ready.</div>
-        <button class="btn btn-refresh" onclick="fetchData()">↻ Sync with Google Sheets</button>
+    <button class="btn btn-in" onclick="generateQR('TIME_IN')">GENERATE TIME IN QR</button>
+    <button class="btn btn-out" onclick="generateQR('TIME_OUT')">GENERATE TIME OUT QR</button>
+    
+    <div id="qrcode-wrapper" style="display: none;">
+      <div id="qrcode-container">
+        <img id="qr-image" src="" alt="QR Code">
       </div>
+      <p style="margin-top: 15px; color: var(--purple); font-weight: bold; font-size: 16px;">Scan with your phone camera</p>
     </div>
-
-    <!-- HISTORY TAB -->
-    <div id="history" class="tab-content">
-      <div class="card">
-        <h2>Attendance History</h2>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Time In</th>
-                <th>Time Out</th>
-                <th>Hours</th>
-              </tr>
-            </thead>
-            <tbody id="historyTable">
-              <tr><td colspan="4" style="text-align:center; color:var(--muted);">No records loaded. Sync required.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- SETUP TAB -->
-    <div id="setup" class="tab-content">
-      <div class="card">
-        <h2>Employee Profile</h2>
-        <label>Employee Name</label>
-        <input type="text" id="empName" placeholder="e.g. John Doe" oninput="saveSettings()">
-        
-        <label>Team / Department</label>
-        <input type="text" id="team" placeholder="e.g. Sales" oninput="saveSettings()">
-        
-        <p style="font-size: 11px; color: var(--muted);">Your Device ID is securely generated in the background. Ensure your name matches your Google Sheet exactly.</p>
-      </div>
-    </div>
-
   </div>
+
+  <!-- ==========================================
+       PHONE MODE: AUTHENTICATION FORM
+       ========================================== -->
+  <div id="phone-auth" class="card">
+    <h2>Attendance Verification</h2>
+    <p id="phone-greeting">Time In for Employee</p>
+    
+    <label>Enter Your 4-Digit Auth Code</label>
+    <input type="number" id="enteredCode" placeholder="____" style="text-align: center; font-size: 24px; letter-spacing: 4px;">
+    
+    <button class="btn btn-save" onclick="verifyAndSubmit()">SUBMIT ATTENDANCE</button>
+    <div id="scan-status"></div>
+  </div>
+
 
   <script>
     // =========================================================================
-    // 1. PASTE YOUR GOOGLE APPS SCRIPT URL HERE
+    // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
     // =========================================================================
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec;
+    const GOOGLE_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
-    // Initialize Device ID
-    let deviceId = localStorage.getItem('deviceId');
-    if (!deviceId) {
-      deviceId = 'web-' + Math.random().toString(36).substring(2, 11);
-      localStorage.setItem('deviceId', deviceId);
+    // Read URL to figure out if we are on the Phone or Laptop
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+
+    if (mode === 'scan') {
+      // ---------------------------------------------------------
+      // SCENARIO A: PHONE SCANNER MODE
+      // ---------------------------------------------------------
+      document.getElementById('phone-auth').classList.add('active-card');
+      
+      const actionText = urlParams.get('action').replace('_', ' ');
+      const empName = urlParams.get('name');
+      document.getElementById('phone-greeting').innerText = `${actionText} for ${empName}`;
+
+    } else {
+      // ---------------------------------------------------------
+      // SCENARIO B: LAPTOP MODE
+      // ---------------------------------------------------------
+      const savedName = localStorage.getItem('empName');
+      const authCode = localStorage.getItem('authCode');
+
+      if (savedName && authCode) {
+        // Already registered -> Show QR Kiosk
+        document.getElementById('laptop-kiosk').classList.add('active-card');
+        document.getElementById('welcome-text').innerText = "Hello, " + savedName;
+      } else {
+        // First time -> Show Registration
+        document.getElementById('laptop-setup').classList.add('active-card');
+      }
     }
 
-    // Load Settings
-    document.getElementById('empName').value = localStorage.getItem('empName') || '';
-    document.getElementById('team').value = localStorage.getItem('team') || '';
-    document.getElementById('arrangement').value = localStorage.getItem('arrangement') || 'Onsite';
-    updateHeader();
-
-    function saveSettings() {
-      localStorage.setItem('empName', document.getElementById('empName').value.trim());
-      localStorage.setItem('team', document.getElementById('team').value.trim());
-      localStorage.setItem('arrangement', document.getElementById('arrangement').value);
-      updateHeader();
-    }
-
-    function updateHeader() {
-      const name = localStorage.getItem('empName');
-      document.getElementById('header-name').innerText = name ? name : "Setup Required";
-    }
-
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      event.target.classList.add('active');
-      if (tabId === 'history') fetchData();
-    }
-
-    async function sendData(action) {
-      const name = localStorage.getItem('empName');
-      const team = localStorage.getItem('team');
-      const arrangement = localStorage.getItem('arrangement');
-      const statusDiv = document.getElementById('status');
-
+    // --- LAPTOP: REGISTRATION ---
+    function registerLaptop() {
+      const name = document.getElementById('empName').value.trim();
+      const team = document.getElementById('team').value.trim();
+      
       if (!name || !team) {
-        statusDiv.innerText = "Error: Complete your profile in the Setup tab first.";
-        statusDiv.style.color = "#F87171";
-        switchTab('setup');
+        alert("Please enter both Name and Team.");
         return;
       }
 
-      statusDiv.innerText = `Submitting ${action.replace('_', ' ')}...`;
+      // Generate a random 4-digit code
+      const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
+      
+      localStorage.setItem('empName', name);
+      localStorage.setItem('team', team);
+      localStorage.setItem('authCode', newAuthCode);
+      
+      // Hide setup, show code reveal
+      document.getElementById('laptop-setup').classList.remove('active-card');
+      document.getElementById('laptop-reveal').classList.add('active-card');
+      document.getElementById('auth-code-display').innerText = newAuthCode;
+    }
+
+    function goToDashboard() {
+      window.location.reload();
+    }
+
+    // --- LAPTOP: GENERATE QR ---
+    function generateQR(actionType) {
+      const name = localStorage.getItem('empName');
+      const team = localStorage.getItem('team');
+      const code = localStorage.getItem('authCode'); // Secret code passed to phone URL
+      const arrangement = document.getElementById('arrangement').value;
+
+      // Build URL for the phone to open
+      const currentWebsite = window.location.origin + window.location.pathname;
+      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&code=${encodeURIComponent(code)}`;
+
+      // Generate QR Code image
+      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
+      
+      document.getElementById('qr-image').src = qrImageUrl;
+      document.getElementById('qrcode-wrapper').style.display = 'block';
+    }
+
+    // --- PHONE: VERIFY AND SUBMIT ---
+    async function verifyAndSubmit() {
+      const enteredCode = document.getElementById('enteredCode').value.trim();
+      const expectedCode = urlParams.get('code');
+      const statusDiv = document.getElementById('scan-status');
+
+      if (!enteredCode) {
+        statusDiv.innerText = "Please enter your code.";
+        statusDiv.style.color = "#F87171";
+        return;
+      }
+
+      if (enteredCode !== expectedCode) {
+        statusDiv.innerText = "❌ Incorrect Authentication Code.";
+        statusDiv.style.color = "#F87171";
+        return;
+      }
+
+      // Code is correct, send to Google Sheets
+      statusDiv.innerText = "Verifying... sending to Google Sheets.";
       statusDiv.style.color = "#38BDF8";
 
-      const payload = { action, employee_name: name, team, device_id: deviceId, work_arrangement: arrangement };
+      const payload = {
+        action: urlParams.get('action'),
+        employee_name: urlParams.get('name'),
+        team: urlParams.get('team'),
+        device_id: "Mobile-QR-Auth",
+        work_arrangement: urlParams.get('arr')
+      };
 
       try {
         const response = await fetch(GOOGLE_URL, {
@@ -237,77 +234,21 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
+        
         const result = await response.json();
         
         if (result.ok) {
             statusDiv.style.color = "#34D399";
-            statusDiv.innerText = result.message;
-            fetchData(); 
+            statusDiv.innerText = "✅ SUCCESS! " + result.message;
         } else {
             statusDiv.style.color = "#F87171";
-            statusDiv.innerText = "Error: " + result.error;
+            statusDiv.innerText = "❌ ERROR: " + result.error;
         }
       } catch (error) {
         statusDiv.style.color = "#F87171";
-        statusDiv.innerText = "Connection failed. Check your internet or Google URL.";
+        statusDiv.innerText = "Connection failed. Check your internet.";
       }
     }
-
-    async function fetchData() {
-      const name = localStorage.getItem('empName');
-      const team = localStorage.getItem('team');
-      const tableBody = document.getElementById('historyTable');
-      const statusDiv = document.getElementById('status');
-      
-      if (!name || !team || GOOGLE_URL === "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") return;
-
-      statusDiv.innerText = "Syncing with Google Sheets...";
-      statusDiv.style.color = "#AAA4B8";
-
-      const payload = { action: 'GET_DATA', employee_name: name, team, device_id: deviceId };
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        const result = await response.json();
-        
-        if (result.ok) {
-          statusDiv.innerText = "Synced successfully.";
-          statusDiv.style.color = "#34D399";
-          
-          // Update Dashboard Stats
-          if(result.summary) {
-            document.getElementById('stat-hours').innerText = result.summary.totalRecordedHours ? result.summary.totalRecordedHours.toFixed(1) : '0';
-            document.getElementById('stat-days').innerText = result.summary.completedDays || '0';
-          }
-
-          // Update History Table
-          if (result.records && result.records.length > 0) {
-            tableBody.innerHTML = '';
-            result.records.slice(0, 10).forEach(record => {
-              const tr = document.createElement('tr');
-              tr.innerHTML = `
-                <td>${record.date || '—'}</td>
-                <td>${record.timeIn || '—'}</td>
-                <td>${record.timeOut || '—'}</td>
-                <td>${record.totalHours ? record.totalHours + 'h' : '—'}</td>
-              `;
-              tableBody.appendChild(tr);
-            });
-          } else {
-            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--muted);">No attendance history found.</td></tr>`;
-          }
-        }
-      } catch (error) {
-        statusDiv.innerText = "Failed to sync data.";
-        statusDiv.style.color = "#F87171";
-      }
-    }
-
-    window.onload = () => { if(localStorage.getItem('empName')) fetchData(); };
   </script>
 </body>
 </html>
