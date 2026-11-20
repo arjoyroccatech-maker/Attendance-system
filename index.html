@@ -30,7 +30,6 @@
       box-sizing: border-box; font-size: 16px;
     }
     input:focus, select:focus { outline: none; border-color: var(--purple); }
-    select:disabled { opacity: 0.6; cursor: not-allowed; border-color: #555; }
     .btn {
       width: 100%; padding: 16px; font-size: 15px; font-weight: bold;
       border: none; border-radius: 6px; cursor: pointer; margin-bottom: 10px;
@@ -51,18 +50,9 @@
     #qrcode-container img { display: block; }
     #scan-status { font-size: 16px; font-weight: bold; margin-top: 15px; }
     
+    /* Error Card Styles */
     .error-icon { font-size: 40px; margin-bottom: 10px; }
     #device-error h2 { color: var(--red); }
-
-    /* Live Status Text */
-    #kiosk-status {
-      color: #38BDF8; font-weight: bold; font-size: 13px; margin-bottom: 15px;
-    }
-    .refresh-link {
-      font-size: 12px; color: var(--muted); text-decoration: underline; 
-      cursor: pointer; margin-top: 15px; display: inline-block; 
-    }
-    .refresh-link:hover { color: var(--text); }
   </style>
 </head>
 <body>
@@ -94,7 +84,7 @@
        ========================================== -->
   <div id="laptop-reveal" class="card">
     <h2>Registration Saved!</h2>
-    <p>Here is your permanent Authentication Code.</p>
+    <p>Here is your permanent Authentication Code. You will need to type this on your phone when you scan the QR code.</p>
     <div id="auth-code-display">0000</div>
     <p style="color: #F87171;">⚠️ Write this down or memorize it!</p>
     <button class="btn btn-in" onclick="goToDashboard()">I REMEMBER IT, CONTINUE</button>
@@ -105,7 +95,7 @@
        ========================================== -->
   <div id="laptop-kiosk" class="card">
     <h2 id="welcome-text">Welcome</h2>
-    <div id="kiosk-status">Checking Google Sheets...</div>
+    <p>Select your work arrangement and generate a QR code to scan with your phone.</p>
     
     <label>Work Arrangement</label>
     <select id="arrangement">
@@ -113,10 +103,8 @@
       <option value="Work From Home">Work From Home</option>
     </select>
 
-    <button id="btn-time-in" class="btn btn-in" onclick="generateQR('TIME_IN')" style="display: none;">GENERATE TIME IN QR</button>
-    <button id="btn-time-out" class="btn btn-out" onclick="generateQR('TIME_OUT')" style="display: none;">GENERATE TIME OUT QR</button>
-    
-    <span class="refresh-link" onclick="fetchLiveStatus()">↻ Refresh Status</span>
+    <button class="btn btn-in" onclick="generateQR('TIME_IN')">GENERATE TIME IN QR</button>
+    <button class="btn btn-out" onclick="generateQR('TIME_OUT')">GENERATE TIME OUT QR</button>
 
     <div id="qrcode-wrapper" style="display: none;">
       <div id="qrcode-container">
@@ -144,67 +132,13 @@
     // =========================================================================
     // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
     // =========================================================================
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyOqmAdblwenmG64sqEWtI8jnS8RC4XxxWiFou19d0ZAHkDz5RtFqFIReLSI16QfaN6ZA/exec";
+    const GOOGLE_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
 
-    // Fetch actual status from Google Sheets
-    async function fetchLiveStatus() {
-      const btnIn = document.getElementById('btn-time-in');
-      const btnOut = document.getElementById('btn-time-out');
-      const arrangementSelect = document.getElementById('arrangement');
-      const statusText = document.getElementById('kiosk-status');
-
-      btnIn.style.display = 'none';
-      btnOut.style.display = 'none';
-      document.getElementById('qrcode-wrapper').style.display = 'none';
-      statusText.innerText = "Syncing with Google Sheets...";
-      statusText.style.color = "#AAA4B8";
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "GET_DATA",
-            employee_name: localStorage.getItem('empName'),
-            team: localStorage.getItem('team'),
-            device_id: "Mobile-QR-Auth" // Looks for records created by the phone
-          })
-        });
-        
-        const result = await response.json();
-        
-        if (result.ok) {
-          if (result.openRecord) {
-            // Found a missing Time Out!
-            statusText.innerText = "🟢 Status: Active Shift (" + result.openRecord.timeIn + ")";
-            statusText.style.color = "#34D399";
-            
-            arrangementSelect.value = result.openRecord.workArrangement;
-            arrangementSelect.disabled = true; // Lock dropdown
-            
-            btnOut.style.display = 'block'; // Only allow Time Out
-          } else {
-            // No missing Time Out found (Fully logged out)
-            statusText.innerText = "⚪ Status: Checked Out";
-            statusText.style.color = "#AAA4B8";
-            
-            arrangementSelect.disabled = false; // Unlock dropdown
-            
-            btnIn.style.display = 'block'; // Only allow Time In
-          }
-        }
-      } catch (error) {
-        statusText.innerText = "⚠️ Offline: Could not reach Google Sheets.";
-        statusText.style.color = "#F87171";
-        btnIn.style.display = 'block';
-        btnOut.style.display = 'block';
-      }
-    }
-
+    // 3. ENFORCE DEVICE RULES
     if (mode === 'scan') {
       if (!isMobile) {
         document.getElementById('device-error').classList.add('active-card');
@@ -226,9 +160,6 @@
         if (savedName && authCode) {
           document.getElementById('laptop-kiosk').classList.add('active-card');
           document.getElementById('welcome-text').innerText = "Hello, " + savedName;
-          
-          // Trigger the Google Sheets sync on load
-          fetchLiveStatus(); 
         } else {
           document.getElementById('laptop-setup').classList.add('active-card');
         }
