@@ -413,6 +413,14 @@
         hintEl.style.color = 'var(--text-muted)';
         localStorage.setItem('profileDataUrl', dataUrl);
         if (fileId) localStorage.setItem('profileFileId', fileId);
+      } else if (fileId) {
+        imgEl.src = `https://lh3.googleusercontent.com/d/${fileId}=s250`;
+        imgEl.style.display = 'block';
+        svgEl.style.display = 'none';
+        overlayEl.innerText = 'Change';
+        hintEl.innerText = 'Change Photo';
+        hintEl.style.color = 'var(--text-muted)';
+        localStorage.setItem('profileFileId', fileId);
       } else {
         imgEl.style.display = 'none';
         svgEl.style.display = 'block';
@@ -424,12 +432,12 @@
       }
     }
 
-    function applyPhoneProfilePhoto(dataUrl) {
+    function applyPhoneProfilePhoto(srcOrDataUrl) {
       const imgEl = document.getElementById('phone-profile-img');
       const svgEl = document.getElementById('phone-default-svg');
 
-      if (dataUrl && dataUrl.startsWith('data:image')) {
-        imgEl.src = dataUrl;
+      if (srcOrDataUrl) {
+        imgEl.src = srcOrDataUrl;
         imgEl.style.display = 'block';
         svgEl.style.display = 'none';
       } else {
@@ -482,7 +490,6 @@
           const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
           const base64String = dataUrl.split(',')[1];
 
-          // Show the image immediately in the UI while saving to Drive in background
           applyProfilePhoto(dataUrl, "");
 
           try {
@@ -517,8 +524,20 @@
       reader.readAsDataURL(file);
     }
 
-    // Fetch photo directly from Apps Script when on the mobile phone screen
-    async function fetchPhoneProfilePhoto(empName, empTeam) {
+    // Instant load via Google CDN + silent Base64 fallback
+    async function initPhoneProfilePhoto(empName, empTeam, photoId) {
+      const cacheKey = `phonePhoto_${empName}`;
+      const cached = localStorage.getItem(cacheKey);
+      
+      // 1. Show cached Base64 immediately if scanned previously on this phone
+      if (cached) {
+        applyPhoneProfilePhoto(cached);
+      } else if (photoId) {
+        // 2. Load immediately (0s delay) from Google's fast image CDN using the File ID in the QR URL
+        applyPhoneProfilePhoto(`https://lh3.googleusercontent.com/d/${photoId}=s250`);
+      }
+
+      // 3. Silently refresh from Apps Script in background and cache on phone
       if (!empName || !empTeam) return;
       try {
         const response = await fetch(GOOGLE_URL, {
@@ -534,6 +553,7 @@
         const result = await response.json();
         if (result.ok && result.profileDataUrl) {
           applyPhoneProfilePhoto(result.profileDataUrl);
+          try { localStorage.setItem(cacheKey, result.profileDataUrl); } catch (err) {}
         }
       } catch (e) {}
     }
@@ -718,9 +738,10 @@
         const actionText = urlParams.get('action').replace('_', ' ');
         const empName = urlParams.get('name');
         const empTeam = urlParams.get('team');
+        const photoId = urlParams.get('photo') || "";
         
         document.getElementById('phone-greeting').innerText = `${actionText} for ${empName}`;
-        fetchPhoneProfilePhoto(empName, empTeam);
+        initPhoneProfilePhoto(empName, empTeam, photoId);
       }
     } else {
       if (isMobile) {
@@ -736,7 +757,7 @@
           
           const cachedDataUrl = localStorage.getItem('profileDataUrl');
           const cachedFileId = localStorage.getItem('profileFileId');
-          if (cachedDataUrl) applyProfilePhoto(cachedDataUrl, cachedFileId);
+          if (cachedDataUrl || cachedFileId) applyProfilePhoto(cachedDataUrl, cachedFileId);
 
           fetchLiveStatus(false); 
         } else {
@@ -770,6 +791,7 @@
       const name = localStorage.getItem('empName');
       const team = localStorage.getItem('team');
       const code = localStorage.getItem('authCode'); 
+      const photoId = localStorage.getItem('profileFileId') || "";
       const arrangement = document.getElementById('arrangement').value;
 
       if (actionType === 'TIME_IN') {
@@ -777,7 +799,7 @@
       }
 
       const currentWebsite = window.location.origin + window.location.pathname;
-      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&code=${encodeURIComponent(code)}`;
+      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&code=${encodeURIComponent(code)}&photo=${encodeURIComponent(photoId)}`;
       const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
       
       document.getElementById('qr-image').src = qrImageUrl;
