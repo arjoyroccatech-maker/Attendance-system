@@ -190,7 +190,7 @@
     .sub-link:hover { color: var(--ink); text-decoration: underline; }
 
     /* =========================================================================
-       KIOSK-GRADE MANAGER COMMAND TERMINAL (Live Employee Photos Everywhere)
+       KIOSK-GRADE MANAGER COMMAND TERMINAL (Live Employee Photos + Remove Account)
        ========================================================================= */
     .kiosk-terminal-deck {
       display: none;
@@ -357,16 +357,20 @@
     .btn-export-xlsx svg { width: 17px; height: 17px; fill: currentColor; }
 
     .btn-kiosk-sm {
-      min-height: 38px;
-      padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--border);
+      min-height: 36px;
+      padding: 7px 13px; border-radius: 10px; border: 1.5px solid var(--border);
       background: #FFFFFF; color: var(--ink); font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.14s;
+      font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.14s;
+      white-space: nowrap;
     }
     .btn-kiosk-sm:hover { background: var(--surface-recessed); border-color: var(--ink); }
     .btn-kiosk-sm.dark { background: var(--ink); color: #FFF; border-color: var(--ink); }
+    .btn-kiosk-sm.warn { background: var(--amber-bg); color: var(--amber); border-color: rgba(217, 119, 6, 0.3); }
+    .btn-kiosk-sm.warn:hover { background: #FEF3C7; }
     .btn-kiosk-sm.danger { background: var(--crimson-bg); color: var(--crimson); border-color: rgba(220, 38, 38, 0.3); }
+    .btn-kiosk-sm.danger:hover { background: #FEE2E2; }
 
-    /* Roster Cards Grid (Larger Circular Portraits on Live Team Pulse) */
+    /* Roster Cards Grid */
     .roster-grid {
       padding: 24px 28px;
       display: grid;
@@ -399,7 +403,7 @@
       font-size: 13px; color: var(--ink-secondary);
     }
 
-    /* Live Employee Photo Avatar System (Used across Roster Cards & All Tables) */
+    /* Live Employee Photo Avatar System */
     .emp-photo-avatar {
       border-radius: 50%;
       background: #E2E8F0;
@@ -646,7 +650,7 @@
   </div>
 
   <!-- =====================================================================
-       KIOSK-GRADE MANAGER COMMAND TERMINAL (Live Employee Photos Everywhere)
+       KIOSK-GRADE MANAGER COMMAND TERMINAL
        ===================================================================== -->
   <div id="mgr-terminal-deck" class="kiosk-terminal-deck">
     
@@ -732,7 +736,7 @@
         </button>
       </div>
 
-      <!-- VIEW 1: LIVE TEAM PULSE (Large Circular Profile Portraits) -->
+      <!-- VIEW 1: LIVE TEAM PULSE -->
       <div id="deck-view-live" class="deck-view active">
         <div class="view-bar">
           <div>
@@ -791,12 +795,12 @@
         </table>
       </div>
 
-      <!-- VIEW 3: REGISTERED DEVICES -->
+      <!-- VIEW 3: REGISTERED DEVICES & ACCOUNT CONTROLS -->
       <div id="deck-view-devices" class="deck-view">
         <div class="view-bar">
           <div>
-            <h2 class="view-heading">Registered Devices</h2>
-            <div class="view-sub">1-to-1 mobile hardware bindings and access status</div>
+            <h2 class="view-heading">Registered Devices & Accounts</h2>
+            <div class="view-sub">Reset bound phones, suspend access, or remove an account to reset its workstation</div>
           </div>
         </div>
         <table class="deck-table">
@@ -1136,11 +1140,10 @@
     let cachedManagerRecords = [];
     let cachedFilteredRecords = [];
     let cachedManagerMembers = [];
-    let memberPhotoCache = {}; // { nameLower: { fileId, dataUrl } }
+    let memberPhotoCache = {};
     let serverTodayStr = "";
     window.shiftStartTime = null;
 
-    // Load cached member photos from localStorage so Manager Terminal shows photos instantly
     try {
       const savedPhotoCache = localStorage.getItem('mgrMemberPhotoCache');
       if (savedPhotoCache) memberPhotoCache = JSON.parse(savedPhotoCache);
@@ -1197,6 +1200,20 @@
         `;
       }
       return `<div class="emp-photo-avatar ${sizeClass}${liveCls}">${initials}</div>`;
+    }
+
+    // Clears local employee state and returns workstation to registration
+    function resetLocalEmployeeWorkstation() {
+      clearInterval(qrPollingInterval);
+      clearInterval(qrExpiryTimer);
+      qrPollingInterval = null;
+      qrExpiryTimer = null;
+      window.shiftStartTime = null;
+
+      ['empName', 'team', 'empEmail', 'authCode', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
+        localStorage.removeItem(k);
+      });
+      switchCard('laptop-setup');
     }
 
     function switchCard(cardId) {
@@ -1555,7 +1572,7 @@
       renderMissingTimeOutsTable(missingOutRecords);
     }
 
-    // VIEW 1: LIVE TEAM PULSE (Large Circular Profile Portraits)
+    // VIEW 1: LIVE TEAM PULSE
     function renderLiveTeamBoard(members, records) {
       const grid = document.getElementById('live-board-grid');
       const teamFilterEl = document.getElementById('liveTeamFilter');
@@ -1712,7 +1729,7 @@
       XLSX.writeFile(workbook, `Attendance_History_${dateStamp}.xlsx`);
     }
 
-    // VIEW 3: REGISTERED DEVICES
+    // VIEW 3: REGISTERED DEVICES & ACCOUNT CONTROLS (Includes Remove Account)
     function renderDevicesTable(members) {
       const tbody = document.getElementById('mgr-devices-body');
       if (!members.length) {
@@ -1729,7 +1746,7 @@
         const isBlocked = (st === "blocked" || st === "disabled");
         const toggleBtn = isBlocked
           ? `<button type="button" class="btn-kiosk-sm dark" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'UNBLOCK')">Unblock</button>`
-          : `<button type="button" class="btn-kiosk-sm danger" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'BLOCK')">Block</button>`;
+          : `<button type="button" class="btn-kiosk-sm warn" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'BLOCK')">Block</button>`;
 
         return `
           <tr>
@@ -1746,9 +1763,10 @@
             <td style="font-family:monospace; font-size:13px; font-weight:600;">${escapeHtml(m.deviceId || "Unbound")}</td>
             <td>${statusTag}</td>
             <td>
-              <div style="display:flex; gap:8px;">
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button type="button" class="btn-kiosk-sm" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET')">Reset Phone</button>
                 ${toggleBtn}
+                <button type="button" class="btn-kiosk-sm danger" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'REMOVE')">Remove Account</button>
               </div>
             </td>
           </tr>
@@ -1757,9 +1775,16 @@
     }
 
     async function handleDeviceAction(empName, deviceAction) {
-      const label = deviceAction === "RESET"
-        ? `Reset bound mobile phone for ${empName}? Their next QR scan will register their new device.`
-        : (deviceAction === "BLOCK" ? `Suspend attendance access for ${empName}?` : `Restore access for ${empName}?`);
+      let label = "";
+      if (deviceAction === "RESET") {
+        label = `Reset bound mobile phone for ${empName}? Their next QR scan will register their new device.`;
+      } else if (deviceAction === "BLOCK") {
+        label = `Suspend attendance access for ${empName}?`;
+      } else if (deviceAction === "UNBLOCK") {
+        label = `Restore access for ${empName}?`;
+      } else if (deviceAction === "REMOVE") {
+        label = `Permanently remove ${empName}'s account from the database? Their workstation will reset back to the registration form.`;
+      }
       if (!confirm(label)) return;
 
       const email = localStorage.getItem('mgrEmail') || "";
@@ -1781,15 +1806,30 @@
         const data = await res.json();
         if (data.ok) {
           alert(data.message);
-          cachedManagerMembers = data.members || cachedManagerMembers;
-          persistMemberPhotos(cachedManagerMembers);
-          renderDevicesTable(cachedManagerMembers);
-          renderLiveTeamBoard(cachedManagerMembers, cachedManagerRecords);
+          // If the removed employee was also registered on this same laptop, clear its local storage immediately
+          if (deviceAction === "REMOVE") {
+            const localEmp = String(localStorage.getItem('empName') || "").trim().toLowerCase();
+            if (localEmp && localEmp === String(empName).trim().toLowerCase()) {
+              ['empName', 'team', 'empEmail', 'authCode', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
+                localStorage.removeItem(k);
+              });
+            }
+          }
+          cachedManagerMembers = data.members || [];
+          updateTerminalDeckData(
+            {
+              name: localStorage.getItem('mgrName') || "Manager",
+              department: localStorage.getItem('mgrDept') || "",
+              email: email
+            },
+            cachedManagerRecords,
+            cachedManagerMembers
+          );
         } else {
           alert(data.error || "Action failed.");
         }
       } catch (e) {
-        alert("Connection error while updating device status.");
+        alert("Connection error while updating account.");
       }
     }
 
@@ -2256,6 +2296,12 @@
         const result = await response.json();
         
         if (result.ok) {
+          // If manager removed this account, reset laptop immediately back to registration form
+          if (result.accountRemoved) {
+            resetLocalEmployeeWorkstation();
+            return;
+          }
+
           if (!isSilentPolling) {
             if (!result.email) {
               switchCard('laptop-email-complete');
