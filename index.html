@@ -3,181 +3,265 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QR Attendance System</title>
+  <title>DATAWORDS • Attendance Kiosk</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg: #F4F6F9;
-      --card-bg: #FFFFFF;
-      --text-main: #1A1D20; 
-      --text-muted: #6C757D;
-      --border: #E9ECEF;
-      
-      --brand-green: #10A350;
-      --brand-red: #D3252E;
-      --header-bg: #000000;
+      --bg-base: #F1F5F9;
+      --surface: #FFFFFF;
+      --surface-subtle: #F8FAFC;
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --border-strong: #CBD5E1;
+
+      --emerald: #059669;
+      --emerald-hover: #047857;
+      --emerald-soft: #ECFDF5;
+      --crimson: #DC2626;
+      --crimson-hover: #B91C1C;
+      --crimson-soft: #FEF2F2;
+      --slate-dark: #0F172A;
+      --slate-dark-hover: #1E293B;
+
+      --shadow-card: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+      --shadow-pill-green: 0 10px 24px -4px rgba(5, 150, 105, 0.35);
+      --shadow-pill-red: 0 10px 24px -4px rgba(220, 38, 38, 0.32);
     }
     
+    * { box-sizing: border-box; }
+
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg); color: var(--text-main);
+      background-color: var(--bg-base);
+      background-image:
+        radial-gradient(at 0% 0%, rgba(5, 150, 105, 0.06) 0px, transparent 45%),
+        radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.06) 0px, transparent 50%);
+      color: var(--text-primary);
       margin: 0; padding: 0; display: flex; flex-direction: column;
-      min-height: 100vh; box-sizing: border-box;
-      background-image: radial-gradient(circle at 100% 100%, #e2e6eb 0%, #f4f6f9 40%);
+      min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
 
-    /* --- TOP NAV BAR --- */
+    /* --- FROSTED KIOSK TOP NAV BAR --- */
     .top-bar {
-      background-color: var(--header-bg);
-      color: white; padding: 12px 30px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 36px;
       display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 50;
     }
-    .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-    .brand svg { width: 24px; height: 24px; fill: white; }
+    .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
+    .brand-logo {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+    }
+    .brand-logo svg { width: 20px; height: 20px; fill: #10B981; }
     .brand-text { display: flex; flex-direction: column; }
-    .brand-title { font-weight: 700; font-size: 16px; letter-spacing: 0.5px;}
-    .brand-subtitle { font-size: 10px; color: #aaa; letter-spacing: 0.5px; }
+    .brand-title { font-weight: 800; font-size: 15px; letter-spacing: 0.6px; color: var(--text-primary); }
+    .brand-subtitle { font-size: 11px; color: var(--text-muted); font-weight: 500; }
     
-    .nav-actions { display: flex; align-items: center; gap: 20px; font-size: 13px; font-weight: 500; }
-    .online-indicator { display: flex; align-items: center; gap: 6px; }
-    .dot { width: 10px; height: 10px; background-color: #0fcc5c; border-radius: 50%; }
-    .nav-divider { width: 1px; height: 20px; background-color: #333; }
-    .nav-icon { display: flex; align-items: center; gap: 6px; cursor: pointer; color: #ddd; transition: color 0.15s; }
-    .nav-icon:hover { color: #fff; }
-    .nav-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .nav-actions { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; }
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 12px; border-radius: 999px;
+      background: var(--emerald-soft); color: var(--emerald);
+      font-size: 12px; font-weight: 700; border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+    .status-dot {
+      width: 8px; height: 8px; background-color: #10B981; border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22);
+    }
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 14px; border-radius: 10px;
+      background: var(--surface-subtle); color: var(--text-secondary);
+      border: 1px solid var(--border); cursor: pointer;
+      font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
+      transition: all 0.15s ease;
+    }
+    .nav-btn:hover { background: #FFFFFF; color: var(--text-primary); border-color: var(--border-strong); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .nav-btn svg { width: 15px; height: 15px; fill: currentColor; }
 
-    /* --- MAIN CONTAINER --- */
+    /* --- MAIN STAGE --- */
     .main-wrapper {
-      flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px 20px;
+      flex: 1; display: flex; justify-content: center; align-items: center; padding: 36px 20px;
     }
 
     .card {
-      background-color: var(--card-bg); padding: 0; border-radius: 24px;
-      width: 100%; max-width: 650px; text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-      display: none; animation: fadeIn 0.35s ease-out; overflow: hidden;
-      border: 1px solid rgba(0,0,0,0.03);
+      background-color: var(--surface); padding: 0; border-radius: 28px;
+      width: 100%; max-width: 660px; text-align: center;
+      box-shadow: var(--shadow-card);
+      display: none; animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.9);
     }
     .active-card { display: block; }
     
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(14px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .card-padding { padding: 44px 40px 36px 40px; }
+    .card-padding { padding: 44px 44px 36px 44px; }
 
     /* --- ROLE SELECTOR ENTRY --- */
-    .role-card { max-width: 580px; padding: 44px 40px; }
-    .role-card h2 { margin: 0 0 8px 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+    .role-card { max-width: 620px; padding: 46px 42px; }
+    .eyebrow-badge {
+      display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--emerald); background: var(--emerald-soft);
+      padding: 5px 12px; border-radius: 999px; margin-bottom: 14px;
+    }
+    .role-card h2 { margin: 0 0 8px 0; font-size: 28px; font-weight: 800; letter-spacing: -0.6px; color: var(--text-primary); }
     .role-card p { color: var(--text-muted); font-size: 14px; margin: 0 0 32px 0; }
     .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
     .role-btn {
-      background: #FAFAFA; border: 2px solid var(--border); border-radius: 18px;
-      padding: 28px 20px; cursor: pointer; text-align: center;
-      transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center;
+      background: var(--surface-subtle); border: 1.5px solid var(--border); border-radius: 20px;
+      padding: 30px 22px; cursor: pointer; text-align: center;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; flex-direction: column; align-items: center;
       font-family: 'Inter', sans-serif;
     }
     .role-btn:hover {
-      border-color: #111; background: #FFFFFF;
-      transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.07);
+      background: #FFFFFF; transform: translateY(-4px);
+      box-shadow: 0 16px 30px -8px rgba(15, 23, 42, 0.1);
     }
-    .role-btn.employee-role:hover { border-color: var(--brand-green); }
+    .role-btn.employee-role:hover { border-color: var(--emerald); }
+    .role-btn.manager-role:hover { border-color: var(--slate-dark); }
     .role-icon-circle {
-      width: 56px; height: 56px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
+      width: 60px; height: 60px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
     }
-    .employee-role .role-icon-circle { background: rgba(16, 163, 80, 0.12); color: var(--brand-green); }
-    .manager-role .role-icon-circle { background: rgba(17, 17, 17, 0.08); color: #111; }
+    .employee-role .role-icon-circle { background: var(--emerald-soft); color: var(--emerald); }
+    .manager-role .role-icon-circle { background: #E2E8F0; color: var(--slate-dark); }
     .role-icon-circle svg { width: 28px; height: 28px; fill: currentColor; }
-    .role-title { font-size: 17px; font-weight: 800; color: #111; margin-bottom: 6px; }
-    .role-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+    .role-title { font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -0.2px; }
+    .role-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
     .role-status-pill {
-      margin-top: 12px; font-size: 11px; font-weight: 700; padding: 4px 10px;
-      border-radius: 20px; background: #E9ECEF; color: #495057;
+      margin-top: 14px; font-size: 11px; font-weight: 700; padding: 5px 12px;
+      border-radius: 999px; background: #E2E8F0; color: var(--text-secondary);
     }
-    .role-status-pill.ready { background: rgba(16, 163, 80, 0.14); color: var(--brand-green); }
+    .role-status-pill.ready { background: var(--emerald-soft); color: var(--emerald); }
 
-    /* --- SETUP & AUTH CARDS --- */
-    .setup-card { max-width: 450px; padding: 40px; }
-    .setup-card h2 { margin-top: 0; font-size: 24px; font-weight: 700; }
-    .setup-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
-    .setup-card label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); text-align: left; }
-    .setup-card input { width: 100%; padding: 14px 16px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ced4da; box-sizing: border-box; font-size: 15px; font-family: 'Inter', sans-serif; }
-    .setup-card input:focus { outline: none; border-color: #333; }
+    /* --- FORMS & AUTH CARDS --- */
+    .setup-card { max-width: 440px; padding: 42px 38px; }
+    .form-icon-header {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: var(--surface-subtle); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px auto; color: var(--text-primary);
+    }
+    .form-icon-header svg { width: 24px; height: 24px; fill: currentColor; }
+    .setup-card h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; }
+    .setup-card p { color: var(--text-muted); font-size: 13.5px; line-height: 1.5; margin: 0 0 24px 0; }
+    .setup-card label {
+      display: block; font-size: 12px; font-weight: 700; margin-bottom: 7px;
+      color: var(--text-secondary); text-align: left; letter-spacing: 0.2px;
+    }
+    .setup-card input {
+      width: 100%; padding: 13px 15px; margin-bottom: 18px;
+      border-radius: 12px; border: 1.5px solid var(--border);
+      background: var(--surface-subtle); color: var(--text-primary);
+      font-size: 14.5px; font-weight: 500; font-family: 'Inter', sans-serif;
+      transition: all 0.15s ease;
+    }
+    .setup-card input:focus {
+      outline: none; background: #FFFFFF; border-color: var(--slate-dark);
+      box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06);
+    }
     
-    #auth-code-display { font-size: 42px; font-weight: 800; color: #111; letter-spacing: 12px; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid #e9ecef; }
+    #auth-code-display {
+      font-size: 40px; font-weight: 800; color: var(--text-primary);
+      letter-spacing: 12px; background: var(--surface-subtle);
+      padding: 20px; border-radius: 16px; margin-bottom: 20px;
+      border: 1.5px dashed var(--border-strong);
+    }
     
-    .btn-save { width: 100%; padding: 16px; font-size: 15px; font-weight: 600; background: #111; color: white; border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.15s; }
-    .btn-save:hover { opacity: 0.92; }
-    .btn-save:disabled { opacity: 0.55; cursor: not-allowed; }
-    .sub-link { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
-    .sub-link:hover { color: #111; }
+    .btn-save {
+      width: 100%; padding: 15px 20px; font-size: 14.5px; font-weight: 700;
+      background: var(--slate-dark); color: white; border: none;
+      border-radius: 12px; cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: all 0.15s ease; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+    .btn-save:hover { background: var(--slate-dark-hover); transform: translateY(-1px); }
+    .btn-save:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    .sub-link {
+      display: inline-block; margin-top: 16px; font-size: 13px;
+      color: var(--text-muted); font-weight: 500; cursor: pointer; text-decoration: none;
+    }
+    .sub-link:hover { color: var(--text-primary); text-decoration: underline; }
 
     /* --- MANAGER DASHBOARD --- */
-    .manager-dash-card { max-width: 1050px; text-align: left; }
+    .manager-dash-card { max-width: 1080px; text-align: left; }
     .mgr-header {
       padding: 28px 32px; border-bottom: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
     }
-    .mgr-header h2 { margin: 0 0 4px 0; font-size: 22px; font-weight: 800; }
+    .mgr-header h2 { margin: 0 0 4px 0; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
     .mgr-header p { margin: 0; font-size: 13px; color: var(--text-muted); }
     .mgr-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .mgr-search {
-      padding: 10px 14px; border-radius: 8px; border: 1px solid #ced4da;
-      font-size: 13px; font-family: 'Inter', sans-serif; min-width: 220px;
+      padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border);
+      background: var(--surface-subtle); font-size: 13px; font-family: 'Inter', sans-serif; min-width: 240px;
     }
-    .mgr-search:focus { outline: none; border-color: #111; }
+    .mgr-search:focus { outline: none; background: #FFF; border-color: var(--slate-dark); }
     .btn-sm {
-      padding: 10px 16px; border-radius: 8px; border: 1px solid #ced4da;
-      background: #FFF; color: #111; font-size: 13px; font-weight: 600; cursor: pointer;
+      padding: 10px 16px; border-radius: 10px; border: 1px solid var(--border);
+      background: #FFF; color: var(--text-primary); font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s;
     }
-    .btn-sm.primary { background: #111; color: #FFF; border-color: #111; }
+    .btn-sm:hover { background: var(--surface-subtle); }
+    .btn-sm.primary { background: var(--slate-dark); color: #FFF; border-color: var(--slate-dark); }
+    .btn-sm.primary:hover { background: var(--slate-dark-hover); }
     .mgr-stats {
-      display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--border); background: #FAFAFA;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--border); background: var(--surface-subtle);
     }
-    .mgr-stat-box { padding: 18px 32px; border-right: 1px solid var(--border); }
+    .mgr-stat-box { padding: 20px 32px; border-right: 1px solid var(--border); }
     .mgr-stat-box:last-child { border-right: none; }
     .mgr-stat-label { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
-    .mgr-stat-val { font-size: 24px; font-weight: 800; color: #111; }
+    .mgr-stat-val { font-size: 26px; font-weight: 800; color: var(--text-primary); }
     .table-wrap { width: 100%; overflow-x: auto; max-height: 480px; }
     table.att-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     table.att-table th {
-      position: sticky; top: 0; background: #F8F9FA; color: var(--text-muted);
-      font-weight: 700; text-align: left; padding: 13px 16px; border-bottom: 1px solid var(--border);
-      white-space: nowrap;
+      position: sticky; top: 0; background: #F8FAFC; color: var(--text-muted);
+      font-weight: 700; text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--border);
+      white-space: nowrap; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px;
     }
     table.att-table td {
-      padding: 13px 16px; border-bottom: 1px solid var(--border); color: #111; white-space: nowrap;
+      padding: 14px 18px; border-bottom: 1px solid var(--border); color: var(--text-primary); white-space: nowrap;
     }
-    table.att-table tr:hover td { background: #FAFAFA; }
+    table.att-table tr:hover td { background: #F8FAFC; }
     .badge-pill {
-      display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+      display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
     }
-    .badge-active { background: rgba(16, 163, 80, 0.14); color: var(--brand-green); }
-    .badge-onsite { background: #E7F1FF; color: #0B5ED7; }
-    .badge-wfh { background: #FFF3CD; color: #997404; }
+    .badge-active { background: var(--emerald-soft); color: var(--emerald); }
+    .badge-onsite { background: #EFF6FF; color: #1D4ED8; }
+    .badge-wfh { background: #FEF3C7; color: #B45309; }
 
     /* --- KIOSK UI & INTERACTIVE PROFILE PHOTO --- */
-    .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 30px; }
-    .welcome-divider { width: 1px; height: 58px; background-color: #DEE2E6; }
+    .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 28px; }
+    .welcome-divider { width: 1px; height: 56px; background-color: var(--border); }
 
-    .avatar-wrapper { position: relative; width: 76px; height: 76px; cursor: pointer; flex-shrink: 0; }
+    .avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; flex-shrink: 0; }
     .avatar {
-      width: 100%; height: 100%; background: #E9ECEF; border-radius: 50%;
+      width: 100%; height: 100%; background: var(--surface-subtle); border-radius: 50%;
       display: flex; justify-content: center; align-items: center;
-      overflow: hidden; border: 2px solid #E2E8F0; transition: border-color 0.2s;
+      overflow: hidden; border: 2px solid var(--border); transition: border-color 0.2s;
     }
-    .avatar-wrapper:hover .avatar { border-color: #111; }
-    .avatar svg { width: 40px; height: 40px; fill: #6C757D; }
+    .avatar-wrapper:hover .avatar { border-color: var(--slate-dark); }
+    .avatar svg { width: 40px; height: 40px; fill: #94A3B8; }
     .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
 
     .avatar-overlay {
       position: absolute; inset: 0; border-radius: 50%;
-      background: rgba(0, 0, 0, 0.55); color: white;
+      background: rgba(15, 23, 42, 0.6); color: white;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
       font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
       opacity: 0; transition: opacity 0.2s; pointer-events: none;
@@ -186,100 +270,117 @@
 
     .camera-badge {
       position: absolute; bottom: 0; right: 0;
-      width: 24px; height: 24px; border-radius: 50%;
-      background: #111; color: white; border: 2px solid white;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--slate-dark); color: white; border: 2px solid white;
       display: flex; justify-content: center; align-items: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
     }
     .camera-badge svg { width: 12px; height: 12px; fill: white; }
 
     .avatar-loading {
       position: absolute; inset: 0; border-radius: 50%;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.88);
       display: none; justify-content: center; align-items: center;
     }
 
     .welcome-text { text-align: left; }
-    .welcome-text .small { font-size: 15px; color: var(--text-muted); font-weight: 500; }
-    .welcome-text .name { font-size: 24px; font-weight: 800; color: #111; letter-spacing: -0.5px; }
+    .welcome-text .small { font-size: 14px; color: var(--text-muted); font-weight: 500; }
+    .welcome-text .name { font-size: 24px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; }
     .photo-action-hint {
-      font-size: 11px; font-weight: 600; color: var(--brand-green);
+      font-size: 11.5px; font-weight: 600; color: var(--emerald);
       cursor: pointer; display: inline-block; margin-top: 3px;
     }
     .photo-action-hint:hover { text-decoration: underline; }
 
     .clock-section { margin-bottom: 32px; }
-    .time-display { font-size: 72px; font-weight: 800; color: #111; line-height: 1; letter-spacing: -2px; }
-    .time-display span { font-size: 24px; font-weight: 700; margin-left: 5px; }
-    .date-display { font-size: 18px; color: var(--text-muted); font-weight: 500; margin-top: 10px; }
-
-    .button-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 14px; }
-    .btn-pill {
-      flex: 1; max-width: 300px; padding: 18px 24px; border-radius: 50px;
-      display: flex; align-items: center; justify-content: center; gap: 15px;
-      font-size: 22px; font-weight: 600; color: white; border: none; cursor: pointer;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.14); transition: transform 0.1s, box-shadow 0.2s;
+    .time-display {
+      font-size: 74px; font-weight: 800; color: var(--text-primary);
+      line-height: 1; letter-spacing: -2.5px; font-variant-numeric: tabular-nums;
     }
-    .btn-pill:hover { box-shadow: 0 10px 22px rgba(0,0,0,0.2); }
-    .btn-pill:active { transform: scale(0.97); }
-    .btn-pill svg { width: 28px; height: 28px; fill: white; }
-    .btn-divider { width: 1px; height: 30px; background: rgba(255,255,255,0.35); }
+    .time-display span { font-size: 22px; font-weight: 700; color: var(--text-secondary); margin-left: 6px; letter-spacing: 0; }
+    .date-display { font-size: 16px; color: var(--text-muted); font-weight: 500; margin-top: 10px; }
+
+    .button-group { display: flex; justify-content: center; gap: 18px; margin-bottom: 16px; }
+    .btn-pill {
+      flex: 1; max-width: 310px; padding: 18px 26px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center; gap: 14px;
+      font-size: 20px; font-weight: 700; color: white; border: none; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: transform 0.12s ease, box-shadow 0.2s ease;
+    }
+    .btn-pill:active { transform: scale(0.98); }
+    .btn-pill svg { width: 26px; height: 26px; fill: white; }
+    .btn-divider { width: 1px; height: 26px; background: rgba(255,255,255,0.3); }
     
-    .bg-green { background: linear-gradient(135deg, #10A350, #0c8240); }
-    .bg-red { background: linear-gradient(135deg, #D3252E, #a61c23); }
+    .bg-green { background: linear-gradient(135deg, #10B981, #059669); box-shadow: var(--shadow-pill-green); }
+    .bg-green:hover { box-shadow: 0 14px 28px -4px rgba(5, 150, 105, 0.42); }
+    .bg-red { background: linear-gradient(135deg, #EF4444, #DC2626); box-shadow: var(--shadow-pill-red); }
+    .bg-red:hover { box-shadow: 0 14px 28px -4px rgba(220, 38, 38, 0.4); }
 
     /* Email OTP Fallback Link & Box */
     .otp-fallback-link {
-      font-size: 13px; color: var(--text-muted); font-weight: 500;
+      font-size: 13px; color: var(--text-muted); font-weight: 600;
       cursor: pointer; display: inline-block; margin-top: 6px;
       transition: color 0.15s;
     }
-    .otp-fallback-link:hover { color: #111; text-decoration: underline; }
+    .otp-fallback-link:hover { color: var(--text-primary); text-decoration: underline; }
 
     #otp-section {
-      max-width: 360px; margin: 0 auto; padding: 20px;
-      background: #F8F9FA; border-radius: 16px; border: 1px solid var(--border);
+      max-width: 360px; margin: 0 auto; padding: 24px;
+      background: var(--surface-subtle); border-radius: 18px; border: 1px solid var(--border);
       display: none;
     }
-    #otp-section h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 700; }
+    #otp-section h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 800; }
     #otp-info-text { font-size: 13px; color: var(--text-muted); margin: 0 0 16px 0; }
     #otp-code-input {
       width: 100%; padding: 12px; font-size: 24px; font-weight: 700;
-      text-align: center; letter-spacing: 6px; border-radius: 8px;
-      border: 1px solid #ced4da; box-sizing: border-box; margin-bottom: 12px;
+      text-align: center; letter-spacing: 6px; border-radius: 12px;
+      border: 1.5px solid var(--border); background: #FFF; margin-bottom: 12px;
       font-family: 'Inter', sans-serif;
     }
     #otp-status-msg { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
 
     /* Bottom Status Bar */
-    .status-bar { border-top: 1px solid var(--border); display: flex; background: #FAFAFA; }
-    .status-col { flex: 1; padding: 22px 28px; display: flex; align-items: center; gap: 15px; text-align: left; }
+    .status-bar { border-top: 1px solid var(--border); display: flex; background: var(--surface-subtle); }
+    .status-col { flex: 1; padding: 20px 28px; display: flex; align-items: center; gap: 14px; text-align: left; }
     .status-col:first-child { border-right: 1px solid var(--border); }
-    .status-icon { width: 24px; height: 24px; fill: #495057; flex-shrink: 0; }
+    .status-icon-box {
+      width: 40px; height: 40px; border-radius: 11px;
+      background: #FFFFFF; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .status-icon-box svg { width: 20px; height: 20px; fill: var(--text-secondary); }
     .status-text-wrap { display: flex; flex-direction: column; align-items: flex-start; }
-    .status-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; }
-    .status-value { font-size: 15px; font-weight: 700; color: #111; font-variant-numeric: tabular-nums; }
-    .timer-highlight { color: var(--brand-red); font-weight: 800; }
+    .status-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .status-value { font-size: 14.5px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .timer-highlight { color: var(--crimson); font-weight: 800; }
     
     .status-select { 
-      font-size: 15px; font-weight: 700; color: #111; border: none; background: transparent; 
+      font-size: 14.5px; font-weight: 700; color: var(--text-primary); border: none; background: transparent; 
       font-family: 'Inter', sans-serif; cursor: pointer; padding: 0 18px 0 0; outline: none;
       width: auto;
     }
-    .status-select:disabled { cursor: not-allowed; color: #6C757D; -webkit-appearance: none; appearance: none; padding-right: 0; }
+    .status-select:disabled { cursor: not-allowed; color: var(--text-muted); -webkit-appearance: none; appearance: none; padding-right: 0; }
 
-    /* Footer */
-    .footer { background-color: var(--header-bg); color: #888; text-align: center; padding: 15px; font-size: 12px; letter-spacing: 0.5px; }
-    .footer span { color: white; }
+    /* Clean Subtle Footer */
+    .footer {
+      color: var(--text-muted); text-align: center; padding: 16px;
+      font-size: 12px; font-weight: 500;
+    }
+    .footer span { color: var(--text-primary); font-weight: 700; }
 
     /* QR State inside Kiosk */
-    #qrcode-container { margin: 10px auto; padding: 20px; background: white; border-radius: 16px; display: inline-block; border: 1px solid var(--border); }
-    .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 600; color: var(--brand-green); margin-top: 15px; font-size: 15px;}
+    #qrcode-container {
+      margin: 10px auto; padding: 18px; background: white;
+      border-radius: 20px; display: inline-block;
+      border: 1.5px solid var(--border); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+    }
+    .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--emerald); margin-top: 14px; font-size: 14.5px; }
     .qr-countdown { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
-    .cancel-link { font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; margin-top: 14px; display: inline-block; }
+    .cancel-link { font-size: 13px; color: var(--text-muted); font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: 14px; display: inline-block; }
     
     .spinner { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid currentColor; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; }
-    .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: #111; margin: 40px auto; display: block; }
+    .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: var(--slate-dark); margin: 40px auto; display: block; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* --- PHONE AUTH WITH OVERLAPPING PROFILE CIRCLE --- */
@@ -293,71 +394,75 @@
 
     .phone-avatar-circle {
       width: 90px; height: 90px; border-radius: 50%;
-      background-color: #E9ECEF; border: 4px solid #FFFFFF;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      background-color: var(--surface-subtle); border: 4px solid #FFFFFF;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
       margin: -85px auto 18px auto;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden; position: relative; z-index: 2;
     }
-    .phone-avatar-circle svg { width: 46px; height: 46px; fill: #6C757D; }
+    .phone-avatar-circle svg { width: 46px; height: 46px; fill: #94A3B8; }
     .phone-avatar-circle img { width: 100%; height: 100%; object-fit: cover; display: none; }
 
     .phone-badge {
-      display: inline-block; background: #F1F3F5; color: #495057;
+      display: inline-block; background: var(--surface-subtle); color: var(--text-secondary);
+      border: 1px solid var(--border);
       font-size: 12px; font-weight: 700; padding: 5px 14px;
-      border-radius: 20px; margin-bottom: 20px; letter-spacing: 0.3px;
+      border-radius: 999px; margin-bottom: 20px; letter-spacing: 0.3px;
     }
 
     .masked-input { -webkit-text-security: disc; text-security: disc; }
 
-    @media (max-width: 600px) {
+    @media (max-width: 640px) {
+      .top-bar { padding: 12px 18px; }
       .role-grid { grid-template-columns: 1fr; }
       .mgr-stats { grid-template-columns: 1fr; }
+      .card-padding { padding: 32px 24px; }
+      .time-display { font-size: 56px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- TOP NAV -->
+  <!-- FROSTED LIGHT KIOSK TOP NAV -->
   <div class="top-bar">
     <div class="brand" onclick="showRoleSelector()">
-      <svg viewBox="0 0 24 24"><path d="M4 10h3v10H4zM10 4h3v16h-3zM16 14h3v6h-3z"/></svg>
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24"><path d="M4 10h3v10H4zM10 4h3v16h-3zM16 14h3v6h-3z"/></svg>
+      </div>
       <div class="brand-text">
-        <span class="brand-title">87seconds-Group</span>
-        <span class="brand-subtitle">Webmarketing Team</span>
+        <span class="brand-title">DATAWORDS</span>
+        <span class="brand-subtitle">Webmarketing Attendance Kiosk</span>
       </div>
     </div>
     <div class="nav-actions">
-      <div class="online-indicator"><div class="dot"></div> Online</div>
-      <div class="nav-divider"></div>
-      <div class="nav-icon" onclick="showRoleSelector()">
+      <div class="status-chip"><span class="status-dot"></span> System Online</div>
+      <button type="button" class="nav-btn" onclick="showRoleSelector()">
         <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-        Switch Role
-      </div>
-      <div class="nav-divider"></div>
-      <div class="nav-icon" onclick="window.close()"><svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Exit</div>
+        Switch Portal
+      </button>
     </div>
   </div>
 
   <div class="main-wrapper">
     <!-- DEVICE BLOCK -->
     <div id="device-error" class="card setup-card">
-      <div style="font-size: 48px; margin-bottom:15px;">🚫</div>
-      <h2 style="color:var(--brand-red);">Access Denied</h2>
+      <div style="font-size: 44px; margin-bottom:12px;">🚫</div>
+      <h2 style="color:var(--crimson);">Access Denied</h2>
       <p id="error-message">Device not allowed.</p>
     </div>
 
-    <!-- ROLE SELECTOR ENTRY SCREEN (Always shown first on desktop) -->
+    <!-- ROLE SELECTOR ENTRY SCREEN -->
     <div id="role-selector" class="card role-card active-card">
-      <h2>Select Your Portal</h2>
-      <p>Choose your role to continue to attendance or management.</p>
+      <div class="eyebrow-badge">Attendance Portal</div>
+      <h2>Choose Your Workspace</h2>
+      <p>Select Employee to log your shift, or Manager to review attendance history.</p>
       <div class="role-grid">
         <button type="button" class="role-btn employee-role" onclick="selectEmployeeRole()">
           <div class="role-icon-circle">
             <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
           </div>
           <div class="role-title">EMPLOYEE</div>
-          <div class="role-desc">Time In, Time Out & personal kiosk verification</div>
+          <div class="role-desc">Time In, Time Out & personal QR verification</div>
           <div class="role-status-pill" id="emp-role-pill">New Setup</div>
         </button>
 
@@ -372,19 +477,25 @@
       </div>
     </div>
 
-    <!-- EMPLOYEE RETURNING LOGIN (Requires 4-Digit Auth Code) -->
+    <!-- EMPLOYEE RETURNING LOGIN -->
     <div id="employee-login" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+      </div>
       <h2>Employee Login</h2>
       <p id="emp-login-subtitle">Enter your 4-digit Authentication Code to open your kiosk.</p>
       <label style="text-align:center;">Your 4-Digit Auth Code</label>
       <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="empLoginCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') submitEmployeeLogin()">
       <button class="btn-save" onclick="submitEmployeeLogin()">Unlock Kiosk</button>
-      <div id="emp-login-error" style="color:var(--brand-red); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
-      <span class="sub-link" onclick="showRoleSelector()">Back to Role Selection</span>
+      <div id="emp-login-error" style="color:var(--crimson); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
+      <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
     </div>
 
     <!-- MANAGER STEP 1: REGISTRATION FORM -->
     <div id="manager-setup" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      </div>
       <h2>Manager Registration</h2>
       <p>Create your manager account to access team attendance records.</p>
       <label>Full Name</label>
@@ -399,16 +510,22 @@
 
     <!-- MANAGER STEP 2: DEVELOPER DEFAULT PASS -->
     <div id="manager-dev-auth" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+      </div>
       <h2>Developer Authorization</h2>
       <p>Enter the default developer pass code to authorize manager registration.</p>
       <label>Default Pass Code</label>
       <input type="password" id="devPassInput" placeholder="Enter developer pass" autocomplete="off" onkeydown="if(event.key==='Enter') verifyDevPass()">
       <button class="btn-save" id="btn-verify-dev" onclick="verifyDevPass()">Verify Developer Pass</button>
-      <span class="sub-link" onclick="switchCard('manager-setup')">Back to Registration</span>
+      <span class="sub-link" onclick="switchCard('manager-setup')">← Back to Registration</span>
     </div>
 
     <!-- MANAGER STEP 3: CREATE PERSONAL PASSWORD -->
     <div id="manager-create-pass" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>
+      </div>
       <h2>Create Your Password</h2>
       <p>Set a personal password you will use every time you log in as Manager.</p>
       <label>New Manager Password (min. 4 characters)</label>
@@ -420,6 +537,9 @@
 
     <!-- MANAGER RETURNING LOGIN -->
     <div id="manager-login" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      </div>
       <h2>Manager Login</h2>
       <p id="mgr-login-subtitle">Enter your personal manager password to view attendance logs.</p>
       <div id="mgr-login-email-wrap">
@@ -453,7 +573,7 @@
         </div>
         <div class="mgr-stat-box">
           <div class="mgr-stat-label">Active Shifts (No Time Out)</div>
-          <div class="mgr-stat-val" id="stat-active-shifts" style="color:var(--brand-green);">0</div>
+          <div class="mgr-stat-val" id="stat-active-shifts" style="color:var(--emerald);">0</div>
         </div>
         <div class="mgr-stat-box">
           <div class="mgr-stat-label">Completed Shifts</div>
@@ -484,8 +604,11 @@
 
     <!-- EMPLOYEE INITIAL REGISTRATION -->
     <div id="laptop-setup" class="card setup-card">
-      <h2>Device Setup</h2>
-      <p>Register your profile to permanently lock this device as your kiosk.</p>
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
+      </div>
+      <h2>Kiosk Device Setup</h2>
+      <p>Register your profile to bind this workstation as your personal attendance kiosk.</p>
       <label>Employee Name</label>
       <input type="text" id="empName" placeholder="e.g. John Doe" autocomplete="off">
       <label>Team / Department</label>
@@ -493,14 +616,18 @@
       <label>Work Email (For Backup OTP)</label>
       <input type="email" id="empEmail" placeholder="e.g. john.doe@company.com" autocomplete="off">
       <button class="btn-save" id="btn-register-laptop" onclick="registerLaptop()">Secure Device & Continue</button>
+      <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
     </div>
 
     <!-- UPDATE MISSING EMAIL PROMPT -->
     <div id="laptop-email-complete" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      </div>
       <h2>Update Your Email</h2>
       <p>Please add your email address to enable backup Email OTP verification.</p>
       <label>Registered Employee</label>
-      <input type="text" id="missingEmailEmpName" disabled style="background:#f8f9fa; color:#6c757d;">
+      <input type="text" id="missingEmailEmpName" disabled style="background:#F1F5F9; color:#64748B;">
       <label>Work Email Address</label>
       <input type="email" id="missingEmailInput" placeholder="e.g. john.doe@company.com" autocomplete="off">
       <button class="btn-save" id="btn-save-missing-email" onclick="saveMissingEmail()">Save Email & Continue</button>
@@ -508,11 +635,14 @@
 
     <!-- CODE REVEAL -->
     <div id="laptop-reveal" class="card setup-card">
+      <div class="form-icon-header" style="background:var(--emerald-soft); color:var(--emerald); border-color:rgba(5,150,105,0.2);">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </div>
       <h2>Registration Complete</h2>
-      <p>Your Mobile Authentication Code is ready.</p>
+      <p>Save your 4-digit Authentication Code. You will need it to open your kiosk and verify QR scans.</p>
       <div id="auth-code-display">0000</div>
-      <p style="color: var(--brand-red); font-weight: 500;">⚠️ Save this code!</p>
-      <button class="btn-save" onclick="openEmployeeKiosk()">I Have It, Continue</button>
+      <p style="color: var(--crimson); font-weight: 600; font-size: 13px;">⚠️ Write this down or keep it private.</p>
+      <button class="btn-save" onclick="openEmployeeKiosk()">I Have Saved It, Continue</button>
     </div>
 
     <!-- MAIN EMPLOYEE KIOSK -->
@@ -532,14 +662,14 @@
               <svg viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
             </div>
             <div class="avatar-loading" id="avatar-loading-spinner">
-              <div class="spinner" style="border-top-color:#111;"></div>
+              <div class="spinner" style="border-top-color:var(--slate-dark);"></div>
             </div>
           </div>
 
           <div class="welcome-divider"></div>
 
           <div class="welcome-text">
-            <span class="small">Welcome!</span><br>
+            <span class="small">Welcome back,</span><br>
             <span class="name" id="kiosk-name">EMPLOYEE NAME</span><br>
             <span class="photo-action-hint" id="photo-action-hint" onclick="triggerPhotoUpload()">+ Add Profile Photo</span>
           </div>
@@ -580,10 +710,10 @@
           <span class="cancel-link" onclick="cancelOTP()">Cancel</span>
         </div>
 
-        <!-- QR Display (With Strict 60s Expiration Countdown) -->
+        <!-- QR Display -->
         <div id="qr-section" style="display: none;">
           <div id="qrcode-container"><img id="qr-image" src="" alt="QR Code"></div>
-          <div class="qr-waiting" id="qr-waiting-text"><div class="spinner"></div> Awaiting verification...</div>
+          <div class="qr-waiting" id="qr-waiting-text"><div class="spinner"></div> Awaiting mobile verification...</div>
           <div class="qr-countdown" id="qr-countdown-text">QR expires in 60s</div>
           <span class="cancel-link" onclick="cancelQR()">Cancel</span>
         </div>
@@ -592,14 +722,18 @@
       <!-- Bottom Status Bar -->
       <div class="status-bar">
         <div class="status-col">
-          <svg class="status-icon" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+          <div class="status-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+          </div>
           <div class="status-text-wrap">
             <span class="status-label">Today's Status</span>
             <span class="status-value" id="kiosk-status-text">Checking...</span>
           </div>
         </div>
         <div class="status-col">
-          <svg class="status-icon" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+          <div class="status-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+          </div>
           <div class="status-text-wrap">
             <span class="status-label">Work Arrangement</span>
             <select class="status-select" id="arrangement">
@@ -611,7 +745,7 @@
       </div>
     </div>
 
-    <!-- PHONE AUTH (Server-Side PIN + Live 60s Expiry Lock) -->
+    <!-- PHONE AUTH -->
     <div id="phone-auth" class="card setup-card">
       <div class="phone-avatar-circle">
         <svg id="phone-default-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -619,13 +753,13 @@
       </div>
 
       <h2 style="font-size:22px; margin-bottom:6px;">Verify Attendance</h2>
-      <p id="phone-greeting" style="font-weight: 600; color:#111; margin-bottom: 10px;">Employee Name</p>
+      <p id="phone-greeting" style="font-weight: 700; color:var(--text-primary); margin-bottom: 10px;">Employee Name</p>
       <div id="phone-badge" class="phone-badge">TIME IN • Onsite</div>
 
       <label style="text-align:center;">Authentication Code</label>
       <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" autofocus style="text-align: center; font-size: 28px; letter-spacing: 8px;">
       <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
-      <div id="scan-status" style="font-size: 15px; font-weight: 600; margin-top: 15px;"></div>
+      <div id="scan-status" style="font-size: 14px; font-weight: 600; margin-top: 15px;"></div>
     </div>
   </div>
 
@@ -916,7 +1050,7 @@
           renderManagerDashboard(data.manager, data.records || []);
         }
       } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--brand-red);">Failed to refresh records.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--crimson);">Failed to refresh records.</td></tr>`;
       }
     }
 
@@ -1045,12 +1179,12 @@
           otpInput.focus();
         } else {
           infoText.innerText = "Unable to send OTP.";
-          statusMsg.style.color = "var(--brand-red)";
+          statusMsg.style.color = "var(--crimson)";
           statusMsg.innerText = "❌ " + result.error;
         }
       } catch (err) {
         infoText.innerText = "Connection failed.";
-        statusMsg.style.color = "var(--brand-red)";
+        statusMsg.style.color = "var(--crimson)";
         statusMsg.innerText = "❌ Could not reach server.";
       }
     }
@@ -1067,13 +1201,13 @@
       const targetAction = (currentShiftState === 'ACTIVE') ? 'TIME_OUT' : 'TIME_IN';
 
       if (otpCode.length !== 6) {
-        statusMsg.style.color = "var(--brand-red)";
+        statusMsg.style.color = "var(--crimson)";
         statusMsg.innerText = "Please enter the 6-digit code.";
         return;
       }
 
       verifyBtn.disabled = true;
-      statusMsg.style.color = "#111";
+      statusMsg.style.color = "var(--text-primary)";
       statusMsg.innerText = "Verifying OTP...";
 
       if (targetAction === 'TIME_IN') {
@@ -1096,19 +1230,19 @@
         const result = await response.json();
 
         if (result.ok) {
-          statusMsg.style.color = "var(--brand-green)";
+          statusMsg.style.color = "var(--emerald)";
           statusMsg.innerText = "✅ " + result.message;
           setTimeout(() => {
             document.getElementById('otp-section').style.display = 'none';
             fetchLiveStatus(false);
           }, 1200);
         } else {
-          statusMsg.style.color = "var(--brand-red)";
+          statusMsg.style.color = "var(--crimson)";
           statusMsg.innerText = "❌ " + result.error;
           verifyBtn.disabled = false;
         }
       } catch (err) {
-        statusMsg.style.color = "var(--brand-red)";
+        statusMsg.style.color = "var(--crimson)";
         statusMsg.innerText = "❌ Connection error.";
         verifyBtn.disabled = false;
       }
@@ -1143,7 +1277,7 @@
         svgEl.style.display = 'block';
         overlayEl.innerText = 'Add Photo';
         hintEl.innerText = '+ Add Profile Photo';
-        hintEl.style.color = 'var(--brand-green)';
+        hintEl.style.color = 'var(--emerald)';
         localStorage.removeItem('profileDataUrl');
         localStorage.removeItem('profileFileId');
       }
@@ -1411,7 +1545,7 @@
 
              const waitText = document.getElementById('qr-waiting-text');
              waitText.innerHTML = '✅ Verified Successfully!';
-             waitText.style.color = 'var(--brand-green)';
+             waitText.style.color = 'var(--emerald)';
              document.getElementById('qr-countdown-text').innerText = '';
              
              setTimeout(() => renderUIState(result), 1000);
@@ -1491,7 +1625,7 @@
             const statusDiv = document.getElementById('scan-status');
             const submitBtn = document.getElementById('submit-btn');
             const codeInput = document.getElementById('enteredCode');
-            statusDiv.style.color = "var(--brand-red)";
+            statusDiv.style.color = "var(--crimson)";
             statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
             submitBtn.disabled = true;
             submitBtn.style.opacity = "0.5";
@@ -1636,8 +1770,8 @@
       document.getElementById('qr-image').src = qrImageUrl;
       
       const waitText = document.getElementById('qr-waiting-text');
-      waitText.innerHTML = '<div class="spinner"></div> Awaiting verification...';
-      waitText.style.color = 'var(--brand-green)';
+      waitText.innerHTML = '<div class="spinner"></div> Awaiting mobile verification...';
+      waitText.style.color = 'var(--emerald)';
 
       const countdownEl = document.getElementById('qr-countdown-text');
       let secondsLeft = 60;
@@ -1654,7 +1788,7 @@
       qrExpiryTimer = setInterval(() => {
         secondsLeft--;
         if (secondsLeft <= 15 && secondsLeft > 0) {
-          countdownEl.style.color = 'var(--brand-red)';
+          countdownEl.style.color = 'var(--crimson)';
         }
         if (secondsLeft <= 0) {
           cancelQR();
@@ -1672,7 +1806,7 @@
 
       if (!qrTimestamp || (Date.now() - qrTimestamp) > 60000) {
         statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
-        statusDiv.style.color = "var(--brand-red)";
+        statusDiv.style.color = "var(--crimson)";
         submitBtn.disabled = true;
         submitBtn.style.opacity = "0.5";
         return;
@@ -1680,14 +1814,14 @@
 
       if (!enteredCode || enteredCode.length !== 4) {
         statusDiv.innerText = "Please enter your 4-digit code.";
-        statusDiv.style.color = "var(--brand-red)";
+        statusDiv.style.color = "var(--crimson)";
         return;
       }
 
       submitBtn.disabled = true;
       submitBtn.style.opacity = "0.5";
-      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:#111;"></div> Verifying PIN & Device...';
-      statusDiv.style.color = "#111";
+      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:var(--slate-dark);"></div> Verifying PIN & Device...';
+      statusDiv.style.color = "var(--text-primary)";
 
       const mobileDeviceId = getOrCreateMobileDeviceId();
 
@@ -1710,16 +1844,16 @@
         const result = await response.json();
         
         if (result.ok) {
-            statusDiv.style.color = "var(--brand-green)";
+            statusDiv.style.color = "var(--emerald)";
             statusDiv.innerText = "✅ SUCCESS! " + result.message;
         } else {
-            statusDiv.style.color = "var(--brand-red)";
+            statusDiv.style.color = "var(--crimson)";
             statusDiv.innerText = "🚫 " + result.error;
             submitBtn.disabled = false;
             submitBtn.style.opacity = "1";
         }
       } catch (error) {
-        statusDiv.style.color = "var(--brand-red)";
+        statusDiv.style.color = "var(--crimson)";
         statusDiv.innerText = "Connection failed. Check your internet.";
         submitBtn.disabled = false;
         submitBtn.style.opacity = "1";
