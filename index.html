@@ -190,7 +190,7 @@
     .sub-link:hover { color: var(--ink); text-decoration: underline; }
 
     /* =========================================================================
-       KIOSK-GRADE MANAGER COMMAND TERMINAL (Live Employee Photos + Remove Account)
+       KIOSK-GRADE MANAGER COMMAND TERMINAL
        ========================================================================= */
     .kiosk-terminal-deck {
       display: none;
@@ -1729,7 +1729,7 @@
       XLSX.writeFile(workbook, `Attendance_History_${dateStamp}.xlsx`);
     }
 
-    // VIEW 3: REGISTERED DEVICES & ACCOUNT CONTROLS (Includes Remove Account)
+    // VIEW 3: REGISTERED DEVICES & ACCOUNT CONTROLS
     function renderDevicesTable(members) {
       const tbody = document.getElementById('mgr-devices-body');
       if (!members.length) {
@@ -1806,7 +1806,6 @@
         const data = await res.json();
         if (data.ok) {
           alert(data.message);
-          // If the removed employee was also registered on this same laptop, clear its local storage immediately
           if (deviceAction === "REMOVE") {
             const localEmp = String(localStorage.getItem('empName') || "").trim().toLowerCase();
             if (localEmp && localEmp === String(empName).trim().toLowerCase()) {
@@ -2296,9 +2295,18 @@
         const result = await response.json();
         
         if (result.ok) {
-          // If manager removed this account, reset laptop immediately back to registration form
           if (result.accountRemoved) {
             resetLocalEmployeeWorkstation();
+            return;
+          }
+
+          if (result.isBlocked) {
+            clearInterval(qrPollingInterval);
+            clearInterval(qrExpiryTimer);
+            qrPollingInterval = null;
+            qrExpiryTimer = null;
+            switchCard('device-error');
+            document.getElementById('error-message').innerText = "Access Denied: Your account has been suspended by a manager.";
             return;
           }
 
