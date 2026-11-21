@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DATAWORDS • Attendance Kiosk</title>
+  <title>DATAWORDS • Attendance & Operations Kiosk</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,47 +12,51 @@
   
   <style>
     :root {
-      --bg-base: #F1F5F9;
+      /* Unified DATAWORDS Kiosk Design Tokens */
+      --bg-canvas: #F4F6F8;
       --surface: #FFFFFF;
-      --surface-subtle: #F8FAFC;
-      --text-primary: #0F172A;
-      --text-secondary: #475569;
+      --surface-alt: #F8FAFC;
+      --navy-900: #0B132B;
+      --navy-800: #1C2541;
+      --navy-700: #2A365C;
+
+      --text-main: #0F172A;
+      --text-body: #334155;
       --text-muted: #64748B;
       --border: #E2E8F0;
       --border-strong: #CBD5E1;
 
-      --emerald: #059669;
+      --teal-600: #0D9488;
+      --teal-700: #0F766E;
+      --teal-soft: #F0FDFA;
+      --emerald-600: #059669;
       --emerald-soft: #ECFDF5;
-      --crimson: #DC2626;
+      --crimson-600: #DC2626;
       --crimson-soft: #FEF2F2;
-      --amber: #D97706;
+      --amber-600: #D97706;
       --amber-soft: #FFFBEB;
-      --indigo: #4F46E5;
-      --indigo-soft: #EEF2FF;
-      --slate-dark: #0F172A;
-      --slate-dark-hover: #1E293B;
 
-      --shadow-card: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
-      --shadow-pill-green: 0 10px 24px -4px rgba(5, 150, 105, 0.35);
-      --shadow-pill-red: 0 10px 24px -4px rgba(220, 38, 38, 0.32);
+      --shadow-elevated: 0 20px 44px -12px rgba(11, 19, 43, 0.08), 0 4px 12px -2px rgba(11, 19, 43, 0.04);
+      --shadow-btn-in: 0 10px 22px -4px rgba(5, 150, 105, 0.34);
+      --shadow-btn-out: 0 10px 22px -4px rgba(220, 38, 38, 0.30);
     }
     
     * { box-sizing: border-box; }
 
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-base);
+      background-color: var(--bg-canvas);
       background-image:
-        radial-gradient(at 0% 0%, rgba(5, 150, 105, 0.06) 0px, transparent 45%),
-        radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.06) 0px, transparent 50%);
-      color: var(--text-primary);
+        radial-gradient(at 0% 0%, rgba(13, 148, 136, 0.06) 0px, transparent 48%),
+        radial-gradient(at 100% 100%, rgba(11, 19, 43, 0.05) 0px, transparent 52%);
+      color: var(--text-main);
       margin: 0; padding: 0; display: flex; flex-direction: column;
       min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
 
-    /* --- FROSTED KIOSK TOP NAV BAR (Used on Portal Selector & Employee Kiosk) --- */
+    /* --- UNIFIED TOP NAVIGATION BAR (Shared Visual DNA) --- */
     .top-bar {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
@@ -62,39 +66,39 @@
     }
     .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
     .brand-logo {
-      width: 40px; height: 40px; border-radius: 11px;
-      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+      box-shadow: 0 4px 12px rgba(11, 19, 43, 0.16);
     }
-    .brand-logo svg { width: 22px; height: 22px; fill: #10B981; }
+    .brand-logo svg { width: 21px; height: 21px; fill: #2DD4BF; }
     .brand-text { display: flex; flex-direction: column; }
-    .brand-title { font-weight: 800; font-size: 16px; letter-spacing: 0.5px; color: var(--text-primary); }
+    .brand-title { font-weight: 800; font-size: 15.5px; letter-spacing: 0.6px; color: var(--navy-900); }
     .brand-subtitle { font-size: 11.5px; color: var(--text-muted); font-weight: 500; }
     
     .nav-actions { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; }
     .status-chip {
       display: inline-flex; align-items: center; gap: 7px;
       padding: 7px 14px; border-radius: 999px;
-      background: var(--emerald-soft); color: var(--emerald);
-      font-size: 12px; font-weight: 700; border: 1px solid rgba(5, 150, 105, 0.2);
+      background: var(--teal-soft); color: var(--teal-700);
+      font-size: 12px; font-weight: 700; border: 1px solid rgba(13, 148, 136, 0.22);
     }
     .status-dot {
-      width: 8px; height: 8px; background-color: #10B981; border-radius: 50%;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22);
+      width: 8px; height: 8px; background-color: var(--teal-600); border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
     }
     .nav-btn {
       display: inline-flex; align-items: center; gap: 7px;
       padding: 8px 15px; border-radius: 10px;
-      background: var(--surface-subtle); color: var(--text-secondary);
+      background: var(--surface-alt); color: var(--text-body);
       border: 1px solid var(--border); cursor: pointer;
       font-size: 12.5px; font-weight: 600; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
     }
-    .nav-btn:hover { background: #FFFFFF; color: var(--text-primary); border-color: var(--border-strong); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .nav-btn:hover { background: #FFFFFF; color: var(--navy-900); border-color: var(--border-strong); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
     .nav-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-    /* --- MAIN STAGE --- */
+    /* --- CENTERED STAGE (Portal Selector & Employee Kiosk) --- */
     .main-wrapper {
       flex: 1; display: flex; justify-content: center; align-items: center; padding: 32px 24px;
     }
@@ -102,9 +106,9 @@
     .card {
       background-color: var(--surface); padding: 0; border-radius: 28px;
       width: 100%; max-width: 660px; text-align: center;
-      box-shadow: var(--shadow-card);
+      box-shadow: var(--shadow-elevated);
       display: none; animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
-      border: 1px solid rgba(226, 232, 240, 0.9);
+      border: 1px solid rgba(226, 232, 240, 0.95);
     }
     .active-card { display: block; }
     
@@ -115,18 +119,19 @@
 
     .card-padding { padding: 44px 44px 36px 44px; }
 
-    /* --- ROLE SELECTOR ENTRY (Kept as-is!) --- */
+    /* --- PORTAL SELECTOR ENTRY --- */
     .role-card { max-width: 640px; padding: 48px 42px; }
     .eyebrow-badge {
       display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.8px; color: var(--emerald); background: var(--emerald-soft);
+      letter-spacing: 0.8px; color: var(--teal-700); background: var(--teal-soft);
       padding: 6px 14px; border-radius: 999px; margin-bottom: 14px;
+      border: 1px solid rgba(13, 148, 136, 0.18);
     }
-    .role-card h2 { margin: 0 0 8px 0; font-size: 28px; font-weight: 800; letter-spacing: -0.6px; color: var(--text-primary); }
+    .role-card h2 { margin: 0 0 8px 0; font-size: 28px; font-weight: 800; letter-spacing: -0.6px; color: var(--navy-900); }
     .role-card p { color: var(--text-muted); font-size: 14.5px; margin: 0 0 32px 0; }
     .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .role-btn {
-      background: var(--surface-subtle); border: 1.5px solid var(--border); border-radius: 22px;
+      background: var(--surface-alt); border: 1.5px solid var(--border); border-radius: 22px;
       padding: 32px 22px; cursor: pointer; text-align: center;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex; flex-direction: column; align-items: center;
@@ -134,93 +139,94 @@
     }
     .role-btn:hover {
       background: #FFFFFF; transform: translateY(-4px);
-      box-shadow: 0 16px 30px -8px rgba(15, 23, 42, 0.1);
+      box-shadow: 0 16px 30px -8px rgba(11, 19, 43, 0.1);
     }
-    .role-btn.employee-role:hover { border-color: var(--emerald); }
-    .role-btn.manager-role:hover { border-color: var(--slate-dark); }
+    .role-btn.employee-role:hover { border-color: var(--teal-600); }
+    .role-btn.manager-role:hover { border-color: var(--navy-900); }
     .role-icon-circle {
       width: 68px; height: 68px; border-radius: 20px;
       display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
     }
-    .employee-role .role-icon-circle { background: var(--emerald-soft); color: var(--emerald); }
-    .manager-role .role-icon-circle { background: #E2E8F0; color: var(--slate-dark); }
+    .employee-role .role-icon-circle { background: var(--teal-soft); color: var(--teal-600); }
+    .manager-role .role-icon-circle { background: #E2E8F0; color: var(--navy-900); }
     .role-icon-circle svg { width: 34px; height: 34px; fill: currentColor; }
-    .role-title { font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -0.2px; }
+    .role-title { font-size: 18px; font-weight: 800; color: var(--navy-900); margin-bottom: 6px; letter-spacing: -0.2px; }
     .role-desc { font-size: 13px; color: var(--text-muted); line-height: 1.45; }
     .role-status-pill {
       margin-top: 16px; font-size: 11.5px; font-weight: 700; padding: 6px 14px;
-      border-radius: 999px; background: #E2E8F0; color: var(--text-secondary);
+      border-radius: 999px; background: #E2E8F0; color: var(--text-body);
     }
-    .role-status-pill.ready { background: var(--emerald-soft); color: var(--emerald); }
+    .role-status-pill.ready { background: var(--teal-soft); color: var(--teal-700); }
 
     /* --- FORMS & AUTH CARDS --- */
     .setup-card { max-width: 440px; padding: 42px 38px; }
     .form-icon-header {
       width: 58px; height: 58px; border-radius: 16px;
-      background: var(--surface-subtle); border: 1px solid var(--border);
+      background: var(--surface-alt); border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 18px auto; color: var(--text-primary);
+      margin: 0 auto 18px auto; color: var(--navy-900);
     }
     .form-icon-header svg { width: 28px; height: 28px; fill: currentColor; }
-    .setup-card h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; }
+    .setup-card h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; color: var(--navy-900); }
     .setup-card p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin: 0 0 24px 0; }
     .setup-card label {
       display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 7px;
-      color: var(--text-secondary); text-align: left; letter-spacing: 0.2px;
+      color: var(--text-body); text-align: left; letter-spacing: 0.2px;
     }
     .setup-card input {
       width: 100%; padding: 14px 16px; margin-bottom: 18px;
       border-radius: 12px; border: 1.5px solid var(--border);
-      background: var(--surface-subtle); color: var(--text-primary);
+      background: var(--surface-alt); color: var(--text-main);
       font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
     }
     .setup-card input:focus {
-      outline: none; background: #FFFFFF; border-color: var(--slate-dark);
-      box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06);
+      outline: none; background: #FFFFFF; border-color: var(--navy-900);
+      box-shadow: 0 0 0 4px rgba(11, 19, 43, 0.06);
     }
     
     #auth-code-display {
-      font-size: 42px; font-weight: 800; color: var(--text-primary);
-      letter-spacing: 12px; background: var(--surface-subtle);
+      font-size: 42px; font-weight: 800; color: var(--navy-900);
+      letter-spacing: 12px; background: var(--surface-alt);
       padding: 20px; border-radius: 16px; margin-bottom: 20px;
       border: 1.5px dashed var(--border-strong);
     }
     
     .btn-save {
       width: 100%; padding: 15px 20px; font-size: 15px; font-weight: 700;
-      background: var(--slate-dark); color: white; border: none;
+      background: var(--navy-900); color: white; border: none;
       border-radius: 12px; cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: all 0.15s ease; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+      transition: all 0.15s ease; box-shadow: 0 4px 12px rgba(11, 19, 43, 0.16);
     }
-    .btn-save:hover { background: var(--slate-dark-hover); transform: translateY(-1px); }
+    .btn-save:hover { background: var(--navy-800); transform: translateY(-1px); }
     .btn-save:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
     .sub-link {
       display: inline-block; margin-top: 16px; font-size: 13px;
       color: var(--text-muted); font-weight: 500; cursor: pointer; text-decoration: none;
     }
-    .sub-link:hover { color: var(--text-primary); text-decoration: underline; }
+    .sub-link:hover { color: var(--navy-900); text-decoration: underline; }
 
     /* =========================================================================
-       FULL-SCREEN LEFT-SIDEBAR MANAGER WORKSPACE (Matches Screenshot Layout)
+       UNIFIED THEME MANAGER WORKSPACE (Midnight Navy Sidebar + Crisp Alabaster Stage)
        ========================================================================= */
     .mgr-workspace-shell {
       display: none;
       flex-direction: column;
       min-height: 100vh;
       width: 100%;
-      background: #F8FAFC;
+      background: var(--bg-canvas);
     }
     .mgr-workspace-shell.active {
       display: flex;
     }
 
-    /* Top Header inside Manager Workspace */
+    /* Matching Frosted Topbar */
     .mgr-ws-topbar {
       height: 68px;
-      background: #FFFFFF;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 0 28px;
+      padding: 0 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -228,43 +234,48 @@
       top: 0;
       z-index: 40;
     }
-    .mgr-ws-left { display: flex; align-items: center; gap: 22px; }
-    .mgr-ws-brand { display: flex; align-items: center; gap: 12px; }
+    .mgr-ws-left { display: flex; align-items: center; gap: 20px; }
+    .mgr-ws-brand { display: flex; align-items: center; gap: 13px; }
     .mgr-ws-logo {
-      width: 38px; height: 38px; border-radius: 10px;
-      background: var(--slate-dark); color: #10B981;
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%);
+      color: #2DD4BF;
       display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 10px rgba(11, 19, 43, 0.15);
     }
-    .mgr-ws-logo svg { width: 20px; height: 20px; fill: currentColor; }
-    .mgr-ws-title { font-size: 15px; font-weight: 800; letter-spacing: 0.5px; color: var(--text-primary); }
-    .mgr-ws-sub { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.4px; }
+    .mgr-ws-logo svg { width: 21px; height: 21px; fill: currentColor; }
+    .mgr-ws-title { font-size: 15.5px; font-weight: 800; letter-spacing: 0.6px; color: var(--navy-900); }
+    .mgr-ws-sub { font-size: 11px; font-weight: 600; color: var(--teal-700); letter-spacing: 0.5px; }
 
-    .btn-logout-red {
-      padding: 9px 18px;
+    .btn-logout-pill {
+      padding: 8px 16px;
       border-radius: 10px;
-      border: none;
-      background: #DC2626;
-      color: #FFFFFF;
+      border: 1px solid rgba(220, 38, 38, 0.25);
+      background: var(--crimson-soft);
+      color: var(--crimson-600);
       font-family: 'Inter', sans-serif;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
     }
-    .btn-logout-red:hover { background: #B91C1C; }
+    .btn-logout-pill:hover { background: #FEE2E2; border-color: rgba(220, 38, 38, 0.4); }
 
     .mgr-ws-right { display: flex; align-items: center; gap: 18px; }
     .mgr-ws-clock-wrap { text-align: right; }
     .mgr-ws-live-badge {
-      font-size: 10.5px; font-weight: 800; color: var(--emerald);
-      letter-spacing: 0.5px; text-transform: uppercase;
+      font-size: 10.5px; font-weight: 800; color: var(--teal-600);
+      letter-spacing: 0.6px; text-transform: uppercase;
     }
     .mgr-ws-clock {
-      font-size: 19px; font-weight: 800; color: var(--text-primary);
+      font-size: 19px; font-weight: 800; color: var(--navy-900);
       font-variant-numeric: tabular-nums; letter-spacing: -0.3px;
     }
 
-    /* Two-Column Body: Fixed Left Sidebar + Swapping Right Section */
+    /* Two-Column Workspace: Deep Navy Sidebar + Alabaster Stage */
     .mgr-ws-body {
       flex: 1;
       display: flex;
@@ -272,38 +283,42 @@
     }
 
     .mgr-sidebar {
-      width: 265px;
+      width: 270px;
       flex-shrink: 0;
-      background: #FFFFFF;
-      border-right: 1px solid var(--border);
-      padding: 22px 16px;
+      background: var(--navy-900);
+      color: #F8FAFC;
+      padding: 24px 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
     .signed-in-card {
-      background: var(--surface-subtle);
-      border: 1px solid var(--border);
-      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
       padding: 16px;
-      margin-bottom: 26px;
+      margin-bottom: 28px;
       text-align: left;
     }
     .signed-in-label {
-      font-size: 10.5px; font-weight: 800; color: var(--text-muted);
-      letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 6px;
+      font-size: 10px; font-weight: 800; color: #94A3B8;
+      letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px;
     }
     .signed-in-name {
-      font-size: 14.5px; font-weight: 800; color: var(--text-primary); line-height: 1.3;
+      font-size: 15px; font-weight: 800; color: #FFFFFF; line-height: 1.3;
     }
     .signed-in-dept {
-      font-size: 12.5px; font-weight: 600; color: var(--indigo); margin-top: 2px;
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 11px; font-weight: 700; color: #2DD4BF;
+      background: rgba(45, 212, 191, 0.12);
+      padding: 3px 9px; border-radius: 999px; letter-spacing: 0.4px;
     }
 
     .sidebar-section-label {
-      font-size: 10.5px; font-weight: 800; color: var(--text-muted);
-      letter-spacing: 0.7px; text-transform: uppercase;
+      font-size: 10.5px; font-weight: 800; color: #64748B;
+      letter-spacing: 0.8px; text-transform: uppercase;
       padding: 0 12px; margin-bottom: 10px; text-align: left;
     }
 
@@ -312,11 +327,11 @@
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
-      border: none;
+      border: 1px solid transparent;
       background: transparent;
-      color: var(--text-secondary);
+      color: #CBD5E1;
       font-family: 'Inter', sans-serif;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
       display: flex;
       align-items: center;
@@ -326,30 +341,31 @@
       text-align: left;
     }
     .sidebar-nav-left { display: flex; align-items: center; gap: 12px; }
-    .sidebar-nav-btn svg { width: 19px; height: 19px; fill: currentColor; opacity: 0.8; }
-    .sidebar-nav-btn:hover { background: var(--surface-subtle); color: var(--text-primary); }
+    .sidebar-nav-btn svg { width: 19px; height: 19px; fill: currentColor; opacity: 0.75; }
+    .sidebar-nav-btn:hover { background: rgba(255, 255, 255, 0.06); color: #FFFFFF; }
     .sidebar-nav-btn.active {
-      background: var(--indigo-soft);
-      color: var(--indigo);
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.24), rgba(13, 148, 136, 0.12));
+      border-color: rgba(45, 212, 191, 0.35);
+      color: #FFFFFF;
       font-weight: 700;
     }
-    .sidebar-nav-btn.active svg { opacity: 1; }
+    .sidebar-nav-btn.active svg { fill: #2DD4BF; opacity: 1; }
 
     .sidebar-badge {
       font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
-      background: #E2E8F0; color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.1); color: #E2E8F0;
     }
     .sidebar-nav-btn.active .sidebar-badge {
-      background: var(--indigo); color: #FFFFFF;
+      background: #2DD4BF; color: var(--navy-900);
     }
-    .sidebar-badge.warn { background: var(--amber-soft); color: var(--amber); }
+    .sidebar-badge.warn { background: rgba(217, 119, 6, 0.25); color: #FBBF24; }
 
     .sidebar-footer-ver {
-      font-size: 11px; color: var(--text-muted); font-weight: 600;
-      padding: 12px 12px 0 12px; border-top: 1px solid var(--border); text-align: left;
+      font-size: 11px; color: #64748B; font-weight: 600;
+      padding: 14px 12px 0 12px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: left;
     }
 
-    /* Right Main Content Area (Only this section changes when clicking sidebar tabs!) */
+    /* Stationary Right Stage (Only inner pane changes) */
     .mgr-main-content {
       flex: 1;
       padding: 32px 38px;
@@ -365,7 +381,7 @@
       display: block;
     }
     @keyframes paneFade {
-      from { opacity: 0.5; }
+      from { opacity: 0.45; }
       to { opacity: 1; }
     }
 
@@ -379,10 +395,10 @@
     }
     .pane-title {
       margin: 0 0 6px 0;
-      font-size: 28px;
+      font-size: 27px;
       font-weight: 800;
       letter-spacing: -0.6px;
-      color: var(--text-primary);
+      color: var(--navy-900);
     }
     .pane-subtitle {
       margin: 0;
@@ -397,7 +413,7 @@
       border-radius: 10px;
       border: 1px solid var(--border-strong);
       background: #FFFFFF;
-      color: var(--text-primary);
+      color: var(--navy-900);
       font-family: 'Inter', sans-serif;
       font-size: 13px;
       font-weight: 700;
@@ -408,46 +424,46 @@
       transition: all 0.15s;
     }
     .btn-action svg { width: 16px; height: 16px; fill: currentColor; }
-    .btn-action:hover { background: var(--surface-subtle); }
-    .btn-action.primary { background: var(--slate-dark); color: #FFFFFF; border-color: var(--slate-dark); }
-    .btn-action.primary:hover { background: var(--slate-dark-hover); }
-    .btn-action.excel { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(5, 150, 105, 0.3); }
-    .btn-action.excel:hover { background: #D1FAE5; }
-    .btn-action.danger { background: var(--crimson-soft); color: var(--crimson); border-color: rgba(220, 38, 38, 0.25); }
+    .btn-action:hover { background: var(--surface-alt); }
+    .btn-action.primary { background: var(--navy-900); color: #FFFFFF; border-color: var(--navy-900); }
+    .btn-action.primary:hover { background: var(--navy-800); }
+    .btn-action.excel { background: var(--teal-soft); color: var(--teal-700); border-color: rgba(13, 148, 136, 0.3); }
+    .btn-action.excel:hover { background: #CCFBF1; }
+    .btn-action.danger { background: var(--crimson-soft); color: var(--crimson-600); border-color: rgba(220, 38, 38, 0.25); }
 
-    /* KPI Strip inside Live Team Pane */
+    /* KPI Strip */
     .kpi-grid-4 {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
     }
     .kpi-card {
-      background: #FFFFFF; border: 1px solid var(--border); border-radius: 16px;
+      background: #FFFFFF; border: 1px solid var(--border); border-radius: 18px;
       padding: 18px 20px; display: flex; align-items: center; gap: 16px;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02);
+      box-shadow: 0 2px 8px rgba(11, 19, 43, 0.03);
     }
     .kpi-icon {
       width: 50px; height: 50px; border-radius: 14px;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .kpi-icon svg { width: 24px; height: 24px; fill: currentColor; }
-    .tile-green { background: var(--emerald-soft); color: var(--emerald); }
-    .tile-indigo { background: var(--indigo-soft); color: var(--indigo); }
-    .tile-slate { background: #F1F5F9; color: var(--slate-dark); }
-    .tile-amber { background: var(--amber-soft); color: var(--amber); }
-    .kpi-val { font-size: 26px; font-weight: 800; color: var(--text-primary); line-height: 1.1; }
+    .tile-teal { background: var(--teal-soft); color: var(--teal-600); }
+    .tile-navy { background: #E2E8F0; color: var(--navy-900); }
+    .tile-emerald { background: var(--emerald-soft); color: var(--emerald-600); }
+    .tile-amber { background: var(--amber-soft); color: var(--amber-600); }
+    .kpi-val { font-size: 26px; font-weight: 800; color: var(--navy-900); line-height: 1.1; }
     .kpi-lbl { font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-top: 3px; }
 
-    /* Framed Table Container (Matches Screenshot Bordered Box) */
+    /* Framed Workspace Surface */
     .framed-panel {
       background: #FFFFFF;
-      border: 1.5px solid var(--border-strong);
-      border-radius: 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+      box-shadow: 0 6px 20px rgba(11, 19, 43, 0.04);
     }
     .panel-toolbar {
-      padding: 14px 20px;
+      padding: 16px 22px;
       border-bottom: 1px solid var(--border);
-      background: var(--surface-subtle);
+      background: var(--surface-alt);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -457,27 +473,27 @@
     .mgr-search, .mgr-filter-select {
       padding: 9px 13px; border-radius: 10px; border: 1.5px solid var(--border);
       background: #FFFFFF; font-size: 13px; font-family: 'Inter', sans-serif;
-      color: var(--text-primary); font-weight: 500;
+      color: var(--text-main); font-weight: 500;
     }
-    .mgr-search { min-width: 250px; }
-    .mgr-search:focus, .mgr-filter-select:focus { outline: none; border-color: var(--indigo); }
+    .mgr-search { min-width: 240px; }
+    .mgr-search:focus, .mgr-filter-select:focus { outline: none; border-color: var(--teal-600); }
 
     table.ws-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
     table.ws-table th {
-      background: #F8FAFC;
-      color: var(--indigo);
+      background: var(--surface-alt);
+      color: var(--navy-800);
       font-weight: 800;
       text-align: left;
       padding: 15px 22px;
       border-bottom: 1px solid var(--border);
-      font-size: 11.5px;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.6px;
     }
     table.ws-table td {
       padding: 15px 22px;
       border-bottom: 1px solid var(--border);
-      color: var(--text-primary);
+      color: var(--text-main);
       vertical-align: middle;
     }
     table.ws-table tr:last-child td { border-bottom: none; }
@@ -486,25 +502,27 @@
     .emp-cell-wrap { display: flex; align-items: center; gap: 12px; }
     .emp-initials-avatar {
       width: 38px; height: 38px; border-radius: 11px;
-      background: var(--indigo-soft); color: var(--indigo);
+      background: #E2E8F0; color: var(--navy-900);
       font-weight: 800; font-size: 13px;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .emp-initials-avatar.active-av { background: var(--emerald-soft); color: var(--emerald); }
-    .emp-cell-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-    .emp-cell-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    .emp-initials-avatar.active-av { background: var(--teal-soft); color: var(--teal-700); border: 1px solid rgba(13, 148, 136, 0.25); }
+    .emp-cell-name { font-size: 14px; font-weight: 700; color: var(--navy-900); }
+    .emp-cell-sub { font-size: 12px; color: var(--text-muted); font-weight: 600; }
 
     .live-board-grid {
-      padding: 22px; display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px;
+      padding: 22px; display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr)); gap: 16px;
     }
     .member-status-card {
       border: 1.5px solid var(--border); border-radius: 16px; padding: 18px;
       background: var(--surface); display: flex; flex-direction: column; gap: 12px;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .member-status-card.is-in { border-color: rgba(5, 150, 105, 0.45); background: #FAFFFD; }
+    .member-status-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -6px rgba(11, 19, 43, 0.08); }
+    .member-status-card.is-in { border-color: rgba(13, 148, 136, 0.45); background: #FAFFFE; }
     .member-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .member-card-meta {
-      font-size: 12.5px; color: var(--text-secondary);
+      font-size: 12.5px; color: var(--text-body);
       display: flex; justify-content: space-between; align-items: center;
       padding-top: 10px; border-top: 1px solid var(--border);
     }
@@ -513,11 +531,12 @@
       display: inline-flex; align-items: center; gap: 5px;
       padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap;
     }
-    .badge-active { background: var(--emerald-soft); color: var(--emerald); }
+    .badge-active { background: var(--emerald-soft); color: var(--emerald-600); }
     .badge-onsite { background: #EFF6FF; color: #1D4ED8; }
     .badge-wfh { background: #FEF3C7; color: #B45309; }
     .badge-muted { background: #F1F5F9; color: var(--text-muted); }
-    .badge-danger { background: var(--crimson-soft); color: var(--crimson); }
+    .badge-danger { background: var(--crimson-soft); color: var(--crimson-600); }
+    .badge-team { background: #F1F5F9; color: var(--navy-800); border: 1px solid var(--border); }
 
     .inline-resolve-input {
       padding: 8px 10px; border-radius: 9px; border: 1.5px solid var(--border);
@@ -528,23 +547,23 @@
       font-size: 13px; font-family: 'Inter', sans-serif; width: 165px;
     }
 
-    /* --- EMPLOYEE KIOSK UI (Kept intact!) --- */
+    /* --- EMPLOYEE KIOSK UI --- */
     .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 28px; }
     .welcome-divider { width: 1px; height: 56px; background-color: var(--border); }
 
     .avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; flex-shrink: 0; }
     .avatar {
-      width: 100%; height: 100%; background: var(--surface-subtle); border-radius: 50%;
+      width: 100%; height: 100%; background: var(--surface-alt); border-radius: 50%;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden; border: 2px solid var(--border); transition: border-color 0.2s;
     }
-    .avatar-wrapper:hover .avatar { border-color: var(--slate-dark); }
+    .avatar-wrapper:hover .avatar { border-color: var(--navy-900); }
     .avatar svg { width: 40px; height: 40px; fill: #94A3B8; }
     .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
 
     .avatar-overlay {
       position: absolute; inset: 0; border-radius: 50%;
-      background: rgba(15, 23, 42, 0.6); color: white;
+      background: rgba(11, 19, 43, 0.62); color: white;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
       font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
       opacity: 0; transition: opacity 0.2s; pointer-events: none;
@@ -554,9 +573,9 @@
     .camera-badge {
       position: absolute; bottom: 0; right: 0;
       width: 26px; height: 26px; border-radius: 50%;
-      background: var(--slate-dark); color: white; border: 2px solid white;
+      background: var(--navy-900); color: white; border: 2px solid white;
       display: flex; justify-content: center; align-items: center;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+      box-shadow: 0 2px 6px rgba(11, 19, 43, 0.2);
     }
     .camera-badge svg { width: 12px; height: 12px; fill: white; }
 
@@ -568,19 +587,19 @@
 
     .welcome-text { text-align: left; }
     .welcome-text .small { font-size: 14px; color: var(--text-muted); font-weight: 500; }
-    .welcome-text .name { font-size: 24px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; }
+    .welcome-text .name { font-size: 24px; font-weight: 800; color: var(--navy-900); letter-spacing: -0.5px; }
     .photo-action-hint {
-      font-size: 11.5px; font-weight: 600; color: var(--emerald);
+      font-size: 11.5px; font-weight: 600; color: var(--teal-600);
       cursor: pointer; display: inline-block; margin-top: 3px;
     }
     .photo-action-hint:hover { text-decoration: underline; }
 
     .clock-section { margin-bottom: 32px; }
     .time-display {
-      font-size: 74px; font-weight: 800; color: var(--text-primary);
+      font-size: 74px; font-weight: 800; color: var(--navy-900);
       line-height: 1; letter-spacing: -2.5px; font-variant-numeric: tabular-nums;
     }
-    .time-display span { font-size: 22px; font-weight: 700; color: var(--text-secondary); margin-left: 6px; letter-spacing: 0; }
+    .time-display span { font-size: 22px; font-weight: 700; color: var(--text-body); margin-left: 6px; letter-spacing: 0; }
     .date-display { font-size: 16px; color: var(--text-muted); font-weight: 500; margin-top: 10px; }
 
     .button-group { display: flex; justify-content: center; gap: 18px; margin-bottom: 16px; }
@@ -595,20 +614,20 @@
     .btn-pill svg { width: 26px; height: 26px; fill: white; }
     .btn-divider { width: 1px; height: 26px; background: rgba(255,255,255,0.3); }
     
-    .bg-green { background: linear-gradient(135deg, #10B981, #059669); box-shadow: var(--shadow-pill-green); }
+    .bg-green { background: linear-gradient(135deg, #10B981, #059669); box-shadow: var(--shadow-btn-in); }
     .bg-green:hover { box-shadow: 0 14px 28px -4px rgba(5, 150, 105, 0.42); }
-    .bg-red { background: linear-gradient(135deg, #EF4444, #DC2626); box-shadow: var(--shadow-pill-red); }
+    .bg-red { background: linear-gradient(135deg, #EF4444, #DC2626); box-shadow: var(--shadow-btn-out); }
     .bg-red:hover { box-shadow: 0 14px 28px -4px rgba(220, 38, 38, 0.4); }
 
     .otp-fallback-link {
       font-size: 13px; color: var(--text-muted); font-weight: 600;
       cursor: pointer; display: inline-block; margin-top: 6px;
     }
-    .otp-fallback-link:hover { color: var(--text-primary); text-decoration: underline; }
+    .otp-fallback-link:hover { color: var(--navy-900); text-decoration: underline; }
 
     #otp-section {
       max-width: 360px; margin: 0 auto; padding: 24px;
-      background: var(--surface-subtle); border-radius: 18px; border: 1px solid var(--border);
+      background: var(--surface-alt); border-radius: 18px; border: 1px solid var(--border);
       display: none;
     }
     #otp-section h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 800; }
@@ -621,7 +640,7 @@
     }
     #otp-status-msg { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
 
-    .status-bar { border-top: 1px solid var(--border); display: flex; background: var(--surface-subtle); }
+    .status-bar { border-top: 1px solid var(--border); display: flex; background: var(--surface-alt); }
     .status-col { flex: 1; padding: 20px 28px; display: flex; align-items: center; gap: 14px; text-align: left; }
     .status-col:first-child { border-right: 1px solid var(--border); }
     .status-icon-box {
@@ -629,14 +648,14 @@
       background: #FFFFFF; border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .status-icon-box svg { width: 20px; height: 20px; fill: var(--text-secondary); }
+    .status-icon-box svg { width: 20px; height: 20px; fill: var(--text-body); }
     .status-text-wrap { display: flex; flex-direction: column; align-items: flex-start; }
     .status-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
-    .status-value { font-size: 14.5px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
-    .timer-highlight { color: var(--crimson); font-weight: 800; }
+    .status-value { font-size: 14.5px; font-weight: 700; color: var(--navy-900); font-variant-numeric: tabular-nums; }
+    .timer-highlight { color: var(--crimson-600); font-weight: 800; }
     
     .status-select { 
-      font-size: 14.5px; font-weight: 700; color: var(--text-primary); border: none; background: transparent; 
+      font-size: 14.5px; font-weight: 700; color: var(--navy-900); border: none; background: transparent; 
       font-family: 'Inter', sans-serif; cursor: pointer; padding: 0 18px 0 0; outline: none;
     }
     .status-select:disabled { cursor: not-allowed; color: var(--text-muted); -webkit-appearance: none; appearance: none; padding-right: 0; }
@@ -645,19 +664,19 @@
       color: var(--text-muted); text-align: center; padding: 16px;
       font-size: 12px; font-weight: 500;
     }
-    .footer span { color: var(--text-primary); font-weight: 700; }
+    .footer span { color: var(--navy-900); font-weight: 700; }
 
     #qrcode-container {
       margin: 10px auto; padding: 18px; background: white;
       border-radius: 20px; display: inline-block;
-      border: 1.5px solid var(--border); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+      border: 1.5px solid var(--border); box-shadow: 0 8px 20px rgba(11, 19, 43, 0.05);
     }
-    .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--emerald); margin-top: 14px; font-size: 14.5px; }
+    .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--teal-600); margin-top: 14px; font-size: 14.5px; }
     .qr-countdown { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
     .cancel-link { font-size: 13px; color: var(--text-muted); font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: 14px; display: inline-block; }
     
     .spinner { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid currentColor; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; }
-    .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: var(--slate-dark); margin: 40px auto; display: block; }
+    .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: var(--navy-900); margin: 40px auto; display: block; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     #phone-auth {
@@ -669,8 +688,8 @@
     }
     .phone-avatar-circle {
       width: 90px; height: 90px; border-radius: 50%;
-      background-color: var(--surface-subtle); border: 4px solid #FFFFFF;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+      background-color: var(--surface-alt); border: 4px solid #FFFFFF;
+      box-shadow: 0 8px 20px rgba(11, 19, 43, 0.12);
       margin: -85px auto 18px auto;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden; position: relative; z-index: 2;
@@ -678,7 +697,7 @@
     .phone-avatar-circle svg { width: 46px; height: 46px; fill: #94A3B8; }
     .phone-avatar-circle img { width: 100%; height: 100%; object-fit: cover; display: none; }
     .phone-badge {
-      display: inline-block; background: var(--surface-subtle); color: var(--text-secondary);
+      display: inline-block; background: var(--surface-alt); color: var(--text-body);
       border: 1px solid var(--border);
       font-size: 12px; font-weight: 700; padding: 5px 14px;
       border-radius: 999px; margin-bottom: 20px; letter-spacing: 0.3px;
@@ -702,7 +721,7 @@
 </head>
 <body>
 
-  <!-- STANDARD KIOSK TOP NAV (Hidden when full-screen Manager Workspace is open) -->
+  <!-- STANDARD KIOSK TOP NAV (Used on Portal Selector & Employee Kiosk) -->
   <div class="top-bar" id="standard-topbar">
     <div class="brand" onclick="showRoleSelector()">
       <div class="brand-logo">
@@ -723,10 +742,9 @@
   </div>
 
   <!-- =====================================================================
-       FULL-SCREEN LEFT-SIDEBAR MANAGER WORKSPACE (Matches Screenshot Layout)
+       UNIFIED THEME MANAGER WORKSPACE (Midnight Navy Rail + Stationary Viewport)
        ===================================================================== -->
   <div id="mgr-workspace" class="mgr-workspace-shell">
-    <!-- Top Header -->
     <div class="mgr-ws-topbar">
       <div class="mgr-ws-left">
         <div class="mgr-ws-brand">
@@ -734,11 +752,11 @@
             <svg viewBox="0 0 24 24"><path d="M4 10h3v10H4zM10 4h3v16h-3zM16 14h3v6h-3z"/></svg>
           </div>
           <div>
-            <div class="mgr-ws-title">ATTENDANCE</div>
-            <div class="mgr-ws-sub">MANAGER PORTAL</div>
+            <div class="mgr-ws-title">DATAWORDS</div>
+            <div class="mgr-ws-sub">MANAGER OPERATIONS PORTAL</div>
           </div>
         </div>
-        <button type="button" class="btn-logout-red" onclick="logoutManager()">Log out</button>
+        <button type="button" class="btn-logout-pill" onclick="logoutManager()">Log out</button>
       </div>
 
       <div class="mgr-ws-right">
@@ -749,11 +767,9 @@
       </div>
     </div>
 
-    <!-- Fixed Left Sidebar + Right Swapping Content Pane -->
     <div class="mgr-ws-body">
       <aside class="mgr-sidebar">
         <div>
-          <!-- Signed In As Card -->
           <div class="signed-in-card">
             <div class="signed-in-label">SIGNED IN AS</div>
             <div class="signed-in-name" id="sb-mgr-name">Manager Name</div>
@@ -764,8 +780,8 @@
           <nav class="sidebar-nav">
             <button type="button" class="sidebar-nav-btn active" id="sb-btn-live" onclick="switchManagerSection('live')">
               <span class="sidebar-nav-left">
-                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                Live Team
+                <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                Overview
               </span>
               <span class="sidebar-badge" id="sb-count-live">0</span>
             </button>
@@ -773,15 +789,15 @@
             <button type="button" class="sidebar-nav-btn" id="sb-btn-history" onclick="switchManagerSection('history')">
               <span class="sidebar-nav-left">
                 <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                Attendance History
+                Attendance Logs
               </span>
               <span class="sidebar-badge" id="sb-count-history">0</span>
             </button>
 
             <button type="button" class="sidebar-nav-btn" id="sb-btn-devices" onclick="switchManagerSection('devices')">
               <span class="sidebar-nav-left">
-                <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
-                Devices & Access
+                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                Team & Devices
               </span>
               <span class="sidebar-badge" id="sb-count-devices">0</span>
             </button>
@@ -789,25 +805,25 @@
             <button type="button" class="sidebar-nav-btn" id="sb-btn-missing" onclick="switchManagerSection('missing')">
               <span class="sidebar-nav-left">
                 <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                Fix Time-Out
+                Open Shifts
               </span>
               <span class="sidebar-badge warn" id="sb-count-missing">0</span>
             </button>
           </nav>
         </div>
 
-        <div class="sidebar-footer-ver">DATAWORDS KIOSK • v3.8</div>
+        <div class="sidebar-footer-ver">DATAWORDS KIOSK • v4.0</div>
       </aside>
 
-      <!-- RIGHT CONTENT PANEL (Only this area changes when clicking sidebar tabs) -->
+      <!-- STATIONARY VIEWPORT (Only the selected pane updates) -->
       <main class="mgr-main-content">
 
-        <!-- SECTION 1: LIVE TEAM -->
+        <!-- PANE 1: OVERVIEW -->
         <section id="pane-live" class="mgr-section-pane active">
           <div class="pane-header-row">
             <div>
-              <h1 class="pane-title">Live Team Overview</h1>
-              <p class="pane-subtitle">Real-time status of who is currently clocked in or finished for today.</p>
+              <h1 class="pane-title">Team Overview</h1>
+              <p class="pane-subtitle">Live status of active shifts, teams, and daily attendance across your organization.</p>
             </div>
             <div class="pane-actions">
               <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
@@ -819,25 +835,25 @@
 
           <div class="kpi-grid-4">
             <div class="kpi-card">
-              <div class="kpi-icon tile-green">
+              <div class="kpi-icon tile-teal">
                 <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
               </div>
               <div>
-                <div class="kpi-val" id="stat-active-shifts" style="color:var(--emerald);">0</div>
+                <div class="kpi-val" id="stat-active-shifts" style="color:var(--teal-600);">0</div>
                 <div class="kpi-lbl">Active Now</div>
               </div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-icon tile-indigo">
+              <div class="kpi-icon tile-navy">
                 <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
               </div>
               <div>
                 <div class="kpi-val" id="stat-total-members">0</div>
-                <div class="kpi-lbl">Team Size</div>
+                <div class="kpi-lbl">Team Members</div>
               </div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-icon tile-slate">
+              <div class="kpi-icon tile-emerald">
                 <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/></svg>
               </div>
               <div>
@@ -850,23 +866,29 @@
                 <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
               </div>
               <div>
-                <div class="kpi-val" id="stat-missing-outs" style="color:var(--amber);">0</div>
+                <div class="kpi-val" id="stat-missing-outs" style="color:var(--amber-600);">0</div>
                 <div class="kpi-lbl">Open Shifts</div>
               </div>
             </div>
           </div>
 
           <div class="framed-panel">
+            <div class="panel-toolbar">
+              <div style="font-size:13px; font-weight:700; color:var(--navy-900);">Live Team Roster</div>
+              <select id="liveTeamFilter" class="mgr-filter-select" onchange="renderLiveTeamBoard(cachedManagerMembers, cachedManagerRecords)">
+                <option value="ALL">All Teams</option>
+              </select>
+            </div>
             <div id="live-board-grid" class="live-board-grid"></div>
           </div>
         </section>
 
-        <!-- SECTION 2: ATTENDANCE HISTORY (Matches Screenshot Table Layout) -->
+        <!-- PANE 2: ATTENDANCE LOGS -->
         <section id="pane-history" class="mgr-section-pane">
           <div class="pane-header-row">
             <div>
-              <h1 class="pane-title">Attendance history</h1>
-              <p class="pane-subtitle">Review recorded employee workdays and export your attendance report.</p>
+              <h1 class="pane-title">Attendance Logs</h1>
+              <p class="pane-subtitle">Filter by team, employee, or work arrangement and export reports to Excel.</p>
             </div>
             <div class="pane-actions">
               <button type="button" class="btn-action excel" onclick="exportAttendanceToExcel()">
@@ -883,7 +905,10 @@
           <div class="framed-panel">
             <div class="panel-toolbar">
               <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <input type="text" id="mgrSearchInput" class="mgr-search" placeholder="Search employee, team, date..." oninput="filterManagerTable()">
+                <input type="text" id="mgrSearchInput" class="mgr-search" placeholder="Search employee or date..." oninput="filterManagerTable()">
+                <select id="mgrFilterTeam" class="mgr-filter-select" onchange="filterManagerTable()">
+                  <option value="ALL">All Teams</option>
+                </select>
                 <select id="mgrFilterArr" class="mgr-filter-select" onchange="filterManagerTable()">
                   <option value="ALL">All Arrangements</option>
                   <option value="Onsite">Onsite</option>
@@ -901,12 +926,12 @@
             <table class="ws-table">
               <thead>
                 <tr>
-                  <th>Employee</th>
+                  <th>Employee & Team</th>
                   <th>Date</th>
                   <th>Time In</th>
                   <th>Time Out</th>
-                  <th>Work Arrangement</th>
-                  <th>Total Hours</th>
+                  <th>Arrangement</th>
+                  <th>Hours</th>
                 </tr>
               </thead>
               <tbody id="mgr-table-body"></tbody>
@@ -914,12 +939,12 @@
           </div>
         </section>
 
-        <!-- SECTION 3: DEVICES & ACCESS -->
+        <!-- PANE 3: TEAM & DEVICES -->
         <section id="pane-devices" class="mgr-section-pane">
           <div class="pane-header-row">
             <div>
-              <h1 class="pane-title">Devices & access</h1>
-              <p class="pane-subtitle">Reset bound mobile phones or suspend device access for team members.</p>
+              <h1 class="pane-title">Team & Devices</h1>
+              <p class="pane-subtitle">Manage registered team members, unbind lost phones, or suspend access.</p>
             </div>
             <div class="pane-actions">
               <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
@@ -933,7 +958,7 @@
             <table class="ws-table">
               <thead>
                 <tr>
-                  <th>Employee</th>
+                  <th>Employee & Team</th>
                   <th>Email</th>
                   <th>Bound Device</th>
                   <th>Status</th>
@@ -945,12 +970,12 @@
           </div>
         </section>
 
-        <!-- SECTION 4: FIX MISSING TIME-OUT -->
+        <!-- PANE 4: OPEN SHIFTS -->
         <section id="pane-missing" class="mgr-section-pane">
           <div class="pane-header-row">
             <div>
-              <h1 class="pane-title">Fix missing time-outs</h1>
-              <p class="pane-subtitle">Close open shifts manually when an employee forgets to clock out.</p>
+              <h1 class="pane-title">Open Shifts</h1>
+              <p class="pane-subtitle">Close shifts manually when a team member forgets to scan Time Out.</p>
             </div>
             <div class="pane-actions">
               <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
@@ -964,7 +989,7 @@
             <table class="ws-table">
               <thead>
                 <tr>
-                  <th>Employee</th>
+                  <th>Employee & Team</th>
                   <th>Date & Time In</th>
                   <th>Set Time Out</th>
                   <th>Manager Note</th>
@@ -987,11 +1012,11 @@
     <!-- DEVICE BLOCK -->
     <div id="device-error" class="card setup-card">
       <div style="font-size: 44px; margin-bottom:12px;">🚫</div>
-      <h2 style="color:var(--crimson);">Access Denied</h2>
+      <h2 style="color:var(--crimson-600);">Access Denied</h2>
       <p id="error-message">Device not allowed.</p>
     </div>
 
-    <!-- ROLE SELECTOR ENTRY SCREEN (Kept as-is!) -->
+    <!-- PORTAL SELECTOR ENTRY SCREEN -->
     <div id="role-selector" class="card role-card active-card">
       <div class="eyebrow-badge">Attendance Portal</div>
       <h2>Choose Your Workspace</h2>
@@ -1011,7 +1036,7 @@
             <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
           </div>
           <div class="role-title">MANAGER</div>
-          <div class="role-desc">Live team board, Excel exports & device controls</div>
+          <div class="role-desc">Live team overview, Excel exports & device controls</div>
           <div class="role-status-pill" id="mgr-role-pill">Register / Login</div>
         </button>
       </div>
@@ -1027,7 +1052,7 @@
       <label style="text-align:center;">Your 4-Digit Auth Code</label>
       <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="empLoginCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') submitEmployeeLogin()">
       <button class="btn-save" onclick="submitEmployeeLogin()">Unlock Kiosk</button>
-      <div id="emp-login-error" style="color:var(--crimson); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
+      <div id="emp-login-error" style="color:var(--crimson-600); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
       <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
     </div>
 
@@ -1125,13 +1150,13 @@
 
     <!-- CODE REVEAL -->
     <div id="laptop-reveal" class="card setup-card">
-      <div class="form-icon-header" style="background:var(--emerald-soft); color:var(--emerald); border-color:rgba(5,150,105,0.2);">
+      <div class="form-icon-header" style="background:var(--teal-soft); color:var(--teal-600); border-color:rgba(13,148,136,0.2);">
         <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
       </div>
       <h2>Registration Complete</h2>
       <p>Save your 4-digit Authentication Code. You will need it to open your kiosk and verify QR scans.</p>
       <div id="auth-code-display">0000</div>
-      <p style="color: var(--crimson); font-weight: 600; font-size: 13px;">⚠️ Write this down or keep it private.</p>
+      <p style="color: var(--crimson-600); font-weight: 600; font-size: 13px;">⚠️ Write this down or keep it private.</p>
       <button class="btn-save" onclick="openEmployeeKiosk()">I Have Saved It, Continue</button>
     </div>
 
@@ -1152,7 +1177,7 @@
               <svg viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
             </div>
             <div class="avatar-loading" id="avatar-loading-spinner">
-              <div class="spinner" style="border-top-color:var(--slate-dark);"></div>
+              <div class="spinner" style="border-top-color:var(--navy-900);"></div>
             </div>
           </div>
 
@@ -1243,7 +1268,7 @@
       </div>
 
       <h2 style="font-size:22px; margin-bottom:6px;">Verify Attendance</h2>
-      <p id="phone-greeting" style="font-weight: 700; color:var(--text-primary); margin-bottom: 10px;">Employee Name</p>
+      <p id="phone-greeting" style="font-weight: 700; color:var(--navy-900); margin-bottom: 10px;">Employee Name</p>
       <div id="phone-badge" class="phone-badge">TIME IN • Onsite</div>
 
       <label style="text-align:center;">Authentication Code</label>
@@ -1281,7 +1306,6 @@
     window.shiftStartTime = null;
 
     function switchCard(cardId) {
-      // Ensure standard shell is visible and full-screen Manager Workspace is hidden
       document.getElementById('mgr-workspace').classList.remove('active');
       document.getElementById('standard-topbar').style.display = 'flex';
       document.getElementById('centered-stage').style.display = 'flex';
@@ -1567,13 +1591,30 @@
       });
     }
 
+    function populateTeamFilters(members, records) {
+      const teamSet = new Set();
+      members.forEach(m => { if (m.team) teamSet.add(String(m.team).trim()); });
+      records.forEach(r => { if (r.team) teamSet.add(String(r.team).trim()); });
+      const teams = Array.from(teamSet).sort();
+
+      ['liveTeamFilter', 'mgrFilterTeam'].forEach(selectId => {
+        const sel = document.getElementById(selectId);
+        if (!sel) return;
+        const prev = sel.value || "ALL";
+        sel.innerHTML = `<option value="ALL">All Teams</option>` +
+          teams.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+        sel.value = teams.includes(prev) ? prev : "ALL";
+      });
+    }
+
     function renderManagerDashboard(manager, records, members) {
       cachedManagerRecords = records;
       cachedManagerMembers = members;
 
-      // Populate Sidebar "SIGNED IN AS" card
       document.getElementById('sb-mgr-name').innerText = manager.name;
       document.getElementById('sb-mgr-dept').innerText = String(manager.department || "").toUpperCase();
+
+      populateTeamFilters(members, records);
 
       const activeRecords = records.filter(r => r.timeIn && !r.timeOut);
       const missingOutRecords = activeRecords;
@@ -1593,22 +1634,28 @@
       renderDevicesTable(members);
       renderMissingTimeOutsTable(missingOutRecords);
 
-      // Hide centered stage & open full-screen left-sidebar Manager Workspace
       document.getElementById('standard-topbar').style.display = 'none';
       document.getElementById('centered-stage').style.display = 'none';
       document.getElementById('standard-footer').style.display = 'none';
       document.getElementById('mgr-workspace').classList.add('active');
     }
 
-    // SECTION 1: LIVE TEAM BOARD
+    // PANE 1: LIVE TEAM OVERVIEW
     function renderLiveTeamBoard(members, records) {
       const grid = document.getElementById('live-board-grid');
-      if (!members.length) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No registered employees yet.</div>`;
+      const teamFilterEl = document.getElementById('liveTeamFilter');
+      const selectedTeam = teamFilterEl ? teamFilterEl.value : "ALL";
+
+      const visibleMembers = selectedTeam === "ALL"
+        ? members
+        : members.filter(m => String(m.team || "").trim() === selectedTeam);
+
+      if (!visibleMembers.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No team members found for this filter.</div>`;
         return;
       }
 
-      grid.innerHTML = members.map(m => {
+      grid.innerHTML = visibleMembers.map(m => {
         const nameLower = String(m.name || "").toLowerCase();
         const activeShift = records.find(r => String(r.employeeName || "").toLowerCase() === nameLower && r.timeIn && !r.timeOut);
         const todayCompleted = records.find(r => String(r.employeeName || "").toLowerCase() === nameLower && r.date === serverTodayStr && r.timeOut);
@@ -1650,9 +1697,10 @@
       }).join("");
     }
 
-    // SECTION 2: ATTENDANCE HISTORY + EXCEL EXPORT
+    // PANE 2: ATTENDANCE LOGS + TEAM FILTER + EXCEL EXPORT
     function filterManagerTable() {
       const q = (document.getElementById('mgrSearchInput').value || "").trim().toLowerCase();
+      const teamFilter = document.getElementById('mgrFilterTeam').value;
       const arrFilter = document.getElementById('mgrFilterArr').value;
       const statusFilter = document.getElementById('mgrFilterStatus').value;
 
@@ -1662,13 +1710,14 @@
           String(r.team || "").toLowerCase().includes(q) ||
           String(r.date || "").toLowerCase().includes(q);
 
+        const matchesTeam = teamFilter === "ALL" || String(r.team || "").trim() === teamFilter;
         const matchesArr = arrFilter === "ALL" || String(r.workArrangement || "") === arrFilter;
         const isActive = Boolean(r.timeIn && !r.timeOut);
         const matchesStatus = statusFilter === "ALL" ||
           (statusFilter === "ACTIVE" && isActive) ||
           (statusFilter === "COMPLETED" && !isActive);
 
-        return matchesQuery && matchesArr && matchesStatus;
+        return matchesQuery && matchesTeam && matchesArr && matchesStatus;
       });
 
       cachedFilteredRecords = filtered;
@@ -1704,7 +1753,7 @@
                 <div class="emp-initials-avatar ${isActive ? 'active-av' : ''}">${escapeHtml(getInitials(r.employeeName))}</div>
                 <div>
                   <div class="emp-cell-name">${escapeHtml(r.employeeName)}</div>
-                  <div class="emp-cell-sub">${escapeHtml(r.team)}</div>
+                  <div style="margin-top:3px;"><span class="badge-pill badge-team">${escapeHtml(r.team)}</span></div>
                 </div>
               </div>
             </td>
@@ -1748,7 +1797,7 @@
       XLSX.writeFile(workbook, `Attendance_History_${dateStamp}.xlsx`);
     }
 
-    // SECTION 3: DEVICES & ACCESS
+    // PANE 3: TEAM & DEVICES
     function renderDevicesTable(members) {
       const tbody = document.getElementById('mgr-devices-body');
       if (!members.length) {
@@ -1774,11 +1823,11 @@
                 <div class="emp-initials-avatar">${escapeHtml(getInitials(m.name))}</div>
                 <div>
                   <div class="emp-cell-name">${escapeHtml(m.name)}</div>
-                  <div class="emp-cell-sub">${escapeHtml(m.team)}</div>
+                  <div style="margin-top:3px;"><span class="badge-pill badge-team">${escapeHtml(m.team)}</span></div>
                 </div>
               </div>
             </td>
-            <td style="color:var(--text-secondary);">${escapeHtml(m.email || "—")}</td>
+            <td style="color:var(--text-body);">${escapeHtml(m.email || "—")}</td>
             <td style="font-family:monospace; font-size:12.5px;">${escapeHtml(m.deviceId || "Unbound")}</td>
             <td>${statusBadge}</td>
             <td>
@@ -1827,11 +1876,11 @@
       }
     }
 
-    // SECTION 4: FIX MISSING TIME-OUT
+    // PANE 4: OPEN SHIFTS / MANUAL CORRECTIONS
     function renderMissingTimeOutsTable(openRows) {
       const tbody = document.getElementById('mgr-missing-body');
       if (!openRows.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:36px; color:var(--text-muted);">All shifts are closed. No missing Time-Outs right now.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:36px; color:var(--text-muted);">All shifts are closed. No open shifts right now.</td></tr>`;
         return;
       }
 
@@ -1842,7 +1891,7 @@
               <div class="emp-initials-avatar active-av">${escapeHtml(getInitials(r.employeeName))}</div>
               <div>
                 <div class="emp-cell-name">${escapeHtml(r.employeeName)}</div>
-                <div class="emp-cell-sub">${escapeHtml(r.team)}</div>
+                <div style="margin-top:3px;"><span class="badge-pill badge-team">${escapeHtml(r.team)}</span></div>
               </div>
             </div>
           </td>
@@ -1963,12 +2012,12 @@
           otpInput.focus();
         } else {
           infoText.innerText = "Unable to send OTP.";
-          statusMsg.style.color = "var(--crimson)";
+          statusMsg.style.color = "var(--crimson-600)";
           statusMsg.innerText = "❌ " + result.error;
         }
       } catch (err) {
         infoText.innerText = "Connection failed.";
-        statusMsg.style.color = "var(--crimson)";
+        statusMsg.style.color = "var(--crimson-600)";
         statusMsg.innerText = "❌ Could not reach server.";
       }
     }
@@ -1985,13 +2034,13 @@
       const targetAction = (currentShiftState === 'ACTIVE') ? 'TIME_OUT' : 'TIME_IN';
 
       if (otpCode.length !== 6) {
-        statusMsg.style.color = "var(--crimson)";
+        statusMsg.style.color = "var(--crimson-600)";
         statusMsg.innerText = "Please enter the 6-digit code.";
         return;
       }
 
       verifyBtn.disabled = true;
-      statusMsg.style.color = "var(--text-primary)";
+      statusMsg.style.color = "var(--navy-900)";
       statusMsg.innerText = "Verifying OTP...";
 
       if (targetAction === 'TIME_IN') {
@@ -2014,19 +2063,19 @@
         const result = await response.json();
 
         if (result.ok) {
-          statusMsg.style.color = "var(--emerald)";
+          statusMsg.style.color = "var(--teal-600)";
           statusMsg.innerText = "✅ " + result.message;
           setTimeout(() => {
             document.getElementById('otp-section').style.display = 'none';
             fetchLiveStatus(false);
           }, 1200);
         } else {
-          statusMsg.style.color = "var(--crimson)";
+          statusMsg.style.color = "var(--crimson-600)";
           statusMsg.innerText = "❌ " + result.error;
           verifyBtn.disabled = false;
         }
       } catch (err) {
-        statusMsg.style.color = "var(--crimson)";
+        statusMsg.style.color = "var(--crimson-600)";
         statusMsg.innerText = "❌ Connection error.";
         verifyBtn.disabled = false;
       }
@@ -2061,7 +2110,7 @@
         svgEl.style.display = 'block';
         overlayEl.innerText = 'Add Photo';
         hintEl.innerText = '+ Add Profile Photo';
-        hintEl.style.color = 'var(--emerald)';
+        hintEl.style.color = 'var(--teal-600)';
         localStorage.removeItem('profileDataUrl');
         localStorage.removeItem('profileFileId');
       }
@@ -2229,7 +2278,7 @@
       return new Date();
     }
 
-    // --- LIVE CLOCKS (Employee Kiosk + Manager Workspace Topbar) ---
+    // --- LIVE CLOCKS ---
     function updateClock() {
       const now = new Date();
       let hours = now.getHours(); let minutes = now.getMinutes(); let seconds = now.getSeconds();
@@ -2333,7 +2382,7 @@
 
              const waitText = document.getElementById('qr-waiting-text');
              waitText.innerHTML = '✅ Verified Successfully!';
-             waitText.style.color = 'var(--emerald)';
+             waitText.style.color = 'var(--teal-600)';
              document.getElementById('qr-countdown-text').innerText = '';
              
              setTimeout(() => renderUIState(result), 1000);
@@ -2413,7 +2462,7 @@
             const statusDiv = document.getElementById('scan-status');
             const submitBtn = document.getElementById('submit-btn');
             const codeInput = document.getElementById('enteredCode');
-            statusDiv.style.color = "var(--crimson)";
+            statusDiv.style.color = "var(--crimson-600)";
             statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
             submitBtn.disabled = true;
             submitBtn.style.opacity = "0.5";
@@ -2559,7 +2608,7 @@
       
       const waitText = document.getElementById('qr-waiting-text');
       waitText.innerHTML = '<div class="spinner"></div> Awaiting mobile verification...';
-      waitText.style.color = 'var(--emerald)';
+      waitText.style.color = 'var(--teal-600)';
 
       const countdownEl = document.getElementById('qr-countdown-text');
       let secondsLeft = 60;
@@ -2576,7 +2625,7 @@
       qrExpiryTimer = setInterval(() => {
         secondsLeft--;
         if (secondsLeft <= 15 && secondsLeft > 0) {
-          countdownEl.style.color = 'var(--crimson)';
+          countdownEl.style.color = 'var(--crimson-600)';
         }
         if (secondsLeft <= 0) {
           cancelQR();
@@ -2594,7 +2643,7 @@
 
       if (!qrTimestamp || (Date.now() - qrTimestamp) > 60000) {
         statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
-        statusDiv.style.color = "var(--crimson)";
+        statusDiv.style.color = "var(--crimson-600)";
         submitBtn.disabled = true;
         submitBtn.style.opacity = "0.5";
         return;
@@ -2602,14 +2651,14 @@
 
       if (!enteredCode || enteredCode.length !== 4) {
         statusDiv.innerText = "Please enter your 4-digit code.";
-        statusDiv.style.color = "var(--crimson)";
+        statusDiv.style.color = "var(--crimson-600)";
         return;
       }
 
       submitBtn.disabled = true;
       submitBtn.style.opacity = "0.5";
-      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:var(--slate-dark);"></div> Verifying PIN & Device...';
-      statusDiv.style.color = "var(--text-primary)";
+      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:var(--navy-900);"></div> Verifying PIN & Device...';
+      statusDiv.style.color = "var(--navy-900)";
 
       const mobileDeviceId = getOrCreateMobileDeviceId();
 
@@ -2632,16 +2681,16 @@
         const result = await response.json();
         
         if (result.ok) {
-            statusDiv.style.color = "var(--emerald)";
+            statusDiv.style.color = "var(--teal-600)";
             statusDiv.innerText = "✅ SUCCESS! " + result.message;
         } else {
-            statusDiv.style.color = "var(--crimson)";
+            statusDiv.style.color = "var(--crimson-600)";
             statusDiv.innerText = "🚫 " + result.error;
             submitBtn.disabled = false;
             submitBtn.style.opacity = "1";
         }
       } catch (error) {
-        statusDiv.style.color = "var(--crimson)";
+        statusDiv.style.color = "var(--crimson-600)";
         statusDiv.innerText = "Connection failed. Check your internet.";
         submitBtn.disabled = false;
         submitBtn.style.opacity = "1";
