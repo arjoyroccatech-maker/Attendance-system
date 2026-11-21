@@ -32,7 +32,7 @@
       --slate-dark: #0F172A;
       --slate-dark-hover: #1E293B;
 
-      --shadow-shell: 0 24px 50px -12px rgba(15, 23, 42, 0.09), 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+      --shadow-card: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
       --shadow-pill-green: 0 10px 24px -4px rgba(5, 150, 105, 0.35);
       --shadow-pill-red: 0 10px 24px -4px rgba(220, 38, 38, 0.32);
     }
@@ -43,87 +43,36 @@
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background-color: var(--bg-base);
       background-image:
-        radial-gradient(at 0% 0%, rgba(5, 150, 105, 0.05) 0px, transparent 45%),
-        radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.05) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(5, 150, 105, 0.06) 0px, transparent 45%),
+        radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.06) 0px, transparent 50%);
       color: var(--text-primary);
       margin: 0; padding: 0; display: flex; flex-direction: column;
       min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
 
-    /* --- MAIN STAGE --- */
-    .main-wrapper {
-      flex: 1; display: flex; justify-content: center; align-items: center; padding: 28px 20px;
-    }
-
-    /* --- UNIFIED STEADY SHELL (Never jumps or disappears) --- */
-    .unified-shell {
-      background-color: var(--surface);
-      border-radius: 28px;
-      width: 100%;
-      max-width: 1120px;
-      min-height: 620px;
-      box-shadow: var(--shadow-shell);
-      border: 1px solid rgba(226, 232, 240, 0.95);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    /* --- PERSISTENT TOP BAR INSIDE THE MAIN FORM --- */
-    .shell-header {
-      padding: 18px 32px;
+    /* --- FROSTED KIOSK TOP NAV BAR (Used on Portal Selector & Employee Kiosk) --- */
+    .top-bar {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      background: #FFFFFF;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
+      padding: 14px 36px;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 50;
     }
-    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
     .brand-logo {
-      width: 42px; height: 42px; border-radius: 12px;
+      width: 40px; height: 40px; border-radius: 11px;
       background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.14);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
     }
     .brand-logo svg { width: 22px; height: 22px; fill: #10B981; }
-    .brand-text { display: flex; flex-direction: column; text-align: left; }
+    .brand-text { display: flex; flex-direction: column; }
     .brand-title { font-weight: 800; font-size: 16px; letter-spacing: 0.5px; color: var(--text-primary); }
-    .brand-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-
-    /* PRIMARY PORTAL TABS (Employee vs Manager right inside the main shell) */
-    .portal-switcher {
-      display: inline-flex;
-      background: var(--surface-subtle);
-      padding: 5px;
-      border-radius: 14px;
-      border: 1.5px solid var(--border);
-      gap: 4px;
-    }
-    .portal-tab-btn {
-      padding: 10px 22px;
-      border: none;
-      border-radius: 10px;
-      background: transparent;
-      font-family: 'Inter', sans-serif;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.18s ease;
-    }
-    .portal-tab-btn svg { width: 17px; height: 17px; fill: currentColor; }
-    .portal-tab-btn:hover { color: var(--text-primary); }
-    .portal-tab-btn.active {
-      background: var(--slate-dark);
-      color: #FFFFFF;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
-    }
-
+    .brand-subtitle { font-size: 11.5px; color: var(--text-muted); font-weight: 500; }
+    
+    .nav-actions { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; }
     .status-chip {
       display: inline-flex; align-items: center; gap: 7px;
       padding: 7px 14px; border-radius: 999px;
@@ -134,65 +83,99 @@
       width: 8px; height: 8px; background-color: #10B981; border-radius: 50%;
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22);
     }
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 15px; border-radius: 10px;
+      background: var(--surface-subtle); color: var(--text-secondary);
+      border: 1px solid var(--border); cursor: pointer;
+      font-size: 12.5px; font-weight: 600; font-family: 'Inter', sans-serif;
+      transition: all 0.15s ease;
+    }
+    .nav-btn:hover { background: #FFFFFF; color: var(--text-primary); border-color: var(--border-strong); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .nav-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-    /* --- DYNAMIC INNER SECTION STAGE --- */
-    .shell-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 32px;
-      background: #FFFFFF;
-    }
-    .shell-body.align-top {
-      justify-content: flex-start;
-      align-items: stretch;
-      padding: 0;
-    }
-
-    .view-section {
-      display: none;
-      width: 100%;
-      animation: softFade 0.2s ease-out;
-    }
-    .view-section.active {
-      display: block;
+    /* --- MAIN STAGE --- */
+    .main-wrapper {
+      flex: 1; display: flex; justify-content: center; align-items: center; padding: 32px 24px;
     }
 
-    @keyframes softFade {
-      from { opacity: 0.4; }
-      to { opacity: 1; }
+    .card {
+      background-color: var(--surface); padding: 0; border-radius: 28px;
+      width: 100%; max-width: 660px; text-align: center;
+      box-shadow: var(--shadow-card);
+      display: none; animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+    }
+    .active-card { display: block; }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* --- CENTERED SUB-FORMS INSIDE THE STEADY SHELL --- */
-    .inner-form-box {
-      max-width: 430px;
-      margin: 0 auto;
-      text-align: center;
-      padding: 12px 8px;
+    .card-padding { padding: 44px 44px 36px 44px; }
+
+    /* --- ROLE SELECTOR ENTRY (Kept as-is!) --- */
+    .role-card { max-width: 640px; padding: 48px 42px; }
+    .eyebrow-badge {
+      display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--emerald); background: var(--emerald-soft);
+      padding: 6px 14px; border-radius: 999px; margin-bottom: 14px;
     }
+    .role-card h2 { margin: 0 0 8px 0; font-size: 28px; font-weight: 800; letter-spacing: -0.6px; color: var(--text-primary); }
+    .role-card p { color: var(--text-muted); font-size: 14.5px; margin: 0 0 32px 0; }
+    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .role-btn {
+      background: var(--surface-subtle); border: 1.5px solid var(--border); border-radius: 22px;
+      padding: 32px 22px; cursor: pointer; text-align: center;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; flex-direction: column; align-items: center;
+      font-family: 'Inter', sans-serif;
+    }
+    .role-btn:hover {
+      background: #FFFFFF; transform: translateY(-4px);
+      box-shadow: 0 16px 30px -8px rgba(15, 23, 42, 0.1);
+    }
+    .role-btn.employee-role:hover { border-color: var(--emerald); }
+    .role-btn.manager-role:hover { border-color: var(--slate-dark); }
+    .role-icon-circle {
+      width: 68px; height: 68px; border-radius: 20px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+    }
+    .employee-role .role-icon-circle { background: var(--emerald-soft); color: var(--emerald); }
+    .manager-role .role-icon-circle { background: #E2E8F0; color: var(--slate-dark); }
+    .role-icon-circle svg { width: 34px; height: 34px; fill: currentColor; }
+    .role-title { font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -0.2px; }
+    .role-desc { font-size: 13px; color: var(--text-muted); line-height: 1.45; }
+    .role-status-pill {
+      margin-top: 16px; font-size: 11.5px; font-weight: 700; padding: 6px 14px;
+      border-radius: 999px; background: #E2E8F0; color: var(--text-secondary);
+    }
+    .role-status-pill.ready { background: var(--emerald-soft); color: var(--emerald); }
+
+    /* --- FORMS & AUTH CARDS --- */
+    .setup-card { max-width: 440px; padding: 42px 38px; }
     .form-icon-header {
       width: 58px; height: 58px; border-radius: 16px;
       background: var(--surface-subtle); border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px auto; color: var(--text-primary);
+      margin: 0 auto 18px auto; color: var(--text-primary);
     }
     .form-icon-header svg { width: 28px; height: 28px; fill: currentColor; }
-    .inner-form-box h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; }
-    .inner-form-box p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin: 0 0 24px 0; }
-    .inner-form-box label {
+    .setup-card h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; }
+    .setup-card p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin: 0 0 24px 0; }
+    .setup-card label {
       display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 7px;
       color: var(--text-secondary); text-align: left; letter-spacing: 0.2px;
     }
-    .inner-form-box input {
+    .setup-card input {
       width: 100%; padding: 14px 16px; margin-bottom: 18px;
       border-radius: 12px; border: 1.5px solid var(--border);
       background: var(--surface-subtle); color: var(--text-primary);
       font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
     }
-    .inner-form-box input:focus {
+    .setup-card input:focus {
       outline: none; background: #FFFFFF; border-color: var(--slate-dark);
       box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06);
     }
@@ -210,21 +193,343 @@
       border-radius: 12px; cursor: pointer; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
     }
-    .btn-save:hover { background: var(--slate-dark-hover); }
-    .btn-save:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-save:hover { background: var(--slate-dark-hover); transform: translateY(-1px); }
+    .btn-save:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
     .sub-link {
       display: inline-block; margin-top: 16px; font-size: 13px;
-      color: var(--text-muted); font-weight: 600; cursor: pointer; text-decoration: none;
+      color: var(--text-muted); font-weight: 500; cursor: pointer; text-decoration: none;
     }
     .sub-link:hover { color: var(--text-primary); text-decoration: underline; }
 
-    /* --- EMPLOYEE KIOSK SECTION INSIDE SHELL --- */
-    .kiosk-center-box {
-      max-width: 620px;
-      margin: 0 auto;
-      text-align: center;
+    /* =========================================================================
+       FULL-SCREEN LEFT-SIDEBAR MANAGER WORKSPACE (Matches Screenshot Layout)
+       ========================================================================= */
+    .mgr-workspace-shell {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      width: 100%;
+      background: #F8FAFC;
     }
-    .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 26px; }
+    .mgr-workspace-shell.active {
+      display: flex;
+    }
+
+    /* Top Header inside Manager Workspace */
+    .mgr-ws-topbar {
+      height: 68px;
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .mgr-ws-left { display: flex; align-items: center; gap: 22px; }
+    .mgr-ws-brand { display: flex; align-items: center; gap: 12px; }
+    .mgr-ws-logo {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: var(--slate-dark); color: #10B981;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mgr-ws-logo svg { width: 20px; height: 20px; fill: currentColor; }
+    .mgr-ws-title { font-size: 15px; font-weight: 800; letter-spacing: 0.5px; color: var(--text-primary); }
+    .mgr-ws-sub { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.4px; }
+
+    .btn-logout-red {
+      padding: 9px 18px;
+      border-radius: 10px;
+      border: none;
+      background: #DC2626;
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-logout-red:hover { background: #B91C1C; }
+
+    .mgr-ws-right { display: flex; align-items: center; gap: 18px; }
+    .mgr-ws-clock-wrap { text-align: right; }
+    .mgr-ws-live-badge {
+      font-size: 10.5px; font-weight: 800; color: var(--emerald);
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .mgr-ws-clock {
+      font-size: 19px; font-weight: 800; color: var(--text-primary);
+      font-variant-numeric: tabular-nums; letter-spacing: -0.3px;
+    }
+
+    /* Two-Column Body: Fixed Left Sidebar + Swapping Right Section */
+    .mgr-ws-body {
+      flex: 1;
+      display: flex;
+      min-height: calc(100vh - 68px);
+    }
+
+    .mgr-sidebar {
+      width: 265px;
+      flex-shrink: 0;
+      background: #FFFFFF;
+      border-right: 1px solid var(--border);
+      padding: 22px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .signed-in-card {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 26px;
+      text-align: left;
+    }
+    .signed-in-label {
+      font-size: 10.5px; font-weight: 800; color: var(--text-muted);
+      letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .signed-in-name {
+      font-size: 14.5px; font-weight: 800; color: var(--text-primary); line-height: 1.3;
+    }
+    .signed-in-dept {
+      font-size: 12.5px; font-weight: 600; color: var(--indigo); margin-top: 2px;
+    }
+
+    .sidebar-section-label {
+      font-size: 10.5px; font-weight: 800; color: var(--text-muted);
+      letter-spacing: 0.7px; text-transform: uppercase;
+      padding: 0 12px; margin-bottom: 10px; text-align: left;
+    }
+
+    .sidebar-nav { display: flex; flex-direction: column; gap: 6px; }
+    .sidebar-nav-btn {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+    }
+    .sidebar-nav-left { display: flex; align-items: center; gap: 12px; }
+    .sidebar-nav-btn svg { width: 19px; height: 19px; fill: currentColor; opacity: 0.8; }
+    .sidebar-nav-btn:hover { background: var(--surface-subtle); color: var(--text-primary); }
+    .sidebar-nav-btn.active {
+      background: var(--indigo-soft);
+      color: var(--indigo);
+      font-weight: 700;
+    }
+    .sidebar-nav-btn.active svg { opacity: 1; }
+
+    .sidebar-badge {
+      font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
+      background: #E2E8F0; color: var(--text-secondary);
+    }
+    .sidebar-nav-btn.active .sidebar-badge {
+      background: var(--indigo); color: #FFFFFF;
+    }
+    .sidebar-badge.warn { background: var(--amber-soft); color: var(--amber); }
+
+    .sidebar-footer-ver {
+      font-size: 11px; color: var(--text-muted); font-weight: 600;
+      padding: 12px 12px 0 12px; border-top: 1px solid var(--border); text-align: left;
+    }
+
+    /* Right Main Content Area (Only this section changes when clicking sidebar tabs!) */
+    .mgr-main-content {
+      flex: 1;
+      padding: 32px 38px;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .mgr-section-pane {
+      display: none;
+      animation: paneFade 0.16s ease-out;
+    }
+    .mgr-section-pane.active {
+      display: block;
+    }
+    @keyframes paneFade {
+      from { opacity: 0.5; }
+      to { opacity: 1; }
+    }
+
+    .pane-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .pane-title {
+      margin: 0 0 6px 0;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      color: var(--text-primary);
+    }
+    .pane-subtitle {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .pane-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .btn-action {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      background: #FFFFFF;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.15s;
+    }
+    .btn-action svg { width: 16px; height: 16px; fill: currentColor; }
+    .btn-action:hover { background: var(--surface-subtle); }
+    .btn-action.primary { background: var(--slate-dark); color: #FFFFFF; border-color: var(--slate-dark); }
+    .btn-action.primary:hover { background: var(--slate-dark-hover); }
+    .btn-action.excel { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(5, 150, 105, 0.3); }
+    .btn-action.excel:hover { background: #D1FAE5; }
+    .btn-action.danger { background: var(--crimson-soft); color: var(--crimson); border-color: rgba(220, 38, 38, 0.25); }
+
+    /* KPI Strip inside Live Team Pane */
+    .kpi-grid-4 {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: #FFFFFF; border: 1px solid var(--border); border-radius: 16px;
+      padding: 18px 20px; display: flex; align-items: center; gap: 16px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02);
+    }
+    .kpi-icon {
+      width: 50px; height: 50px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .kpi-icon svg { width: 24px; height: 24px; fill: currentColor; }
+    .tile-green { background: var(--emerald-soft); color: var(--emerald); }
+    .tile-indigo { background: var(--indigo-soft); color: var(--indigo); }
+    .tile-slate { background: #F1F5F9; color: var(--slate-dark); }
+    .tile-amber { background: var(--amber-soft); color: var(--amber); }
+    .kpi-val { font-size: 26px; font-weight: 800; color: var(--text-primary); line-height: 1.1; }
+    .kpi-lbl { font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-top: 3px; }
+
+    /* Framed Table Container (Matches Screenshot Bordered Box) */
+    .framed-panel {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+    }
+    .panel-toolbar {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .mgr-search, .mgr-filter-select {
+      padding: 9px 13px; border-radius: 10px; border: 1.5px solid var(--border);
+      background: #FFFFFF; font-size: 13px; font-family: 'Inter', sans-serif;
+      color: var(--text-primary); font-weight: 500;
+    }
+    .mgr-search { min-width: 250px; }
+    .mgr-search:focus, .mgr-filter-select:focus { outline: none; border-color: var(--indigo); }
+
+    table.ws-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.ws-table th {
+      background: #F8FAFC;
+      color: var(--indigo);
+      font-weight: 800;
+      text-align: left;
+      padding: 15px 22px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    table.ws-table td {
+      padding: 15px 22px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+    table.ws-table tr:last-child td { border-bottom: none; }
+    table.ws-table tr:hover td { background: #F8FAFC; }
+
+    .emp-cell-wrap { display: flex; align-items: center; gap: 12px; }
+    .emp-initials-avatar {
+      width: 38px; height: 38px; border-radius: 11px;
+      background: var(--indigo-soft); color: var(--indigo);
+      font-weight: 800; font-size: 13px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .emp-initials-avatar.active-av { background: var(--emerald-soft); color: var(--emerald); }
+    .emp-cell-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .emp-cell-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+    .live-board-grid {
+      padding: 22px; display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px;
+    }
+    .member-status-card {
+      border: 1.5px solid var(--border); border-radius: 16px; padding: 18px;
+      background: var(--surface); display: flex; flex-direction: column; gap: 12px;
+    }
+    .member-status-card.is-in { border-color: rgba(5, 150, 105, 0.45); background: #FAFFFD; }
+    .member-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .member-card-meta {
+      font-size: 12.5px; color: var(--text-secondary);
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 10px; border-top: 1px solid var(--border);
+    }
+
+    .badge-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap;
+    }
+    .badge-active { background: var(--emerald-soft); color: var(--emerald); }
+    .badge-onsite { background: #EFF6FF; color: #1D4ED8; }
+    .badge-wfh { background: #FEF3C7; color: #B45309; }
+    .badge-muted { background: #F1F5F9; color: var(--text-muted); }
+    .badge-danger { background: var(--crimson-soft); color: var(--crimson); }
+
+    .inline-resolve-input {
+      padding: 8px 10px; border-radius: 9px; border: 1.5px solid var(--border);
+      font-size: 13px; font-family: 'Inter', sans-serif; width: 135px;
+    }
+    .inline-note-input {
+      padding: 8px 10px; border-radius: 9px; border: 1.5px solid var(--border);
+      font-size: 13px; font-family: 'Inter', sans-serif; width: 165px;
+    }
+
+    /* --- EMPLOYEE KIOSK UI (Kept intact!) --- */
+    .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 28px; }
     .welcome-divider { width: 1px; height: 56px; background-color: var(--border); }
 
     .avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; flex-shrink: 0; }
@@ -270,7 +575,7 @@
     }
     .photo-action-hint:hover { text-decoration: underline; }
 
-    .clock-section { margin-bottom: 30px; }
+    .clock-section { margin-bottom: 32px; }
     .time-display {
       font-size: 74px; font-weight: 800; color: var(--text-primary);
       line-height: 1; letter-spacing: -2.5px; font-variant-numeric: tabular-nums;
@@ -278,9 +583,9 @@
     .time-display span { font-size: 22px; font-weight: 700; color: var(--text-secondary); margin-left: 6px; letter-spacing: 0; }
     .date-display { font-size: 16px; color: var(--text-muted); font-weight: 500; margin-top: 10px; }
 
-    .button-group { display: flex; justify-content: center; gap: 18px; margin-bottom: 14px; }
+    .button-group { display: flex; justify-content: center; gap: 18px; margin-bottom: 16px; }
     .btn-pill {
-      flex: 1; max-width: 300px; padding: 18px 26px; border-radius: 16px;
+      flex: 1; max-width: 310px; padding: 18px 26px; border-radius: 16px;
       display: flex; align-items: center; justify-content: center; gap: 14px;
       font-size: 20px; font-weight: 700; color: white; border: none; cursor: pointer;
       font-family: 'Inter', sans-serif;
@@ -302,7 +607,7 @@
     .otp-fallback-link:hover { color: var(--text-primary); text-decoration: underline; }
 
     #otp-section {
-      max-width: 360px; margin: 0 auto; padding: 22px;
+      max-width: 360px; margin: 0 auto; padding: 24px;
       background: var(--surface-subtle); border-radius: 18px; border: 1px solid var(--border);
       display: none;
     }
@@ -316,16 +621,8 @@
     }
     #otp-status-msg { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
 
-    /* Kiosk Status Strip */
-    .kiosk-status-strip {
-      margin-top: 28px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      display: flex;
-      background: var(--surface-subtle);
-      overflow: hidden;
-    }
-    .status-col { flex: 1; padding: 16px 22px; display: flex; align-items: center; gap: 14px; text-align: left; }
+    .status-bar { border-top: 1px solid var(--border); display: flex; background: var(--surface-subtle); }
+    .status-col { flex: 1; padding: 20px 28px; display: flex; align-items: center; gap: 14px; text-align: left; }
     .status-col:first-child { border-right: 1px solid var(--border); }
     .status-icon-box {
       width: 40px; height: 40px; border-radius: 11px;
@@ -334,7 +631,7 @@
     }
     .status-icon-box svg { width: 20px; height: 20px; fill: var(--text-secondary); }
     .status-text-wrap { display: flex; flex-direction: column; align-items: flex-start; }
-    .status-label { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .status-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
     .status-value { font-size: 14.5px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
     .timer-highlight { color: var(--crimson); font-weight: 800; }
     
@@ -344,176 +641,32 @@
     }
     .status-select:disabled { cursor: not-allowed; color: var(--text-muted); -webkit-appearance: none; appearance: none; padding-right: 0; }
 
-    /* QR Display */
+    .footer {
+      color: var(--text-muted); text-align: center; padding: 16px;
+      font-size: 12px; font-weight: 500;
+    }
+    .footer span { color: var(--text-primary); font-weight: 700; }
+
     #qrcode-container {
-      margin: 8px auto; padding: 16px; background: white;
+      margin: 10px auto; padding: 18px; background: white;
       border-radius: 20px; display: inline-block;
       border: 1.5px solid var(--border); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
     }
-    .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--emerald); margin-top: 12px; font-size: 14.5px; }
-    .qr-countdown { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 5px; font-variant-numeric: tabular-nums; }
-    .cancel-link { font-size: 13px; color: var(--text-muted); font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: 12px; display: inline-block; }
-
-    /* --- MANAGER COMMAND CENTER INSIDE THE UNIFIED SHELL --- */
-    .mgr-sub-header {
-      padding: 18px 32px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      background: var(--surface-subtle);
-    }
-    .mgr-sub-meta { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
-    .mgr-sub-meta span { color: var(--text-muted); font-weight: 500; }
-
-    .mgr-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .btn-sm {
-      padding: 9px 15px; border-radius: 10px; border: 1px solid var(--border);
-      background: #FFF; color: var(--text-primary); font-size: 12.5px; font-weight: 700;
-      cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s;
-      display: inline-flex; align-items: center; gap: 6px;
-    }
-    .btn-sm svg { width: 15px; height: 15px; fill: currentColor; }
-    .btn-sm:hover { background: var(--surface-subtle); border-color: var(--border-strong); }
-    .btn-sm.primary { background: var(--slate-dark); color: #FFF; border-color: var(--slate-dark); }
-    .btn-sm.excel { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(5, 150, 105, 0.3); }
-    .btn-sm.danger { background: var(--crimson-soft); color: var(--crimson); border-color: rgba(220, 38, 38, 0.25); }
-
-    /* Big Icon KPI Strip */
-    .mgr-stats {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-      padding: 20px 32px; border-bottom: 1px solid var(--border); background: #FFFFFF;
-    }
-    .mgr-stat-box {
-      background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 16px;
-      padding: 15px 18px; display: flex; align-items: center; gap: 14px; text-align: left;
-    }
-    .stat-icon-tile {
-      width: 48px; height: 48px; border-radius: 13px;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .stat-icon-tile svg { width: 24px; height: 24px; fill: currentColor; }
-    .tile-green { background: var(--emerald-soft); color: var(--emerald); }
-    .tile-indigo { background: var(--indigo-soft); color: var(--indigo); }
-    .tile-slate { background: #E2E8F0; color: var(--slate-dark); }
-    .tile-amber { background: var(--amber-soft); color: var(--amber); }
-
-    .mgr-stat-val { font-size: 24px; font-weight: 800; color: var(--text-primary); line-height: 1.1; }
-    .mgr-stat-label { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
-
-    /* Sub-Tabs Bar (Stationary; only panel below swaps) */
-    .mgr-tabs {
-      display: flex; gap: 8px; padding: 12px 32px;
-      border-bottom: 1px solid var(--border); background: #FFFFFF; flex-wrap: wrap;
-    }
-    .mgr-tab-btn {
-      padding: 10px 16px; border: 1.5px solid transparent; border-radius: 11px;
-      background: var(--surface-subtle); font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 700; color: var(--text-secondary);
-      cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
-      transition: all 0.15s ease;
-    }
-    .mgr-tab-btn svg { width: 17px; height: 17px; fill: currentColor; }
-    .mgr-tab-btn:hover { background: #F1F5F9; color: var(--text-primary); }
-    .mgr-tab-btn.active {
-      background: var(--slate-dark); color: #FFFFFF; border-color: var(--slate-dark);
-    }
-    .tab-count-badge {
-      font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
-      background: rgba(15, 23, 42, 0.08); color: inherit;
-    }
-    .mgr-tab-btn.active .tab-count-badge { background: rgba(255, 255, 255, 0.22); color: #FFFFFF; }
-
-    .mgr-tab-panel { display: none; text-align: left; }
-    .mgr-tab-panel.active { display: block; animation: softFade 0.18s ease-out; }
-
-    .filter-toolbar {
-      padding: 16px 32px; border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-    }
-    .filter-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .mgr-search, .mgr-filter-select {
-      padding: 9px 13px; border-radius: 10px; border: 1.5px solid var(--border);
-      background: var(--surface-subtle); font-size: 13px; font-family: 'Inter', sans-serif;
-      color: var(--text-primary); font-weight: 500;
-    }
-    .mgr-search { min-width: 240px; }
-    .mgr-search:focus, .mgr-filter-select:focus { outline: none; background: #FFF; border-color: var(--slate-dark); }
-
-    .emp-cell-wrap { display: flex; align-items: center; gap: 12px; }
-    .emp-initials-avatar {
-      width: 38px; height: 38px; border-radius: 11px;
-      background: var(--indigo-soft); color: var(--indigo);
-      font-weight: 800; font-size: 13px;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .emp-initials-avatar.active-av { background: var(--emerald-soft); color: var(--emerald); }
-    .emp-cell-name { font-size: 14px; font-weight: 700; color: var(--text-primary); line-height: 1.25; }
-    .emp-cell-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 1px; }
-
-    .live-board-grid {
-      padding: 24px 32px; display: grid; grid-template-columns: repeat(auto-fill, minmax(265px, 1fr)); gap: 16px;
-      max-height: 360px; overflow-y: auto;
-    }
-    .member-status-card {
-      border: 1.5px solid var(--border); border-radius: 16px; padding: 18px;
-      background: var(--surface); display: flex; flex-direction: column; gap: 12px;
-    }
-    .member-status-card.is-in { border-color: rgba(5, 150, 105, 0.45); background: #FAFFFD; }
-    .member-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .member-card-meta {
-      font-size: 12.5px; color: var(--text-secondary);
-      display: flex; justify-content: space-between; align-items: center;
-      padding-top: 10px; border-top: 1px solid var(--border);
-    }
-
-    .table-wrap { width: 100%; overflow-y: auto; max-height: 340px; }
-    table.att-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-    table.att-table th {
-      position: sticky; top: 0; background: #F8FAFC; color: var(--text-muted);
-      font-weight: 700; text-align: left; padding: 12px 24px; border-bottom: 1px solid var(--border);
-      font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2;
-    }
-    table.att-table td {
-      padding: 13px 24px; border-bottom: 1px solid var(--border); color: var(--text-primary);
-      vertical-align: middle;
-    }
-    table.att-table tr:hover td { background: #F8FAFC; }
-
-    .badge-pill {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap;
-    }
-    .badge-active { background: var(--emerald-soft); color: var(--emerald); }
-    .badge-onsite { background: #EFF6FF; color: #1D4ED8; }
-    .badge-wfh { background: #FEF3C7; color: #B45309; }
-    .badge-muted { background: #F1F5F9; color: var(--text-muted); }
-    .badge-danger { background: var(--crimson-soft); color: var(--crimson); }
-
-    .inline-resolve-input {
-      padding: 8px 10px; border-radius: 9px; border: 1.5px solid var(--border);
-      font-size: 13px; font-family: 'Inter', sans-serif; width: 135px;
-    }
-    .inline-note-input {
-      padding: 8px 10px; border-radius: 9px; border: 1.5px solid var(--border);
-      font-size: 13px; font-family: 'Inter', sans-serif; width: 165px;
-    }
-
+    .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--emerald); margin-top: 14px; font-size: 14.5px; }
+    .qr-countdown { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+    .cancel-link { font-size: 13px; color: var(--text-muted); font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: 14px; display: inline-block; }
+    
     .spinner { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid currentColor; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; }
-    .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: var(--slate-dark); margin: 36px auto; display: block; }
+    .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: var(--slate-dark); margin: 40px auto; display: block; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    .masked-input { -webkit-text-security: disc; text-security: disc; }
-
-    /* --- MOBILE QR VERIFICATION VIEW --- */
-    .phone-card {
-      background: #FFFFFF; border-radius: 26px; max-width: 400px; width: 100%;
-      padding: 40px 32px; text-align: center; box-shadow: var(--shadow-shell);
-      margin-top: 45px; position: relative; display: none;
+    #phone-auth {
+      max-width: 400px;
+      padding: 40px 32px;
+      overflow: visible;
+      margin-top: 45px;
+      position: relative;
     }
-    .phone-card.active { display: block; }
     .phone-avatar-circle {
       width: 90px; height: 90px; border-radius: 50%;
       background-color: var(--surface-subtle); border: 4px solid #FFFFFF;
@@ -528,407 +681,213 @@
       display: inline-block; background: var(--surface-subtle); color: var(--text-secondary);
       border: 1px solid var(--border);
       font-size: 12px; font-weight: 700; padding: 5px 14px;
-      border-radius: 999px; margin-bottom: 20px;
+      border-radius: 999px; margin-bottom: 20px; letter-spacing: 0.3px;
     }
 
-    .footer {
-      color: var(--text-muted); text-align: center; padding: 14px;
-      font-size: 12px; font-weight: 500;
-    }
-    .footer span { color: var(--text-primary); font-weight: 700; }
+    .masked-input { -webkit-text-security: disc; text-security: disc; }
 
     @media (max-width: 860px) {
-      .mgr-stats { grid-template-columns: repeat(2, 1fr); }
+      .mgr-ws-body { flex-direction: column; }
+      .mgr-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+      .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 640px) {
-      .shell-header { padding: 14px 18px; }
-      .mgr-stats { grid-template-columns: 1fr; }
+      .top-bar { padding: 12px 18px; }
+      .role-grid { grid-template-columns: 1fr; }
+      .kpi-grid-4 { grid-template-columns: 1fr; }
+      .card-padding { padding: 32px 24px; }
       .time-display { font-size: 56px; }
-      .kiosk-status-strip { flex-direction: column; }
-      .status-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
     }
   </style>
 </head>
 <body>
 
-  <div class="main-wrapper">
-    <!-- MOBILE-ONLY QR SCAN VIEW -->
-    <div id="phone-auth" class="phone-card">
-      <div class="phone-avatar-circle">
-        <svg id="phone-default-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        <img id="phone-profile-img" src="" alt="Profile Photo" onerror="handlePhoneImageError()">
+  <!-- STANDARD KIOSK TOP NAV (Hidden when full-screen Manager Workspace is open) -->
+  <div class="top-bar" id="standard-topbar">
+    <div class="brand" onclick="showRoleSelector()">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24"><path d="M4 10h3v10H4zM10 4h3v16h-3zM16 14h3v6h-3z"/></svg>
       </div>
-      <h2 style="font-size:22px; margin:0 0 6px 0;">Verify Attendance</h2>
-      <p id="phone-greeting" style="font-weight: 700; color:var(--text-primary); margin:0 0 10px 0;">Employee Name</p>
-      <div id="phone-badge" class="phone-badge">TIME IN • Onsite</div>
-      <label style="display:block; font-size:12px; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Authentication Code</label>
-      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" autofocus style="width:100%; padding:14px; border-radius:12px; border:1.5px solid var(--border); text-align:center; font-size:28px; letter-spacing:8px; margin-bottom:16px;">
-      <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
-      <div id="scan-status" style="font-size: 14px; font-weight: 600; margin-top: 15px;"></div>
+      <div class="brand-text">
+        <span class="brand-title">DATAWORDS</span>
+        <span class="brand-subtitle">Webmarketing Attendance Kiosk</span>
+      </div>
     </div>
-
-    <!-- DEVICE BLOCK CARD -->
-    <div id="device-error" class="phone-card">
-      <div style="font-size: 44px; margin-bottom:12px;">🚫</div>
-      <h2 style="color:var(--crimson); margin:0 0 8px 0;">Access Denied</h2>
-      <p id="error-message" style="color:var(--text-muted); margin:0;">Device not allowed.</p>
+    <div class="nav-actions">
+      <div class="status-chip"><span class="status-dot"></span> System Online</div>
+      <button type="button" class="nav-btn" onclick="showRoleSelector()">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Switch Portal
+      </button>
     </div>
+  </div>
 
-    <!-- UNIFIED DESKTOP KIOSK & MANAGER SHELL -->
-    <div id="unified-shell" class="unified-shell" style="display: none;">
-      
-      <!-- STEADY HEADER WITH BUILT-IN WORKSPACE TABS -->
-      <div class="shell-header">
-        <div class="brand">
-          <div class="brand-logo">
+  <!-- =====================================================================
+       FULL-SCREEN LEFT-SIDEBAR MANAGER WORKSPACE (Matches Screenshot Layout)
+       ===================================================================== -->
+  <div id="mgr-workspace" class="mgr-workspace-shell">
+    <!-- Top Header -->
+    <div class="mgr-ws-topbar">
+      <div class="mgr-ws-left">
+        <div class="mgr-ws-brand">
+          <div class="mgr-ws-logo">
             <svg viewBox="0 0 24 24"><path d="M4 10h3v10H4zM10 4h3v16h-3zM16 14h3v6h-3z"/></svg>
           </div>
-          <div class="brand-text">
-            <span class="brand-title">DATAWORDS</span>
-            <span class="brand-subtitle">Attendance & Team Workspace</span>
+          <div>
+            <div class="mgr-ws-title">ATTENDANCE</div>
+            <div class="mgr-ws-sub">MANAGER PORTAL</div>
           </div>
         </div>
-
-        <!-- PRIMARY TABS: Only the inner section below changes when clicked -->
-        <div class="portal-switcher">
-          <button type="button" class="portal-tab-btn active" id="main-tab-employee" onclick="switchPortalTab('employee')">
-            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            Employee Kiosk
-          </button>
-          <button type="button" class="portal-tab-btn" id="main-tab-manager" onclick="switchPortalTab('manager')">
-            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-            Manager Portal
-          </button>
-        </div>
-
-        <div class="status-chip"><span class="status-dot"></span> Online</div>
+        <button type="button" class="btn-logout-red" onclick="logoutManager()">Log out</button>
       </div>
 
-      <!-- DYNAMIC INNER CONTENT AREA -->
-      <div class="shell-body" id="shell-body">
+      <div class="mgr-ws-right">
+        <div class="mgr-ws-clock-wrap">
+          <div class="mgr-ws-live-badge">● LIVE SYSTEM</div>
+          <div class="mgr-ws-clock" id="mgr-live-clock">00:00:00 PM</div>
+        </div>
+      </div>
+    </div>
 
-        <!-- =============================================================== -->
-        <!-- EMPLOYEE SECTIONS (Swaps cleanly inside the steady shell)       -->
-        <!-- =============================================================== -->
-
-        <!-- 1. Employee Registration -->
-        <div id="sec-emp-setup" class="view-section">
-          <div class="inner-form-box">
-            <div class="form-icon-header">
-              <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
-            </div>
-            <h2>Kiosk Device Setup</h2>
-            <p>Register your profile to bind this workstation as your personal kiosk.</p>
-            <label>Employee Name</label>
-            <input type="text" id="empName" placeholder="e.g. John Doe" autocomplete="off">
-            <label>Team / Department</label>
-            <input type="text" id="team" placeholder="e.g. Sales" autocomplete="off">
-            <label>Work Email (For Backup OTP)</label>
-            <input type="email" id="empEmail" placeholder="e.g. john.doe@company.com" autocomplete="off">
-            <button class="btn-save" id="btn-register-laptop" onclick="registerLaptop()">Secure Device & Continue</button>
+    <!-- Fixed Left Sidebar + Right Swapping Content Pane -->
+    <div class="mgr-ws-body">
+      <aside class="mgr-sidebar">
+        <div>
+          <!-- Signed In As Card -->
+          <div class="signed-in-card">
+            <div class="signed-in-label">SIGNED IN AS</div>
+            <div class="signed-in-name" id="sb-mgr-name">Manager Name</div>
+            <div class="signed-in-dept" id="sb-mgr-dept">DEPARTMENT</div>
           </div>
+
+          <div class="sidebar-section-label">WORKSPACE</div>
+          <nav class="sidebar-nav">
+            <button type="button" class="sidebar-nav-btn active" id="sb-btn-live" onclick="switchManagerSection('live')">
+              <span class="sidebar-nav-left">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                Live Team
+              </span>
+              <span class="sidebar-badge" id="sb-count-live">0</span>
+            </button>
+
+            <button type="button" class="sidebar-nav-btn" id="sb-btn-history" onclick="switchManagerSection('history')">
+              <span class="sidebar-nav-left">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                Attendance History
+              </span>
+              <span class="sidebar-badge" id="sb-count-history">0</span>
+            </button>
+
+            <button type="button" class="sidebar-nav-btn" id="sb-btn-devices" onclick="switchManagerSection('devices')">
+              <span class="sidebar-nav-left">
+                <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+                Devices & Access
+              </span>
+              <span class="sidebar-badge" id="sb-count-devices">0</span>
+            </button>
+
+            <button type="button" class="sidebar-nav-btn" id="sb-btn-missing" onclick="switchManagerSection('missing')">
+              <span class="sidebar-nav-left">
+                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                Fix Time-Out
+              </span>
+              <span class="sidebar-badge warn" id="sb-count-missing">0</span>
+            </button>
+          </nav>
         </div>
 
-        <!-- 2. Employee Code Reveal -->
-        <div id="sec-emp-reveal" class="view-section">
-          <div class="inner-form-box">
-            <div class="form-icon-header" style="background:var(--emerald-soft); color:var(--emerald); border-color:rgba(5,150,105,0.2);">
-              <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        <div class="sidebar-footer-ver">DATAWORDS KIOSK • v3.8</div>
+      </aside>
+
+      <!-- RIGHT CONTENT PANEL (Only this area changes when clicking sidebar tabs) -->
+      <main class="mgr-main-content">
+
+        <!-- SECTION 1: LIVE TEAM -->
+        <section id="pane-live" class="mgr-section-pane active">
+          <div class="pane-header-row">
+            <div>
+              <h1 class="pane-title">Live Team Overview</h1>
+              <p class="pane-subtitle">Real-time status of who is currently clocked in or finished for today.</p>
             </div>
-            <h2>Registration Complete</h2>
-            <p>Save your 4-digit Authentication Code to unlock your kiosk and verify QR scans.</p>
-            <div id="auth-code-display">0000</div>
-            <p style="color: var(--crimson); font-weight: 600; font-size: 13px;">⚠️ Keep this 4-digit code private.</p>
-            <button class="btn-save" onclick="openEmployeeKiosk()">I Have Saved It, Continue</button>
-          </div>
-        </div>
-
-        <!-- 3. Employee Returning Auth Code Login -->
-        <div id="sec-emp-login" class="view-section">
-          <div class="inner-form-box">
-            <div class="form-icon-header">
-              <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-            </div>
-            <h2>Employee Login</h2>
-            <p id="emp-login-subtitle">Enter your 4-digit Authentication Code to open your kiosk.</p>
-            <label style="text-align:center;">Your 4-Digit Auth Code</label>
-            <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="empLoginCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') submitEmployeeLogin()">
-            <button class="btn-save" onclick="submitEmployeeLogin()">Unlock Kiosk</button>
-            <div id="emp-login-error" style="color:var(--crimson); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
-          </div>
-        </div>
-
-        <!-- 4. Employee Missing Email Prompt -->
-        <div id="sec-emp-email" class="view-section">
-          <div class="inner-form-box">
-            <div class="form-icon-header">
-              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-            </div>
-            <h2>Update Your Email</h2>
-            <p>Add your email address to enable backup Email OTP verification.</p>
-            <label>Registered Employee</label>
-            <input type="text" id="missingEmailEmpName" disabled style="background:#F1F5F9; color:#64748B;">
-            <label>Work Email Address</label>
-            <input type="email" id="missingEmailInput" placeholder="e.g. john.doe@company.com" autocomplete="off">
-            <button class="btn-save" id="btn-save-missing-email" onclick="saveMissingEmail()">Save Email & Continue</button>
-          </div>
-        </div>
-
-        <!-- 5. Main Employee Time In / Time Out Kiosk -->
-        <div id="sec-emp-kiosk" class="view-section">
-          <div class="kiosk-center-box">
-            <input type="file" id="photo-upload-input" accept="image/*" style="display: none;" onchange="handlePhotoSelected(event)">
-
-            <div class="welcome-section">
-              <div class="avatar-wrapper" onclick="triggerPhotoUpload()" title="Click to add or change profile photo">
-                <div class="avatar">
-                  <svg id="default-avatar-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                  <img id="profile-photo-img" src="" alt="Profile Photo" onerror="handleImageError()">
-                </div>
-                <div class="avatar-overlay" id="avatar-overlay-text">Add Photo</div>
-                <div class="camera-badge">
-                  <svg viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                </div>
-                <div class="avatar-loading" id="avatar-loading-spinner">
-                  <div class="spinner" style="border-top-color:var(--slate-dark);"></div>
-                </div>
-              </div>
-
-              <div class="welcome-divider"></div>
-
-              <div class="welcome-text">
-                <span class="small">Welcome back,</span><br>
-                <span class="name" id="kiosk-name">EMPLOYEE NAME</span><br>
-                <span class="photo-action-hint" id="photo-action-hint" onclick="triggerPhotoUpload()">+ Add Profile Photo</span>
-              </div>
-            </div>
-
-            <div class="clock-section">
-              <div class="time-display" id="time-display">00:00 <span>AM</span></div>
-              <div class="date-display" id="date-display">Mon, Jan 1, 2024</div>
-            </div>
-
-            <div id="kiosk-loading"><div class="spinner-large"></div></div>
-
-            <div id="action-section" style="display: none;">
-              <div class="button-group">
-                <button id="btn-time-in" class="btn-pill bg-green" onclick="generateQR('TIME_IN')">
-                  <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                  <div class="btn-divider"></div>
-                  Time In
-                </button>
-                <button id="btn-time-out" class="btn-pill bg-red" onclick="generateQR('TIME_OUT')" style="display: none;">
-                  <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                  <div class="btn-divider"></div>
-                  Time Out
-                </button>
-              </div>
-              <span class="otp-fallback-link" onclick="startEmailOTP()">Can't scan QR? Use Email OTP</span>
-            </div>
-
-            <div id="otp-section">
-              <h3>Email Verification</h3>
-              <p id="otp-info-text">Sending 6-digit code to your registered email...</p>
-              <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="6" id="otp-code-input" placeholder="000000" disabled>
-              <button class="btn-save" id="otp-verify-btn" onclick="submitEmailOTP()" disabled>Verify OTP</button>
-              <div id="otp-status-msg"></div>
-              <span class="cancel-link" onclick="cancelOTP()">Cancel</span>
-            </div>
-
-            <div id="qr-section" style="display: none;">
-              <div id="qrcode-container"><img id="qr-image" src="" alt="QR Code"></div>
-              <div class="qr-waiting" id="qr-waiting-text"><div class="spinner"></div> Awaiting mobile verification...</div>
-              <div class="qr-countdown" id="qr-countdown-text">QR expires in 60s</div>
-              <span class="cancel-link" onclick="cancelQR()">Cancel</span>
-            </div>
-
-            <div class="kiosk-status-strip">
-              <div class="status-col">
-                <div class="status-icon-box">
-                  <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-                </div>
-                <div class="status-text-wrap">
-                  <span class="status-label">Today's Status</span>
-                  <span class="status-value" id="kiosk-status-text">Checking...</span>
-                </div>
-              </div>
-              <div class="status-col">
-                <div class="status-icon-box">
-                  <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
-                </div>
-                <div class="status-text-wrap">
-                  <span class="status-label">Work Arrangement</span>
-                  <select class="status-select" id="arrangement">
-                    <option value="Onsite">Onsite</option>
-                    <option value="Work From Home">Work From Home</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- =============================================================== -->
-        <!-- MANAGER SECTIONS (Swaps cleanly inside the same steady shell)   -->
-        <!-- =============================================================== -->
-
-        <!-- 1. Manager Registration -->
-        <div id="sec-mgr-setup" class="view-section">
-          <div class="inner-form-box">
-            <div class="form-icon-header">
-              <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-            </div>
-            <h2>Manager Registration</h2>
-            <p>Create your manager account to access team attendance records.</p>
-            <label>Full Name</label>
-            <input type="text" id="mgrName" placeholder="e.g. Jane Smith" autocomplete="off">
-            <label>Department</label>
-            <input type="text" id="mgrDept" placeholder="e.g. Operations" autocomplete="off">
-            <label>Work Email</label>
-            <input type="email" id="mgrEmail" placeholder="e.g. jane.smith@company.com" autocomplete="off">
-            <button class="btn-save" onclick="proceedToDevPass()">Continue to Verification</button>
-            <span class="sub-link" onclick="openManagerLogin()">Already registered? Log in here</span>
-          </div>
-        </div>
-
-        <!-- 2. Manager Developer Pass -->
-        <div id="sec-mgr-dev" class="view-section">
-          <div class="inner-form-box">
-            <div class="form-icon-header">
-              <svg viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
-            </div>
-            <h2>Developer Authorization</h2>
-            <p>Enter the default developer pass code to authorize manager registration.</p>
-            <label>Default Pass Code</label>
-            <input type="password" id="devPassInput" placeholder="Enter developer pass" autocomplete="off" onkeydown="if(event.key==='Enter') verifyDevPass()">
-            <button class="btn-save" id="btn-verify-dev" onclick="verifyDevPass()">Verify Developer Pass</button>
-            <span class="sub-link" onclick="showShellSection('sec-mgr-setup', false)">← Back to Registration</span>
-          </div>
-        </div>
-
-        <!-- 3. Manager Create Password -->
-        <div id="sec-mgr-pass" class="view-section">
-          <div class="inner-form-box">
-            <div class="form-icon-header">
-              <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>
-            </div>
-            <h2>Create Your Password</h2>
-            <p>Set a personal password you will use every time you log in as Manager.</p>
-            <label>New Manager Password (min. 4 characters)</label>
-            <input type="password" id="mgrNewPass" placeholder="••••••••" autocomplete="new-password">
-            <label>Confirm Password</label>
-            <input type="password" id="mgrConfirmPass" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter') completeManagerRegistration()">
-            <button class="btn-save" id="btn-save-mgr" onclick="completeManagerRegistration()">Save Password & Open Dashboard</button>
-          </div>
-        </div>
-
-        <!-- 4. Manager Returning Login -->
-        <div id="sec-mgr-login" class="view-section">
-          <div class="inner-form-box">
-            <div class="form-icon-header">
-              <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-            </div>
-            <h2>Manager Login</h2>
-            <p id="mgr-login-subtitle">Enter your personal manager password to view attendance logs.</p>
-            <label>Manager Email</label>
-            <input type="email" id="mgrLoginEmail" placeholder="e.g. jane.smith@company.com" autocomplete="email">
-            <label>Manager Password</label>
-            <input type="password" id="mgrLoginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') submitManagerLogin()">
-            <button class="btn-save" id="btn-mgr-login" onclick="submitManagerLogin()">Access Dashboard</button>
-            <span class="sub-link" onclick="showShellSection('sec-mgr-setup', false)">Register a new manager account</span>
-          </div>
-        </div>
-
-        <!-- 5. Manager 4-Tab Command Center (Stationary frame; only sub-panels swap) -->
-        <div id="sec-mgr-dashboard" class="view-section">
-          <div class="mgr-sub-header">
-            <div class="mgr-sub-meta" id="mgr-welcome-meta">Manager Dashboard</div>
-            <div class="mgr-controls">
-              <button type="button" class="btn-sm excel" onclick="exportAttendanceToExcel()">
-                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                Export Excel
-              </button>
-              <button type="button" class="btn-sm primary" onclick="refreshManagerDashboard()">
+            <div class="pane-actions">
+              <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
                 <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
                 Refresh
               </button>
-              <button type="button" class="btn-sm" onclick="logoutManager()">Lock</button>
             </div>
           </div>
 
-          <div class="mgr-stats">
-            <div class="mgr-stat-box">
-              <div class="stat-icon-tile tile-green">
+          <div class="kpi-grid-4">
+            <div class="kpi-card">
+              <div class="kpi-icon tile-green">
                 <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
               </div>
               <div>
-                <div class="mgr-stat-val" id="stat-active-shifts" style="color:var(--emerald);">0</div>
-                <div class="mgr-stat-label">Active Now</div>
+                <div class="kpi-val" id="stat-active-shifts" style="color:var(--emerald);">0</div>
+                <div class="kpi-lbl">Active Now</div>
               </div>
             </div>
-
-            <div class="mgr-stat-box">
-              <div class="stat-icon-tile tile-indigo">
+            <div class="kpi-card">
+              <div class="kpi-icon tile-indigo">
                 <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
               </div>
               <div>
-                <div class="mgr-stat-val" id="stat-total-members">0</div>
-                <div class="mgr-stat-label">Team Size</div>
+                <div class="kpi-val" id="stat-total-members">0</div>
+                <div class="kpi-lbl">Team Size</div>
               </div>
             </div>
-
-            <div class="mgr-stat-box">
-              <div class="stat-icon-tile tile-slate">
-                <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            <div class="kpi-card">
+              <div class="kpi-icon tile-slate">
+                <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/></svg>
               </div>
               <div>
-                <div class="mgr-stat-val" id="stat-total-logs">0</div>
-                <div class="mgr-stat-label">Total Logs</div>
+                <div class="kpi-val" id="stat-total-logs">0</div>
+                <div class="kpi-lbl">Total Logs</div>
               </div>
             </div>
-
-            <div class="mgr-stat-box">
-              <div class="stat-icon-tile tile-amber">
+            <div class="kpi-card">
+              <div class="kpi-icon tile-amber">
                 <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
               </div>
               <div>
-                <div class="mgr-stat-val" id="stat-missing-outs" style="color:var(--amber);">0</div>
-                <div class="mgr-stat-label">Open Shifts</div>
+                <div class="kpi-val" id="stat-missing-outs" style="color:var(--amber);">0</div>
+                <div class="kpi-lbl">Open Shifts</div>
               </div>
             </div>
           </div>
 
-          <div class="mgr-tabs">
-            <button type="button" class="mgr-tab-btn active" id="tab-btn-live" onclick="switchManagerTab('live')">
-              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-              Live Team <span class="tab-count-badge" id="badge-live-count">0</span>
-            </button>
-            <button type="button" class="mgr-tab-btn" id="tab-btn-history" onclick="switchManagerTab('history')">
-              <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 00-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0013 21a9 9 0 000-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
-              History <span class="tab-count-badge" id="badge-history-count">0</span>
-            </button>
-            <button type="button" class="mgr-tab-btn" id="tab-btn-devices" onclick="switchManagerTab('devices')">
-              <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
-              Devices <span class="tab-count-badge" id="badge-devices-count">0</span>
-            </button>
-            <button type="button" class="mgr-tab-btn" id="tab-btn-missing" onclick="switchManagerTab('missing')">
-              <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-              Fix Time-Out <span class="tab-count-badge" id="badge-missing-count">0</span>
-            </button>
-          </div>
-
-          <div id="mgr-panel-live" class="mgr-tab-panel active">
+          <div class="framed-panel">
             <div id="live-board-grid" class="live-board-grid"></div>
           </div>
+        </section>
 
-          <div id="mgr-panel-history" class="mgr-tab-panel">
-            <div class="filter-toolbar">
-              <div class="filter-group">
+        <!-- SECTION 2: ATTENDANCE HISTORY (Matches Screenshot Table Layout) -->
+        <section id="pane-history" class="mgr-section-pane">
+          <div class="pane-header-row">
+            <div>
+              <h1 class="pane-title">Attendance history</h1>
+              <p class="pane-subtitle">Review recorded employee workdays and export your attendance report.</p>
+            </div>
+            <div class="pane-actions">
+              <button type="button" class="btn-action excel" onclick="exportAttendanceToExcel()">
+                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                Export Excel
+              </button>
+              <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
+                <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                Refresh
+              </button>
+            </div>
+          </div>
+
+          <div class="framed-panel">
+            <div class="panel-toolbar">
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
                 <input type="text" id="mgrSearchInput" class="mgr-search" placeholder="Search employee, team, date..." oninput="filterManagerTable()">
                 <select id="mgrFilterArr" class="mgr-filter-select" onchange="filterManagerTable()">
-                  <option value="ALL">All Modes</option>
+                  <option value="ALL">All Arrangements</option>
                   <option value="Onsite">Onsite</option>
-                  <option value="Work From Home">WFH</option>
+                  <option value="Work From Home">Work From Home</option>
                 </select>
                 <select id="mgrFilterStatus" class="mgr-filter-select" onchange="filterManagerTable()">
                   <option value="ALL">All Statuses</option>
@@ -938,64 +897,364 @@
               </div>
               <div style="font-size:12.5px; color:var(--text-muted); font-weight:700;" id="mgr-filtered-count">0 records</div>
             </div>
-            <div class="table-wrap">
-              <table class="att-table">
-                <thead>
-                  <tr>
-                    <th>Employee</th>
-                    <th>Date</th>
-                    <th>Mode</th>
-                    <th>Time In</th>
-                    <th>Time Out</th>
-                    <th>Hours</th>
-                  </tr>
-                </thead>
-                <tbody id="mgr-table-body"></tbody>
-              </table>
+
+            <table class="ws-table">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Date</th>
+                  <th>Time In</th>
+                  <th>Time Out</th>
+                  <th>Work Arrangement</th>
+                  <th>Total Hours</th>
+                </tr>
+              </thead>
+              <tbody id="mgr-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SECTION 3: DEVICES & ACCESS -->
+        <section id="pane-devices" class="mgr-section-pane">
+          <div class="pane-header-row">
+            <div>
+              <h1 class="pane-title">Devices & access</h1>
+              <p class="pane-subtitle">Reset bound mobile phones or suspend device access for team members.</p>
+            </div>
+            <div class="pane-actions">
+              <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
+                <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                Refresh
+              </button>
             </div>
           </div>
 
-          <div id="mgr-panel-devices" class="mgr-tab-panel">
-            <div class="table-wrap">
-              <table class="att-table">
-                <thead>
-                  <tr>
-                    <th>Employee</th>
-                    <th>Email</th>
-                    <th>Bound Phone</th>
-                    <th>Status</th>
-                    <th>Manage</th>
-                  </tr>
-                </thead>
-                <tbody id="mgr-devices-body"></tbody>
-              </table>
+          <div class="framed-panel">
+            <table class="ws-table">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Email</th>
+                  <th>Bound Device</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="mgr-devices-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SECTION 4: FIX MISSING TIME-OUT -->
+        <section id="pane-missing" class="mgr-section-pane">
+          <div class="pane-header-row">
+            <div>
+              <h1 class="pane-title">Fix missing time-outs</h1>
+              <p class="pane-subtitle">Close open shifts manually when an employee forgets to clock out.</p>
+            </div>
+            <div class="pane-actions">
+              <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
+                <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                Refresh
+              </button>
             </div>
           </div>
 
-          <div id="mgr-panel-missing" class="mgr-tab-panel">
-            <div class="table-wrap">
-              <table class="att-table">
-                <thead>
-                  <tr>
-                    <th>Employee</th>
-                    <th>Date & In</th>
-                    <th>Time Out</th>
-                    <th>Note</th>
-                    <th>Save</th>
-                  </tr>
-                </thead>
-                <tbody id="mgr-missing-body"></tbody>
-              </table>
+          <div class="framed-panel">
+            <table class="ws-table">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Date & Time In</th>
+                  <th>Set Time Out</th>
+                  <th>Manager Note</th>
+                  <th>Save</th>
+                </tr>
+              </thead>
+              <tbody id="mgr-missing-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       STANDARD CENTERED STAGE (Portal Selector, Employee Kiosk & Auth Forms)
+       ===================================================================== -->
+  <div class="main-wrapper" id="centered-stage">
+    <!-- DEVICE BLOCK -->
+    <div id="device-error" class="card setup-card">
+      <div style="font-size: 44px; margin-bottom:12px;">🚫</div>
+      <h2 style="color:var(--crimson);">Access Denied</h2>
+      <p id="error-message">Device not allowed.</p>
+    </div>
+
+    <!-- ROLE SELECTOR ENTRY SCREEN (Kept as-is!) -->
+    <div id="role-selector" class="card role-card active-card">
+      <div class="eyebrow-badge">Attendance Portal</div>
+      <h2>Choose Your Workspace</h2>
+      <p>Select Employee to log your shift, or Manager to monitor attendance & team devices.</p>
+      <div class="role-grid">
+        <button type="button" class="role-btn employee-role" onclick="selectEmployeeRole()">
+          <div class="role-icon-circle">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="role-title">EMPLOYEE</div>
+          <div class="role-desc">Time In, Time Out & personal QR verification</div>
+          <div class="role-status-pill" id="emp-role-pill">New Setup</div>
+        </button>
+
+        <button type="button" class="role-btn manager-role" onclick="selectManagerRole()">
+          <div class="role-icon-circle">
+            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+          </div>
+          <div class="role-title">MANAGER</div>
+          <div class="role-desc">Live team board, Excel exports & device controls</div>
+          <div class="role-status-pill" id="mgr-role-pill">Register / Login</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE RETURNING LOGIN -->
+    <div id="employee-login" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+      </div>
+      <h2>Employee Login</h2>
+      <p id="emp-login-subtitle">Enter your 4-digit Authentication Code to open your kiosk.</p>
+      <label style="text-align:center;">Your 4-Digit Auth Code</label>
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="empLoginCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') submitEmployeeLogin()">
+      <button class="btn-save" onclick="submitEmployeeLogin()">Unlock Kiosk</button>
+      <div id="emp-login-error" style="color:var(--crimson); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
+      <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
+    </div>
+
+    <!-- MANAGER STEP 1: REGISTRATION FORM -->
+    <div id="manager-setup" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      </div>
+      <h2>Manager Registration</h2>
+      <p>Create your manager account to access team attendance records.</p>
+      <label>Full Name</label>
+      <input type="text" id="mgrName" placeholder="e.g. Jane Smith" autocomplete="off">
+      <label>Department</label>
+      <input type="text" id="mgrDept" placeholder="e.g. Operations" autocomplete="off">
+      <label>Work Email</label>
+      <input type="email" id="mgrEmail" placeholder="e.g. jane.smith@company.com" autocomplete="off">
+      <button class="btn-save" onclick="proceedToDevPass()">Continue to Verification</button>
+      <span class="sub-link" onclick="openManagerLogin()">Already registered? Log in here</span>
+    </div>
+
+    <!-- MANAGER STEP 2: DEVELOPER DEFAULT PASS -->
+    <div id="manager-dev-auth" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+      </div>
+      <h2>Developer Authorization</h2>
+      <p>Enter the default developer pass code to authorize manager registration.</p>
+      <label>Default Pass Code</label>
+      <input type="password" id="devPassInput" placeholder="Enter developer pass" autocomplete="off" onkeydown="if(event.key==='Enter') verifyDevPass()">
+      <button class="btn-save" id="btn-verify-dev" onclick="verifyDevPass()">Verify Developer Pass</button>
+      <span class="sub-link" onclick="switchCard('manager-setup')">← Back to Registration</span>
+    </div>
+
+    <!-- MANAGER STEP 3: CREATE PERSONAL PASSWORD -->
+    <div id="manager-create-pass" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>
+      </div>
+      <h2>Create Your Password</h2>
+      <p>Set a personal password you will use every time you log in as Manager.</p>
+      <label>New Manager Password (min. 4 characters)</label>
+      <input type="password" id="mgrNewPass" placeholder="••••••••" autocomplete="new-password">
+      <label>Confirm Password</label>
+      <input type="password" id="mgrConfirmPass" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter') completeManagerRegistration()">
+      <button class="btn-save" id="btn-save-mgr" onclick="completeManagerRegistration()">Save Password & Open Dashboard</button>
+    </div>
+
+    <!-- MANAGER RETURNING LOGIN -->
+    <div id="manager-login" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      </div>
+      <h2>Manager Login</h2>
+      <p id="mgr-login-subtitle">Enter your personal manager password to view attendance logs.</p>
+      <div id="mgr-login-email-wrap">
+        <label>Manager Email</label>
+        <input type="email" id="mgrLoginEmail" placeholder="e.g. jane.smith@company.com" autocomplete="email">
+      </div>
+      <label>Manager Password</label>
+      <input type="password" id="mgrLoginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') submitManagerLogin()">
+      <button class="btn-save" id="btn-mgr-login" onclick="submitManagerLogin()">Access Dashboard</button>
+      <span class="sub-link" onclick="switchCard('manager-setup')">Register a new manager account</span>
+    </div>
+
+    <!-- EMPLOYEE INITIAL REGISTRATION -->
+    <div id="laptop-setup" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
+      </div>
+      <h2>Kiosk Device Setup</h2>
+      <p>Register your profile to bind this workstation as your personal attendance kiosk.</p>
+      <label>Employee Name</label>
+      <input type="text" id="empName" placeholder="e.g. John Doe" autocomplete="off">
+      <label>Team / Department</label>
+      <input type="text" id="team" placeholder="e.g. Sales" autocomplete="off">
+      <label>Work Email (For Backup OTP)</label>
+      <input type="email" id="empEmail" placeholder="e.g. john.doe@company.com" autocomplete="off">
+      <button class="btn-save" id="btn-register-laptop" onclick="registerLaptop()">Secure Device & Continue</button>
+      <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
+    </div>
+
+    <!-- UPDATE MISSING EMAIL PROMPT -->
+    <div id="laptop-email-complete" class="card setup-card">
+      <div class="form-icon-header">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      </div>
+      <h2>Update Your Email</h2>
+      <p>Please add your email address to enable backup Email OTP verification.</p>
+      <label>Registered Employee</label>
+      <input type="text" id="missingEmailEmpName" disabled style="background:#F1F5F9; color:#64748B;">
+      <label>Work Email Address</label>
+      <input type="email" id="missingEmailInput" placeholder="e.g. john.doe@company.com" autocomplete="off">
+      <button class="btn-save" id="btn-save-missing-email" onclick="saveMissingEmail()">Save Email & Continue</button>
+    </div>
+
+    <!-- CODE REVEAL -->
+    <div id="laptop-reveal" class="card setup-card">
+      <div class="form-icon-header" style="background:var(--emerald-soft); color:var(--emerald); border-color:rgba(5,150,105,0.2);">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </div>
+      <h2>Registration Complete</h2>
+      <p>Save your 4-digit Authentication Code. You will need it to open your kiosk and verify QR scans.</p>
+      <div id="auth-code-display">0000</div>
+      <p style="color: var(--crimson); font-weight: 600; font-size: 13px;">⚠️ Write this down or keep it private.</p>
+      <button class="btn-save" onclick="openEmployeeKiosk()">I Have Saved It, Continue</button>
+    </div>
+
+    <!-- MAIN EMPLOYEE KIOSK -->
+    <div id="laptop-kiosk" class="card">
+      <div class="card-padding">
+        
+        <input type="file" id="photo-upload-input" accept="image/*" style="display: none;" onchange="handlePhotoSelected(event)">
+
+        <div class="welcome-section">
+          <div class="avatar-wrapper" onclick="triggerPhotoUpload()" title="Click to add or change profile photo">
+            <div class="avatar">
+              <svg id="default-avatar-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              <img id="profile-photo-img" src="" alt="Profile Photo" onerror="handleImageError()">
             </div>
+            <div class="avatar-overlay" id="avatar-overlay-text">Add Photo</div>
+            <div class="camera-badge">
+              <svg viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </div>
+            <div class="avatar-loading" id="avatar-loading-spinner">
+              <div class="spinner" style="border-top-color:var(--slate-dark);"></div>
+            </div>
+          </div>
+
+          <div class="welcome-divider"></div>
+
+          <div class="welcome-text">
+            <span class="small">Welcome back,</span><br>
+            <span class="name" id="kiosk-name">EMPLOYEE NAME</span><br>
+            <span class="photo-action-hint" id="photo-action-hint" onclick="triggerPhotoUpload()">+ Add Profile Photo</span>
           </div>
         </div>
 
+        <div class="clock-section">
+          <div class="time-display" id="time-display">00:00 <span>AM</span></div>
+          <div class="date-display" id="date-display">Mon, Jan 1, 2024</div>
+        </div>
+
+        <!-- Central Loading State -->
+        <div id="kiosk-loading"><div class="spinner-large"></div></div>
+
+        <!-- Action Buttons -->
+        <div id="action-section" style="display: none;">
+          <div class="button-group">
+            <button id="btn-time-in" class="btn-pill bg-green" onclick="generateQR('TIME_IN')">
+              <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+              <div class="btn-divider"></div>
+              Time In
+            </button>
+            <button id="btn-time-out" class="btn-pill bg-red" onclick="generateQR('TIME_OUT')" style="display: none;">
+              <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+              <div class="btn-divider"></div>
+              Time Out
+            </button>
+          </div>
+          <span class="otp-fallback-link" onclick="startEmailOTP()">Can't scan QR? Use Email OTP</span>
+        </div>
+
+        <!-- Email OTP Section -->
+        <div id="otp-section">
+          <h3>Email Verification</h3>
+          <p id="otp-info-text">Sending 6-digit code to your registered email...</p>
+          <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="6" id="otp-code-input" placeholder="000000" disabled>
+          <button class="btn-save" id="otp-verify-btn" onclick="submitEmailOTP()" disabled>Verify OTP</button>
+          <div id="otp-status-msg"></div>
+          <span class="cancel-link" onclick="cancelOTP()">Cancel</span>
+        </div>
+
+        <!-- QR Display -->
+        <div id="qr-section" style="display: none;">
+          <div id="qrcode-container"><img id="qr-image" src="" alt="QR Code"></div>
+          <div class="qr-waiting" id="qr-waiting-text"><div class="spinner"></div> Awaiting mobile verification...</div>
+          <div class="qr-countdown" id="qr-countdown-text">QR expires in 60s</div>
+          <span class="cancel-link" onclick="cancelQR()">Cancel</span>
+        </div>
       </div>
+
+      <!-- Bottom Status Bar -->
+      <div class="status-bar">
+        <div class="status-col">
+          <div class="status-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+          </div>
+          <div class="status-text-wrap">
+            <span class="status-label">Today's Status</span>
+            <span class="status-value" id="kiosk-status-text">Checking...</span>
+          </div>
+        </div>
+        <div class="status-col">
+          <div class="status-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+          </div>
+          <div class="status-text-wrap">
+            <span class="status-label">Work Arrangement</span>
+            <select class="status-select" id="arrangement">
+              <option value="Onsite">Onsite</option>
+              <option value="Work From Home">Work From Home</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE AUTH -->
+    <div id="phone-auth" class="card setup-card">
+      <div class="phone-avatar-circle">
+        <svg id="phone-default-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <img id="phone-profile-img" src="" alt="Profile Photo" onerror="handlePhoneImageError()">
+      </div>
+
+      <h2 style="font-size:22px; margin-bottom:6px;">Verify Attendance</h2>
+      <p id="phone-greeting" style="font-weight: 700; color:var(--text-primary); margin-bottom: 10px;">Employee Name</p>
+      <div id="phone-badge" class="phone-badge">TIME IN • Onsite</div>
+
+      <label style="text-align:center;">Authentication Code</label>
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" autofocus style="text-align: center; font-size: 28px; letter-spacing: 8px;">
+      <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
+      <div id="scan-status" style="font-size: 14px; font-weight: 600; margin-top: 15px;"></div>
     </div>
   </div>
 
   <!-- FOOTER -->
-  <div class="footer">
+  <div class="footer" id="standard-footer">
     Attendance Kiosk • <span>Data Driven. People Focused.</span>
   </div>
 
@@ -1021,52 +1280,16 @@
     let serverTodayStr = "";
     window.shiftStartTime = null;
 
-    function showShellSection(sectionId, isFullBleedDashboard = false) {
-      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-      const target = document.getElementById(sectionId);
-      if (target) target.classList.add('active');
+    function switchCard(cardId) {
+      // Ensure standard shell is visible and full-screen Manager Workspace is hidden
+      document.getElementById('mgr-workspace').classList.remove('active');
+      document.getElementById('standard-topbar').style.display = 'flex';
+      document.getElementById('centered-stage').style.display = 'flex';
+      document.getElementById('standard-footer').style.display = 'block';
 
-      const bodyEl = document.getElementById('shell-body');
-      if (bodyEl) {
-        bodyEl.classList.toggle('align-top', isFullBleedDashboard);
-      }
-    }
-
-    // --- UNIFIED PORTAL TAB SWITCHER (Employee vs Manager inside steady shell) ---
-    function switchPortalTab(portal) {
-      if (isMobile) return;
-      clearInterval(qrPollingInterval);
-      clearInterval(qrExpiryTimer);
-      qrPollingInterval = null;
-      qrExpiryTimer = null;
-      window.shiftStartTime = null;
-
-      document.getElementById('main-tab-employee').classList.toggle('active', portal === 'employee');
-      document.getElementById('main-tab-manager').classList.toggle('active', portal === 'manager');
-
-      if (portal === 'employee') {
-        const savedName = localStorage.getItem('empName');
-        const authCode = localStorage.getItem('authCode');
-        if (savedName && authCode) {
-          document.getElementById('emp-login-subtitle').innerText = `Welcome back, ${savedName}. Enter your 4-digit Authentication Code to open your kiosk.`;
-          document.getElementById('empLoginCode').value = "";
-          document.getElementById('emp-login-error').innerText = "";
-          showShellSection('sec-emp-login', false);
-          setTimeout(() => document.getElementById('empLoginCode').focus(), 80);
-        } else {
-          showShellSection('sec-emp-setup', false);
-        }
-      } else {
-        const activeSessionPass = sessionStorage.getItem('mgrSessionPass');
-        const savedMgrEmail = localStorage.getItem('mgrEmail');
-        if (activeSessionPass && savedMgrEmail) {
-          refreshManagerDashboard();
-        } else if (savedMgrEmail) {
-          openManagerLogin();
-        } else {
-          showShellSection('sec-mgr-setup', false);
-        }
-      }
+      document.querySelectorAll('.card').forEach(el => el.classList.remove('active-card'));
+      const target = document.getElementById(cardId);
+      if (target) target.classList.add('active-card');
     }
 
     function getInitials(name) {
@@ -1075,7 +1298,57 @@
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
 
-    // --- EMPLOYEE AUTH CODE LOGIN & KIOSK ---
+    function showRoleSelector() {
+      if (isMobile) return;
+      clearInterval(qrPollingInterval);
+      clearInterval(qrExpiryTimer);
+      qrPollingInterval = null;
+      qrExpiryTimer = null;
+      window.shiftStartTime = null;
+
+      const savedEmp = localStorage.getItem('empName');
+      const savedCode = localStorage.getItem('authCode');
+      const empPill = document.getElementById('emp-role-pill');
+      if (empPill) {
+        if (savedEmp && savedCode) {
+          empPill.innerText = `Login: ${savedEmp}`;
+          empPill.classList.add('ready');
+        } else {
+          empPill.innerText = "New Setup";
+          empPill.classList.remove('ready');
+        }
+      }
+
+      const savedMgrEmail = localStorage.getItem('mgrEmail');
+      const mgrPill = document.getElementById('mgr-role-pill');
+      if (mgrPill) {
+        if (savedMgrEmail) {
+          mgrPill.innerText = "Login Ready";
+          mgrPill.classList.add('ready');
+        } else {
+          mgrPill.innerText = "Register / Login";
+          mgrPill.classList.remove('ready');
+        }
+      }
+
+      switchCard('role-selector');
+    }
+
+    // --- EMPLOYEE ENTRY & AUTH CODE LOGIN ROUTING ---
+    function selectEmployeeRole() {
+      const savedName = localStorage.getItem('empName');
+      const authCode = localStorage.getItem('authCode');
+      if (savedName && authCode) {
+        document.getElementById('emp-login-subtitle').innerText = `Welcome back, ${savedName}. Enter your 4-digit Authentication Code to continue.`;
+        document.getElementById('empLoginCode').value = "";
+        document.getElementById('emp-login-error').innerText = "";
+        switchCard('employee-login');
+        setTimeout(() => document.getElementById('empLoginCode').focus(), 100);
+      } else {
+        switchCard('laptop-setup');
+      }
+    }
+
     function submitEmployeeLogin() {
       const enteredCode = document.getElementById('empLoginCode').value.trim();
       const savedCode = localStorage.getItem('authCode');
@@ -1099,7 +1372,7 @@
 
     function openEmployeeKiosk() {
       const savedName = localStorage.getItem('empName');
-      showShellSection('sec-emp-kiosk', false);
+      switchCard('laptop-kiosk');
       document.getElementById('kiosk-name').innerText = savedName.toUpperCase();
 
       const cachedDataUrl = localStorage.getItem('profileDataUrl');
@@ -1109,7 +1382,16 @@
       fetchLiveStatus(false);
     }
 
-    // --- MANAGER REGISTRATION, LOGIN & COMMAND CENTER ---
+    // --- MANAGER ENTRY, REGISTRATION & SIDEBAR WORKSPACE ---
+    function selectManagerRole() {
+      const savedMgrEmail = localStorage.getItem('mgrEmail');
+      if (savedMgrEmail) {
+        openManagerLogin();
+      } else {
+        switchCard('manager-setup');
+      }
+    }
+
     function openManagerLogin() {
       const savedMgrEmail = localStorage.getItem('mgrEmail') || "";
       const emailInput = document.getElementById('mgrLoginEmail');
@@ -1123,8 +1405,8 @@
         emailInput.value = "";
         subtitle.innerText = "Enter your registered email and manager password.";
       }
-      showShellSection('sec-mgr-login', false);
-      setTimeout(() => document.getElementById('mgrLoginPass').focus(), 80);
+      switchCard('manager-login');
+      setTimeout(() => document.getElementById('mgrLoginPass').focus(), 100);
     }
 
     function proceedToDevPass() {
@@ -1137,8 +1419,8 @@
 
       pendingManagerDraft = { name, dept, email };
       document.getElementById('devPassInput').value = "";
-      showShellSection('sec-mgr-dev', false);
-      setTimeout(() => document.getElementById('devPassInput').focus(), 80);
+      switchCard('manager-dev-auth');
+      setTimeout(() => document.getElementById('devPassInput').focus(), 100);
     }
 
     async function verifyDevPass() {
@@ -1160,8 +1442,8 @@
           pendingManagerDraft.devPass = devPass;
           document.getElementById('mgrNewPass').value = "";
           document.getElementById('mgrConfirmPass').value = "";
-          showShellSection('sec-mgr-pass', false);
-          setTimeout(() => document.getElementById('mgrNewPass').focus(), 80);
+          switchCard('manager-create-pass');
+          setTimeout(() => document.getElementById('mgrNewPass').focus(), 100);
         } else {
           alert(data.error || "Invalid developer password.");
         }
@@ -1180,7 +1462,7 @@
 
       if (!newPass || newPass.length < 4) return alert("Password must be at least 4 characters.");
       if (newPass !== confirmPass) return alert("Passwords do not match.");
-      if (!pendingManagerDraft) return showShellSection('sec-mgr-setup', false);
+      if (!pendingManagerDraft) return switchCard('manager-setup');
 
       btn.disabled = true;
       btn.innerText = "Creating Account...";
@@ -1277,17 +1559,21 @@
       }
     }
 
-    function switchManagerTab(tabKey) {
+    // Swaps ONLY the right content pane while keeping sidebar & topbar locked in place
+    function switchManagerSection(sectionKey) {
       ['live', 'history', 'devices', 'missing'].forEach(k => {
-        document.getElementById(`tab-btn-${k}`).classList.toggle('active', k === tabKey);
-        document.getElementById(`mgr-panel-${k}`).classList.toggle('active', k === tabKey);
+        document.getElementById(`sb-btn-${k}`).classList.toggle('active', k === sectionKey);
+        document.getElementById(`pane-${k}`).classList.toggle('active', k === sectionKey);
       });
     }
 
     function renderManagerDashboard(manager, records, members) {
       cachedManagerRecords = records;
       cachedManagerMembers = members;
-      document.getElementById('mgr-welcome-meta').innerHTML = `${escapeHtml(manager.name)} <span>• ${escapeHtml(manager.department)}</span>`;
+
+      // Populate Sidebar "SIGNED IN AS" card
+      document.getElementById('sb-mgr-name').innerText = manager.name;
+      document.getElementById('sb-mgr-dept').innerText = String(manager.department || "").toUpperCase();
 
       const activeRecords = records.filter(r => r.timeIn && !r.timeOut);
       const missingOutRecords = activeRecords;
@@ -1297,20 +1583,24 @@
       document.getElementById('stat-total-logs').innerText = records.length;
       document.getElementById('stat-missing-outs').innerText = missingOutRecords.length;
 
-      document.getElementById('badge-live-count').innerText = activeRecords.length;
-      document.getElementById('badge-history-count').innerText = records.length;
-      document.getElementById('badge-devices-count').innerText = members.length;
-      document.getElementById('badge-missing-count').innerText = missingOutRecords.length;
+      document.getElementById('sb-count-live').innerText = activeRecords.length;
+      document.getElementById('sb-count-history').innerText = records.length;
+      document.getElementById('sb-count-devices').innerText = members.length;
+      document.getElementById('sb-count-missing').innerText = missingOutRecords.length;
 
       renderLiveTeamBoard(members, records);
       filterManagerTable();
       renderDevicesTable(members);
       renderMissingTimeOutsTable(missingOutRecords);
 
-      showShellSection('sec-mgr-dashboard', true);
+      // Hide centered stage & open full-screen left-sidebar Manager Workspace
+      document.getElementById('standard-topbar').style.display = 'none';
+      document.getElementById('centered-stage').style.display = 'none';
+      document.getElementById('standard-footer').style.display = 'none';
+      document.getElementById('mgr-workspace').classList.add('active');
     }
 
-    // TAB 1: LIVE TEAM BOARD
+    // SECTION 1: LIVE TEAM BOARD
     function renderLiveTeamBoard(members, records) {
       const grid = document.getElementById('live-board-grid');
       if (!members.length) {
@@ -1360,7 +1650,7 @@
       }).join("");
     }
 
-    // TAB 2: ATTENDANCE HISTORY + EXCEL EXPORT
+    // SECTION 2: ATTENDANCE HISTORY + EXCEL EXPORT
     function filterManagerTable() {
       const q = (document.getElementById('mgrSearchInput').value || "").trim().toLowerCase();
       const arrFilter = document.getElementById('mgrFilterArr').value;
@@ -1396,12 +1686,12 @@
       tbody.innerHTML = rows.map(r => {
         const isActive = Boolean(r.timeIn && !r.timeOut);
         const arrBadge = r.workArrangement === "Work From Home"
-          ? `<span class="badge-pill badge-wfh">WFH</span>`
+          ? `<span class="badge-pill badge-wfh">Work From Home</span>`
           : `<span class="badge-pill badge-onsite">${escapeHtml(r.workArrangement || "Onsite")}</span>`;
 
         const timeOutCell = r.timeOut
           ? escapeHtml(r.timeOut)
-          : `<span class="badge-pill badge-active">● Active</span>`;
+          : `<span class="badge-pill badge-active">● Active Shift</span>`;
 
         const hoursCell = r.totalHours
           ? `<strong>${escapeHtml(r.totalHours)}</strong>`
@@ -1419,9 +1709,9 @@
               </div>
             </td>
             <td style="font-weight:600;">${escapeHtml(r.date)}</td>
-            <td>${arrBadge}</td>
             <td style="font-variant-numeric:tabular-nums;">${escapeHtml(r.timeIn)}</td>
             <td style="font-variant-numeric:tabular-nums;">${timeOutCell}</td>
+            <td>${arrBadge}</td>
             <td style="font-variant-numeric:tabular-nums;">${hoursCell}</td>
           </tr>
         `;
@@ -1458,7 +1748,7 @@
       XLSX.writeFile(workbook, `Attendance_History_${dateStamp}.xlsx`);
     }
 
-    // TAB 3: EMPLOYEES & DEVICE MANAGEMENT
+    // SECTION 3: DEVICES & ACCESS
     function renderDevicesTable(members) {
       const tbody = document.getElementById('mgr-devices-body');
       if (!members.length) {
@@ -1474,8 +1764,8 @@
 
         const isBlocked = (st === "blocked" || st === "disabled");
         const toggleBtn = isBlocked
-          ? `<button type="button" class="btn-sm primary" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'UNBLOCK')">Unblock</button>`
-          : `<button type="button" class="btn-sm danger" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'BLOCK')">Block</button>`;
+          ? `<button type="button" class="btn-action primary" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'UNBLOCK')">Unblock</button>`
+          : `<button type="button" class="btn-action danger" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'BLOCK')">Block</button>`;
 
         return `
           <tr>
@@ -1493,7 +1783,7 @@
             <td>${statusBadge}</td>
             <td>
               <div style="display:flex; gap:8px;">
-                <button type="button" class="btn-sm" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET')">Reset Phone</button>
+                <button type="button" class="btn-action" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET')">Reset Phone</button>
                 ${toggleBtn}
               </div>
             </td>
@@ -1537,7 +1827,7 @@
       }
     }
 
-    // TAB 4: MISSING TIME-OUTS / CORRECTIONS
+    // SECTION 4: FIX MISSING TIME-OUT
     function renderMissingTimeOutsTable(openRows) {
       const tbody = document.getElementById('mgr-missing-body');
       if (!openRows.length) {
@@ -1562,7 +1852,7 @@
           </td>
           <td><input type="text" class="inline-resolve-input" id="resolve-out-${r._row}" placeholder="e.g. 06:00 PM"></td>
           <td><input type="text" class="inline-note-input" id="resolve-note-${r._row}" placeholder="Optional reason"></td>
-          <td><button type="button" class="btn-sm primary" onclick="submitResolveShift(${r._row})">Save Out</button></td>
+          <td><button type="button" class="btn-action primary" onclick="submitResolveShift(${r._row})">Save Out</button></td>
         </tr>
       `).join("");
     }
@@ -1610,7 +1900,7 @@
 
     function logoutManager() {
       sessionStorage.removeItem('mgrSessionPass');
-      openManagerLogin();
+      showRoleSelector();
     }
 
     function escapeHtml(str) {
@@ -1939,16 +2229,20 @@
       return new Date();
     }
 
-    // --- LIVE CLOCK AND INLINE SHIFT TIMER ---
+    // --- LIVE CLOCKS (Employee Kiosk + Manager Workspace Topbar) ---
     function updateClock() {
       const now = new Date();
-      let hours = now.getHours(); let minutes = now.getMinutes();
+      let hours = now.getHours(); let minutes = now.getMinutes(); let seconds = now.getSeconds();
       const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12; hours = hours ? hours : 12;
-      minutes = minutes < 10 ? '0' + minutes : minutes;
+      const minPad = minutes < 10 ? '0' + minutes : minutes;
+      const secPad = seconds < 10 ? '0' + seconds : seconds;
       
       const timeEl = document.getElementById('time-display');
-      if (timeEl) timeEl.innerHTML = `${hours}:${minutes} <span>${ampm}</span>`;
+      if (timeEl) timeEl.innerHTML = `${hours}:${minPad} <span>${ampm}</span>`;
+
+      const mgrClockEl = document.getElementById('mgr-live-clock');
+      if (mgrClockEl) mgrClockEl.innerText = `${hours}:${minPad}:${secPad} ${ampm}`;
       
       const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
       const dateEl = document.getElementById('date-display');
@@ -1999,7 +2293,7 @@
         if (result.ok) {
           if (!isSilentPolling) {
             if (!result.email) {
-              showShellSection('sec-emp-email', false);
+              switchCard('laptop-email-complete');
               document.getElementById('missingEmailEmpName').value = localStorage.getItem('empName');
               return;
             } else {
@@ -2093,16 +2387,17 @@
       }
     }
 
-    // --- INITIAL STARTUP ROUTING ---
+    // --- INITIAL ENTRY ROUTING ---
     if (mode === 'scan') {
-      document.querySelector('.footer').style.display = 'none';
+      document.getElementById('standard-topbar').style.display = 'none';
+      document.getElementById('standard-footer').style.display = 'none';
       if (!isMobile) {
-        document.getElementById('device-error').classList.add('active');
+        switchCard('device-error');
         document.getElementById('error-message').innerText = "Security Block: Verification must be done on a mobile device.";
       } else {
         getOrCreateMobileDeviceId();
 
-        document.getElementById('phone-auth').classList.add('active');
+        switchCard('phone-auth');
         const actionText = (urlParams.get('action') || '').replace('_', ' ');
         const empName = urlParams.get('name');
         const empTeam = urlParams.get('team');
@@ -2138,11 +2433,11 @@
       }
     } else {
       if (isMobile) {
-        document.getElementById('device-error').classList.add('active');
+        document.getElementById('standard-topbar').style.display = 'none';
+        switchCard('device-error');
         document.getElementById('error-message').innerText = "Access Denied: Portal access is restricted to desktop devices.";
       } else {
-        document.getElementById('unified-shell').style.display = 'flex';
-        switchPortalTab('employee');
+        showRoleSelector();
       }
     }
 
@@ -2186,7 +2481,7 @@
         localStorage.setItem('empEmail', email);
         localStorage.setItem('authCode', newAuthCode);
 
-        showShellSection('sec-emp-reveal', false);
+        switchCard('laptop-reveal');
         document.getElementById('auth-code-display').innerText = newAuthCode;
       } catch (err) {
         alert("Connection failed while saving registration. Please try again.");
