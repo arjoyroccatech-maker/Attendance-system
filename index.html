@@ -12,14 +12,14 @@
   
   <style>
     :root {
-      --bg: #F3F5F8;
+      --bg: #EEF2F6;
       --surface: #FFFFFF;
       --surface-soft: #F8FAFC;
       --ink: #0F172A;
-      --ink-secondary: #475569;
+      --ink-secondary: #334155;
       --ink-muted: #64748B;
-      --line: #E2E8F0;
-      --line-strong: #CBD5E1;
+      --line: #CBD5E1;
+      --line-soft: #E2E8F0;
 
       --emerald: #059669;
       --emerald-bg: #ECFDF5;
@@ -27,11 +27,10 @@
       --crimson-bg: #FEF2F2;
       --amber: #D97706;
       --amber-bg: #FFFBEB;
-      --blue: #2563EB;
+      --blue: #1D4ED8;
       --blue-bg: #EFF6FF;
 
-      --shadow-float: 0 24px 48px -12px rgba(15, 23, 42, 0.08), 0 4px 14px -2px rgba(15, 23, 42, 0.03);
-      --shadow-dock: 0 20px 40px -8px rgba(15, 23, 42, 0.22), 0 4px 12px rgba(15, 23, 42, 0.08);
+      --shadow-kiosk: 0 22px 46px -12px rgba(15, 23, 42, 0.09), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
     }
     
     * { box-sizing: border-box; }
@@ -40,54 +39,54 @@
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background-color: var(--bg);
       background-image:
-        radial-gradient(circle at 15% 10%, rgba(5, 150, 105, 0.05) 0%, transparent 40%),
-        radial-gradient(circle at 85% 90%, rgba(37, 99, 235, 0.05) 0%, transparent 45%);
+        radial-gradient(circle at 12% 8%, rgba(5, 150, 105, 0.05) 0%, transparent 42%),
+        radial-gradient(circle at 88% 92%, rgba(15, 23, 42, 0.05) 0%, transparent 46%);
       color: var(--ink);
       margin: 0; padding: 0; display: flex; flex-direction: column;
       min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
 
-    /* --- UNIFIED TOP NAV BAR --- */
+    /* --- UNIFIED KIOSK TOP NAV BAR --- */
     .top-bar {
-      background: rgba(255, 255, 255, 0.86);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1.5px solid var(--line-soft);
       padding: 14px 36px;
       display: flex; justify-content: space-between; align-items: center;
       position: sticky; top: 0; z-index: 50;
     }
     .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
     .brand-logo {
-      width: 38px; height: 38px; border-radius: 11px;
+      width: 40px; height: 40px; border-radius: 12px;
       background: var(--ink);
       display: flex; align-items: center; justify-content: center;
     }
-    .brand-logo svg { width: 20px; height: 20px; fill: #34D399; }
+    .brand-logo svg { width: 21px; height: 21px; fill: #34D399; }
     .brand-text { display: flex; flex-direction: column; }
-    .brand-title { font-weight: 800; font-size: 15px; letter-spacing: 0.6px; color: var(--ink); }
-    .brand-subtitle { font-size: 11px; color: var(--ink-muted); font-weight: 500; }
+    .brand-title { font-weight: 800; font-size: 15.5px; letter-spacing: 0.6px; color: var(--ink); }
+    .brand-subtitle { font-size: 11.5px; color: var(--ink-muted); font-weight: 600; }
     
     .nav-actions { display: flex; align-items: center; gap: 12px; }
     .status-chip {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 6px 13px; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 14px; border-radius: 999px;
       background: var(--emerald-bg); color: var(--emerald);
-      font-size: 12px; font-weight: 700;
+      font-size: 12px; font-weight: 700; border: 1px solid rgba(5, 150, 105, 0.25);
     }
     .status-dot {
-      width: 7px; height: 7px; background-color: #10B981; border-radius: 50%;
+      width: 8px; height: 8px; background-color: #10B981; border-radius: 50%;
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22);
     }
     .nav-btn {
       display: inline-flex; align-items: center; gap: 7px;
-      padding: 7px 14px; border-radius: 10px;
-      background: var(--surface-soft); color: var(--ink-secondary);
-      border: 1px solid var(--line); cursor: pointer;
-      font-size: 12.5px; font-weight: 600; font-family: 'Inter', sans-serif;
+      padding: 8px 15px; border-radius: 11px;
+      background: var(--surface-soft); color: var(--ink);
+      border: 1.5px solid var(--line); cursor: pointer;
+      font-size: 12.5px; font-weight: 700; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
     }
-    .nav-btn:hover { background: #FFFFFF; color: var(--ink); border-color: var(--line-strong); }
+    .nav-btn:hover { background: #FFFFFF; border-color: var(--ink); }
     .nav-btn svg { width: 15px; height: 15px; fill: currentColor; }
 
     /* --- MAIN STAGE --- */
@@ -96,39 +95,40 @@
     }
 
     .card {
-      background-color: var(--surface); padding: 0; border-radius: 28px;
+      background-color: var(--surface); padding: 0; border-radius: 26px;
       width: 100%; max-width: 660px; text-align: center;
-      box-shadow: var(--shadow-float);
-      display: none; animation: popIn 0.28s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
-      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: var(--shadow-kiosk);
+      display: none; animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
+      border: 1.5px solid var(--line-soft);
     }
     .active-card { display: block; }
     
     @keyframes popIn {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .card-padding { padding: 44px 44px 36px 44px; }
 
-    /* --- PORTAL SELECTOR (Kept as-is) --- */
+    /* --- PORTAL SELECTOR --- */
     .role-card { max-width: 640px; padding: 48px 42px; }
     .eyebrow-badge {
-      display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+      display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase;
       letter-spacing: 0.8px; color: var(--emerald); background: var(--emerald-bg);
       padding: 6px 14px; border-radius: 999px; margin-bottom: 14px;
+      border: 1px solid rgba(5, 150, 105, 0.2);
     }
     .role-card h2 { margin: 0 0 8px 0; font-size: 28px; font-weight: 800; letter-spacing: -0.6px; }
     .role-card p { color: var(--ink-muted); font-size: 14.5px; margin: 0 0 32px 0; }
     .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .role-btn {
-      background: var(--surface-soft); border: 1.5px solid var(--line); border-radius: 22px;
+      background: var(--surface-soft); border: 1.5px solid var(--line); border-radius: 20px;
       padding: 32px 22px; cursor: pointer; text-align: center;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex; flex-direction: column; align-items: center;
       font-family: 'Inter', sans-serif;
     }
-    .role-btn:hover { background: #FFFFFF; transform: translateY(-4px); box-shadow: 0 16px 30px -8px rgba(15, 23, 42, 0.1); }
+    .role-btn:hover { background: #FFFFFF; transform: translateY(-3px); box-shadow: 0 14px 28px -8px rgba(15, 23, 42, 0.12); }
     .role-btn.employee-role:hover { border-color: var(--emerald); }
     .role-btn.manager-role:hover { border-color: var(--ink); }
     .role-icon-circle {
@@ -150,7 +150,7 @@
     .setup-card { max-width: 440px; padding: 42px 38px; }
     .form-icon-header {
       width: 58px; height: 58px; border-radius: 16px;
-      background: var(--surface-soft); border: 1px solid var(--line);
+      background: var(--surface-soft); border: 1.5px solid var(--line-soft);
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 18px auto; color: var(--ink);
     }
@@ -165,7 +165,7 @@
       width: 100%; padding: 14px 16px; margin-bottom: 18px;
       border-radius: 12px; border: 1.5px solid var(--line);
       background: var(--surface-soft); color: var(--ink);
-      font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
     }
     .setup-card input:focus { outline: none; background: #FFFFFF; border-color: var(--ink); box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06); }
@@ -174,7 +174,7 @@
       font-size: 42px; font-weight: 800; color: var(--ink);
       letter-spacing: 12px; background: var(--surface-soft);
       padding: 20px; border-radius: 16px; margin-bottom: 20px;
-      border: 1.5px dashed var(--line-strong);
+      border: 1.5px dashed var(--line);
     }
     
     .btn-save {
@@ -185,37 +185,37 @@
     }
     .btn-save:hover { opacity: 0.92; transform: translateY(-1px); }
     .btn-save:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-    .sub-link { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--ink-muted); font-weight: 500; cursor: pointer; text-decoration: none; }
+    .sub-link { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--ink-muted); font-weight: 600; cursor: pointer; text-decoration: none; }
     .sub-link:hover { color: var(--ink); text-decoration: underline; }
 
     /* =========================================================================
-       ORIGINAL BENTO COMMAND DECK + FLOATING GLASS DOCK (Manager Workspace)
+       TRUE KIOSK-GRADE MANAGER TERMINAL (Segmented Hardware Tabs + Bento Strip)
        ========================================================================= */
-    .bento-deck {
+    .kiosk-terminal-deck {
       display: none;
       width: 100%;
-      max-width: 1240px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 28px 28px 110px 28px;
+      padding: 28px 28px 44px 28px;
       flex-direction: column;
-      gap: 24px;
+      gap: 22px;
     }
-    .bento-deck.active {
+    .kiosk-terminal-deck.active {
       display: flex;
     }
 
-    /* Bento Top Strip: Greeting + 4 Hero Metric Tiles */
+    /* Top Bento Row: Identity Card + 4 High-Contrast Kiosk KPI Tiles */
     .bento-top-grid {
       display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+      grid-template-columns: 1.45fr 1fr 1fr 1fr 1fr;
       gap: 16px;
     }
     .bento-tile {
       background: var(--surface);
-      border: 1px solid var(--line);
+      border: 1.5px solid var(--line-soft);
       border-radius: 22px;
       padding: 20px 22px;
-      box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.04);
+      box-shadow: 0 6px 18px -6px rgba(15, 23, 42, 0.05);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -228,100 +228,148 @@
     }
     .hero-dept-pill {
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
-      color: #34D399; background: rgba(52, 211, 153, 0.14);
-      padding: 4px 10px; border-radius: 999px; width: fit-content;
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px;
+      color: #34D399; background: rgba(52, 211, 153, 0.16);
+      padding: 5px 11px; border-radius: 999px; width: fit-content;
     }
-    .hero-mgr-name { font-size: 20px; font-weight: 800; margin: 10px 0 2px 0; letter-spacing: -0.4px; }
+    .hero-mgr-name { font-size: 21px; font-weight: 800; margin: 12px 0 3px 0; letter-spacing: -0.4px; }
     .hero-sync-note { font-size: 12px; color: #94A3B8; font-weight: 500; }
 
     .tile-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .tile-icon {
-      width: 40px; height: 40px; border-radius: 12px;
+      width: 44px; height: 44px; border-radius: 13px;
       display: flex; align-items: center; justify-content: center;
     }
-    .tile-icon svg { width: 20px; height: 20px; fill: currentColor; }
+    .tile-icon svg { width: 22px; height: 22px; fill: currentColor; }
     .ic-emerald { background: var(--emerald-bg); color: var(--emerald); }
     .ic-blue { background: var(--blue-bg); color: var(--blue); }
     .ic-slate { background: #F1F5F9; color: var(--ink); }
     .ic-amber { background: var(--amber-bg); color: var(--amber); }
 
-    .tile-big-num { font-size: 30px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -0.8px; }
-    .tile-caption { font-size: 12.5px; font-weight: 600; color: var(--ink-muted); margin-top: 4px; }
+    .tile-big-num { font-size: 32px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -0.8px; font-variant-numeric: tabular-nums; }
+    .tile-caption { font-size: 12.5px; font-weight: 700; color: var(--ink-muted); margin-top: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
 
-    /* Stationary Active Viewport Card (Only inner view swaps when clicking Dock) */
-    .bento-viewport {
+    /* Main Kiosk Terminal Frame */
+    .terminal-frame {
       background: var(--surface);
-      border: 1px solid var(--line);
+      border: 1.5px solid var(--line-soft);
       border-radius: 26px;
-      box-shadow: var(--shadow-float);
-      min-height: 460px;
+      box-shadow: var(--shadow-kiosk);
       overflow: hidden;
       text-align: left;
     }
 
+    /* Integrated Segmented Kiosk Control Bar (Zero Floating Overlap!) */
+    .segmented-kiosk-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: var(--surface-soft);
+      border-bottom: 1.5px solid var(--line-soft);
+      padding: 8px;
+      gap: 8px;
+    }
+    .seg-tab-btn {
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1.5px solid transparent;
+      background: transparent;
+      color: var(--ink-secondary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.16s ease;
+    }
+    .seg-tab-btn svg { width: 20px; height: 20px; fill: currentColor; opacity: 0.78; }
+    .seg-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--ink);
+    }
+    .seg-tab-btn.active {
+      background: #FFFFFF;
+      color: var(--ink);
+      border-color: var(--line);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    }
+    .seg-tab-btn.active svg { opacity: 1; color: var(--emerald); }
+    .seg-count {
+      font-size: 12px; font-weight: 800; padding: 3px 9px; border-radius: 999px;
+      background: #E2E8F0; color: var(--ink-secondary); font-variant-numeric: tabular-nums;
+    }
+    .seg-tab-btn.active .seg-count {
+      background: var(--ink); color: #FFFFFF;
+    }
+    .seg-count.warn { background: var(--amber-bg); color: var(--amber); }
+
+    /* Stationary Inner View Viewport */
     .deck-view {
       display: none;
-      animation: viewFade 0.18s ease-out;
+      min-height: 440px;
+      animation: viewFade 0.16s ease-out;
     }
     .deck-view.active {
       display: block;
     }
     @keyframes viewFade {
-      from { opacity: 0.4; }
+      from { opacity: 0.45; }
       to { opacity: 1; }
     }
 
     .view-bar {
       padding: 20px 28px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1.5px solid var(--line-soft);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 14px;
+      background: #FFFFFF;
     }
-    .view-heading { margin: 0; font-size: 19px; font-weight: 800; letter-spacing: -0.3px; }
+    .view-heading { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.4px; color: var(--ink); }
     .view-sub { font-size: 13px; color: var(--ink-muted); font-weight: 500; margin-top: 2px; }
 
     .filter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .clean-input, .clean-select {
-      padding: 9px 14px; border-radius: 11px; border: 1.5px solid var(--line);
-      background: var(--surface-soft); font-size: 13px; font-family: 'Inter', sans-serif;
-      color: var(--ink); font-weight: 500;
+      padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--line);
+      background: var(--surface-soft); font-size: 13.5px; font-family: 'Inter', sans-serif;
+      color: var(--ink); font-weight: 600;
     }
-    .clean-input { min-width: 220px; }
+    .clean-input { min-width: 230px; }
     .clean-input:focus, .clean-select:focus { outline: none; background: #FFF; border-color: var(--ink); }
 
     .btn-export-xlsx {
-      padding: 9px 16px; border-radius: 11px; border: none;
+      padding: 10px 18px; border-radius: 12px; border: none;
       background: var(--emerald); color: #FFFFFF;
-      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
-      cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+      font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 700;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
       box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
       transition: transform 0.12s, background 0.15s;
     }
     .btn-export-xlsx:hover { background: #047857; transform: translateY(-1px); }
-    .btn-export-xlsx svg { width: 16px; height: 16px; fill: currentColor; }
+    .btn-export-xlsx svg { width: 17px; height: 17px; fill: currentColor; }
 
     .btn-mini {
-      padding: 8px 13px; border-radius: 10px; border: 1px solid var(--line-strong);
+      padding: 9px 14px; border-radius: 10px; border: 1.5px solid var(--line);
       background: #FFFFFF; color: var(--ink); font-family: 'Inter', sans-serif;
       font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.15s;
     }
-    .btn-mini:hover { background: var(--surface-soft); }
+    .btn-mini:hover { background: var(--surface-soft); border-color: var(--ink); }
     .btn-mini.dark { background: var(--ink); color: #FFF; border-color: var(--ink); }
-    .btn-mini.danger { background: var(--crimson-bg); color: var(--crimson); border-color: rgba(220, 38, 38, 0.25); }
+    .btn-mini.danger { background: var(--crimson-bg); color: var(--crimson); border-color: rgba(220, 38, 38, 0.3); }
 
     /* Roster Cards Grid */
     .roster-grid {
       padding: 24px 28px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 16px;
     }
     .roster-card {
-      border: 1.5px solid var(--line);
+      border: 1.5px solid var(--line-soft);
       border-radius: 18px;
       padding: 18px;
       background: var(--surface-soft);
@@ -338,39 +386,39 @@
     .roster-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
     .roster-bottom {
       display: flex; justify-content: space-between; align-items: center;
-      padding-top: 12px; border-top: 1px solid var(--line);
-      font-size: 12.5px; color: var(--ink-secondary);
+      padding-top: 12px; border-top: 1px solid var(--line-soft);
+      font-size: 13px; color: var(--ink-secondary);
     }
 
-    /* Zero-Scroll Tables */
-    table.deck-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    /* Zero-Scroll High-Contrast Kiosk Tables */
+    table.deck-table { width: 100%; border-collapse: collapse; font-size: 14px; }
     table.deck-table th {
       background: var(--surface-soft); color: var(--ink-muted);
-      font-weight: 700; text-align: left; padding: 14px 24px;
-      border-bottom: 1px solid var(--line); font-size: 11px;
+      font-weight: 800; text-align: left; padding: 14px 24px;
+      border-bottom: 1.5px solid var(--line-soft); font-size: 11.5px;
       text-transform: uppercase; letter-spacing: 0.6px;
     }
     table.deck-table td {
-      padding: 15px 24px; border-bottom: 1px solid var(--line);
+      padding: 16px 24px; border-bottom: 1px solid var(--line-soft);
       color: var(--ink); vertical-align: middle;
     }
     table.deck-table tr:last-child td { border-bottom: none; }
     table.deck-table tr:hover td { background: var(--surface-soft); }
 
-    .person-cell { display: flex; align-items: center; gap: 12px; }
+    .person-cell { display: flex; align-items: center; gap: 13px; }
     .person-badge {
-      width: 38px; height: 38px; border-radius: 12px;
+      width: 40px; height: 40px; border-radius: 12px;
       background: #E2E8F0; color: var(--ink);
-      font-weight: 800; font-size: 13px;
+      font-weight: 800; font-size: 13.5px;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .person-badge.live { background: var(--emerald-bg); color: var(--emerald); }
-    .person-name { font-size: 14px; font-weight: 700; color: var(--ink); }
-    .person-team { font-size: 12px; color: var(--ink-muted); font-weight: 500; }
+    .person-badge.live { background: var(--emerald-bg); color: var(--emerald); border: 1px solid rgba(5, 150, 105, 0.25); }
+    .person-name { font-size: 14.5px; font-weight: 700; color: var(--ink); }
+    .person-team { font-size: 12px; color: var(--ink-muted); font-weight: 600; margin-top: 1px; }
 
     .tag {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 11px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap;
     }
     .tag-green { background: var(--emerald-bg); color: var(--emerald); }
     .tag-blue { background: var(--blue-bg); color: var(--blue); }
@@ -379,74 +427,20 @@
     .tag-red { background: var(--crimson-bg); color: var(--crimson); }
 
     .inline-field {
-      padding: 8px 11px; border-radius: 9px; border: 1.5px solid var(--line);
-      font-size: 13px; font-family: 'Inter', sans-serif; width: 140px;
+      padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--line);
+      font-size: 13.5px; font-family: 'Inter', sans-serif; width: 150px; font-weight: 500;
     }
-
-    /* FLOATING GLASS DOCK (Bottom Center Tab Bar — Original Signature Control) */
-    .floating-dock-wrap {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 60;
-      display: none;
-    }
-    .floating-dock-wrap.active {
-      display: block;
-    }
-    .floating-dock {
-      background: rgba(15, 23, 42, 0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      padding: 7px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: var(--shadow-dock);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-    }
-    .dock-tab {
-      padding: 11px 20px;
-      border-radius: 999px;
-      border: none;
-      background: transparent;
-      color: #CBD5E1;
-      font-family: 'Inter', sans-serif;
-      font-size: 13.5px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-      white-space: nowrap;
-    }
-    .dock-tab svg { width: 17px; height: 17px; fill: currentColor; }
-    .dock-tab:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.08); }
-    .dock-tab.active {
-      background: #FFFFFF;
-      color: var(--ink);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
-    }
-    .dock-pill {
-      font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 999px;
-      background: rgba(255, 255, 255, 0.16); color: inherit;
-    }
-    .dock-tab.active .dock-pill {
-      background: var(--ink); color: #FFFFFF;
-    }
+    .inline-field:focus { outline: none; border-color: var(--ink); }
 
     /* --- EMPLOYEE KIOSK UI --- */
     .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 28px; }
-    .welcome-divider { width: 1px; height: 56px; background-color: var(--line); }
+    .welcome-divider { width: 1px; height: 56px; background-color: var(--line-soft); }
 
     .avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; flex-shrink: 0; }
     .avatar {
       width: 100%; height: 100%; background: var(--surface-soft); border-radius: 50%;
       display: flex; justify-content: center; align-items: center;
-      overflow: hidden; border: 2px solid var(--line); transition: border-color 0.2s;
+      overflow: hidden; border: 2px solid var(--line-soft); transition: border-color 0.2s;
     }
     .avatar-wrapper:hover .avatar { border-color: var(--ink); }
     .avatar svg { width: 40px; height: 40px; fill: #94A3B8; }
@@ -506,7 +500,7 @@
 
     #otp-section {
       max-width: 360px; margin: 0 auto; padding: 24px;
-      background: var(--surface-soft); border-radius: 18px; border: 1px solid var(--line);
+      background: var(--surface-soft); border-radius: 18px; border: 1.5px solid var(--line-soft);
       display: none;
     }
     #otp-section h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 800; }
@@ -519,17 +513,17 @@
     }
     #otp-status-msg { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
 
-    .status-bar { border-top: 1px solid var(--line); display: flex; background: var(--surface-soft); }
+    .status-bar { border-top: 1.5px solid var(--line-soft); display: flex; background: var(--surface-soft); }
     .status-col { flex: 1; padding: 20px 28px; display: flex; align-items: center; gap: 14px; text-align: left; }
-    .status-col:first-child { border-right: 1px solid var(--line); }
+    .status-col:first-child { border-right: 1.5px solid var(--line-soft); }
     .status-icon-box {
       width: 40px; height: 40px; border-radius: 11px;
-      background: #FFFFFF; border: 1px solid var(--line);
+      background: #FFFFFF; border: 1px solid var(--line-soft);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .status-icon-box svg { width: 20px; height: 20px; fill: var(--ink-secondary); }
     .status-text-wrap { display: flex; flex-direction: column; align-items: flex-start; }
-    .status-label { font-size: 11.5px; color: var(--ink-muted); font-weight: 600; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .status-label { font-size: 11.5px; color: var(--ink-muted); font-weight: 700; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
     .status-value { font-size: 14.5px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
     .timer-highlight { color: var(--crimson); font-weight: 800; }
     
@@ -545,7 +539,7 @@
     #qrcode-container {
       margin: 10px auto; padding: 18px; background: white;
       border-radius: 20px; display: inline-block;
-      border: 1.5px solid var(--line); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+      border: 1.5px solid var(--line-soft); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
     }
     .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--emerald); margin-top: 14px; font-size: 14.5px; }
     .qr-countdown { font-size: 12px; font-weight: 600; color: var(--ink-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
@@ -568,7 +562,7 @@
     .phone-avatar-circle img { width: 100%; height: 100%; object-fit: cover; display: none; }
     .phone-badge {
       display: inline-block; background: var(--surface-soft); color: var(--ink-secondary);
-      border: 1px solid var(--line); font-size: 12px; font-weight: 700;
+      border: 1px solid var(--line-soft); font-size: 12px; font-weight: 700;
       padding: 5px 14px; border-radius: 999px; margin-bottom: 20px;
     }
 
@@ -577,6 +571,7 @@
     @media (max-width: 980px) {
       .bento-top-grid { grid-template-columns: repeat(2, 1fr); }
       .bento-hero-tile { grid-column: 1 / -1; }
+      .segmented-kiosk-bar { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 640px) {
       .top-bar { padding: 12px 18px; }
@@ -584,7 +579,6 @@
       .bento-top-grid { grid-template-columns: 1fr; }
       .card-padding { padding: 32px 24px; }
       .time-display { font-size: 56px; }
-      .dock-tab { padding: 10px 14px; font-size: 12px; }
     }
   </style>
 </head>
@@ -611,11 +605,11 @@
   </div>
 
   <!-- =====================================================================
-       ORIGINAL BENTO COMMAND DECK (Manager Workspace — Stationary Stage)
+       TRUE KIOSK-GRADE MANAGER COMMAND TERMINAL
        ===================================================================== -->
-  <div id="mgr-bento-deck" class="bento-deck">
+  <div id="mgr-bento-deck" class="kiosk-terminal-deck">
     
-    <!-- Top Bento Row: Identity Card + 4 Visual KPI Tiles -->
+    <!-- Top Bento Row: Identity Card + 4 High-Contrast Kiosk KPI Tiles -->
     <div class="bento-top-grid">
       <div class="bento-tile bento-hero-tile">
         <div class="hero-dept-pill" id="deck-mgr-dept">OPERATIONS</div>
@@ -674,15 +668,35 @@
       </div>
     </div>
 
-    <!-- Stationary Viewport Card (Only inner deck-view swaps when clicking Floating Dock) -->
-    <div class="bento-viewport">
+    <!-- Unified Kiosk Terminal Frame (Integrated Segmented Control + Stationary Viewport) -->
+    <div class="terminal-frame">
 
-      <!-- VIEW 1: TEAM ROSTER -->
+      <!-- Integrated Tactile Segmented Tab Bar (Zero Floating Overlap) -->
+      <div class="segmented-kiosk-bar">
+        <button type="button" class="seg-tab-btn active" id="dock-btn-live" onclick="switchDeckView('live')">
+          <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          Live Team <span class="seg-count" id="dock-count-live">0</span>
+        </button>
+        <button type="button" class="seg-tab-btn" id="dock-btn-history" onclick="switchDeckView('history')">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          Attendance Logs <span class="seg-count" id="dock-count-history">0</span>
+        </button>
+        <button type="button" class="seg-tab-btn" id="dock-btn-devices" onclick="switchDeckView('devices')">
+          <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+          Team & Devices <span class="seg-count" id="dock-count-devices">0</span>
+        </button>
+        <button type="button" class="seg-tab-btn" id="dock-btn-missing" onclick="switchDeckView('missing')">
+          <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          Open Shifts <span class="seg-count warn" id="dock-count-missing">0</span>
+        </button>
+      </div>
+
+      <!-- VIEW 1: LIVE TEAM PULSE -->
       <div id="deck-view-live" class="deck-view active">
         <div class="view-bar">
           <div>
             <h2 class="view-heading">Live Team Pulse</h2>
-            <div class="view-sub">Real-time presence across your departments</div>
+            <div class="view-sub">Real-time presence and active shifts across your departments</div>
           </div>
           <div class="filter-row">
             <select id="liveTeamFilter" class="clean-select" onchange="renderLiveTeamBoard(cachedManagerMembers, cachedManagerRecords)">
@@ -741,7 +755,7 @@
         <div class="view-bar">
           <div>
             <h2 class="view-heading">Registered Devices</h2>
-            <div class="view-sub">1-to-1 mobile hardware bindings and access status</div>
+            <div class="view-sub">1-to-1 mobile hardware bindings and terminal access status</div>
           </div>
         </div>
         <table class="deck-table">
@@ -783,28 +797,6 @@
     </div>
   </div>
 
-  <!-- FLOATING GLASS DOCK (Switches only the inner view inside the Bento Viewport) -->
-  <div id="mgr-floating-dock" class="floating-dock-wrap">
-    <div class="floating-dock">
-      <button type="button" class="dock-tab active" id="dock-btn-live" onclick="switchDeckView('live')">
-        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-        Team <span class="dock-pill" id="dock-count-live">0</span>
-      </button>
-      <button type="button" class="dock-tab" id="dock-btn-history" onclick="switchDeckView('history')">
-        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-        Logs <span class="dock-pill" id="dock-count-history">0</span>
-      </button>
-      <button type="button" class="dock-tab" id="dock-btn-devices" onclick="switchDeckView('devices')">
-        <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
-        Devices <span class="dock-pill" id="dock-count-devices">0</span>
-      </button>
-      <button type="button" class="dock-tab" id="dock-btn-missing" onclick="switchDeckView('missing')">
-        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-        Open Shifts <span class="dock-pill" id="dock-count-missing">0</span>
-      </button>
-    </div>
-  </div>
-
   <!-- =====================================================================
        CENTERED STAGE (Portal Selector, Employee Kiosk & Auth Forms)
        ===================================================================== -->
@@ -816,7 +808,7 @@
       <p id="error-message">Device not allowed.</p>
     </div>
 
-    <!-- PORTAL SELECTOR ENTRY SCREEN (Kept as-is) -->
+    <!-- PORTAL SELECTOR ENTRY SCREEN -->
     <div id="role-selector" class="card role-card active-card">
       <div class="eyebrow-badge">Attendance Portal</div>
       <h2>Choose Your Workspace</h2>
@@ -1111,1400 +1103,5 @@
       mgrAutoSyncInterval = null;
 
       document.getElementById('mgr-bento-deck').classList.remove('active');
-      document.getElementById('mgr-floating-dock').classList.remove('active');
       document.getElementById('centered-stage').style.display = 'flex';
-      document.getElementById('standard-footer').style.display = 'block';
-      document.getElementById('nav-sub-label').innerText = "Webmarketing Attendance Kiosk";
-      document.getElementById('live-sync-label').innerText = "System Online";
-
-      document.querySelectorAll('.card').forEach(el => el.classList.remove('active-card'));
-      const target = document.getElementById(cardId);
-      if (target) target.classList.add('active-card');
-    }
-
-    function getInitials(name) {
-      const parts = String(name || "?").trim().split(/\s+/);
-      if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-
-    function showRoleSelector() {
-      if (isMobile) return;
-      clearInterval(qrPollingInterval);
-      clearInterval(qrExpiryTimer);
-      clearInterval(mgrAutoSyncInterval);
-      qrPollingInterval = null;
-      qrExpiryTimer = null;
-      mgrAutoSyncInterval = null;
-      window.shiftStartTime = null;
-
-      const savedEmp = localStorage.getItem('empName');
-      const savedCode = localStorage.getItem('authCode');
-      const empPill = document.getElementById('emp-role-pill');
-      if (empPill) {
-        if (savedEmp && savedCode) {
-          empPill.innerText = `Login: ${savedEmp}`;
-          empPill.classList.add('ready');
-        } else {
-          empPill.innerText = "New Setup";
-          empPill.classList.remove('ready');
-        }
-      }
-
-      const savedMgrEmail = localStorage.getItem('mgrEmail');
-      const mgrPill = document.getElementById('mgr-role-pill');
-      if (mgrPill) {
-        if (savedMgrEmail) {
-          mgrPill.innerText = "Login Ready";
-          mgrPill.classList.add('ready');
-        } else {
-          mgrPill.innerText = "Register / Login";
-          mgrPill.classList.remove('ready');
-        }
-      }
-
-      switchCard('role-selector');
-    }
-
-    // --- EMPLOYEE ENTRY & AUTH CODE LOGIN ROUTING ---
-    function selectEmployeeRole() {
-      const savedName = localStorage.getItem('empName');
-      const authCode = localStorage.getItem('authCode');
-      if (savedName && authCode) {
-        document.getElementById('emp-login-subtitle').innerText = `Welcome back, ${savedName}. Enter your 4-digit Authentication Code to continue.`;
-        document.getElementById('empLoginCode').value = "";
-        document.getElementById('emp-login-error').innerText = "";
-        switchCard('employee-login');
-        setTimeout(() => document.getElementById('empLoginCode').focus(), 100);
-      } else {
-        switchCard('laptop-setup');
-      }
-    }
-
-    function submitEmployeeLogin() {
-      const enteredCode = document.getElementById('empLoginCode').value.trim();
-      const savedCode = localStorage.getItem('authCode');
-      const errEl = document.getElementById('emp-login-error');
-
-      if (!enteredCode || enteredCode.length !== 4) {
-        errEl.innerText = "Please enter your 4-digit Auth Code.";
-        return;
-      }
-
-      if (enteredCode !== savedCode) {
-        errEl.innerText = "Incorrect Authentication Code. Please try again.";
-        document.getElementById('empLoginCode').value = "";
-        document.getElementById('empLoginCode').focus();
-        return;
-      }
-
-      errEl.innerText = "";
-      openEmployeeKiosk();
-    }
-
-    function openEmployeeKiosk() {
-      const savedName = localStorage.getItem('empName');
-      switchCard('laptop-kiosk');
-      document.getElementById('kiosk-name').innerText = savedName.toUpperCase();
-
-      const cachedDataUrl = localStorage.getItem('profileDataUrl');
-      const cachedFileId = localStorage.getItem('profileFileId');
-      if (cachedDataUrl || cachedFileId) applyProfilePhoto(cachedDataUrl, cachedFileId);
-
-      fetchLiveStatus(false);
-    }
-
-    // --- MANAGER ENTRY, REGISTRATION & BENTO COMMAND DECK ---
-    function selectManagerRole() {
-      const savedMgrEmail = localStorage.getItem('mgrEmail');
-      if (savedMgrEmail) {
-        openManagerLogin();
-      } else {
-        switchCard('manager-setup');
-      }
-    }
-
-    function openManagerLogin() {
-      const savedMgrEmail = localStorage.getItem('mgrEmail') || "";
-      const emailInput = document.getElementById('mgrLoginEmail');
-      const subtitle = document.getElementById('mgr-login-subtitle');
-      document.getElementById('mgrLoginPass').value = "";
-
-      if (savedMgrEmail) {
-        emailInput.value = savedMgrEmail;
-        subtitle.innerText = `Welcome back (${savedMgrEmail}). Enter your manager password.`;
-      } else {
-        emailInput.value = "";
-        subtitle.innerText = "Enter your registered email and manager password.";
-      }
-      switchCard('manager-login');
-      setTimeout(() => document.getElementById('mgrLoginPass').focus(), 100);
-    }
-
-    function proceedToDevPass() {
-      const name = document.getElementById('mgrName').value.trim();
-      const dept = document.getElementById('mgrDept').value.trim();
-      const email = document.getElementById('mgrEmail').value.trim();
-
-      if (!name || !dept || !email) return alert("Please fill in Name, Department, and Email.");
-      if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
-
-      pendingManagerDraft = { name, dept, email };
-      document.getElementById('devPassInput').value = "";
-      switchCard('manager-dev-auth');
-      setTimeout(() => document.getElementById('devPassInput').focus(), 100);
-    }
-
-    async function verifyDevPass() {
-      const devPass = document.getElementById('devPassInput').value.trim();
-      const btn = document.getElementById('btn-verify-dev');
-      if (!devPass) return alert("Please enter the developer default pass.");
-
-      btn.disabled = true;
-      btn.innerText = "Verifying...";
-
-      try {
-        const res = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: "VERIFY_DEV_PASS", dev_pass: devPass })
-        });
-        const data = await res.json();
-        if (data.ok) {
-          pendingManagerDraft.devPass = devPass;
-          document.getElementById('mgrNewPass').value = "";
-          document.getElementById('mgrConfirmPass').value = "";
-          switchCard('manager-create-pass');
-          setTimeout(() => document.getElementById('mgrNewPass').focus(), 100);
-        } else {
-          alert(data.error || "Invalid developer password.");
-        }
-      } catch (e) {
-        alert("Connection failed. Please try again.");
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Verify Developer Pass";
-      }
-    }
-
-    async function completeManagerRegistration() {
-      const newPass = document.getElementById('mgrNewPass').value.trim();
-      const confirmPass = document.getElementById('mgrConfirmPass').value.trim();
-      const btn = document.getElementById('btn-save-mgr');
-
-      if (!newPass || newPass.length < 4) return alert("Password must be at least 4 characters.");
-      if (newPass !== confirmPass) return alert("Passwords do not match.");
-      if (!pendingManagerDraft) return switchCard('manager-setup');
-
-      btn.disabled = true;
-      btn.innerText = "Creating Account...";
-
-      try {
-        const res = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "REGISTER_MANAGER",
-            manager_name: pendingManagerDraft.name,
-            department: pendingManagerDraft.dept,
-            email: pendingManagerDraft.email,
-            dev_pass: pendingManagerDraft.devPass,
-            custom_password: newPass
-          })
-        });
-        const data = await res.json();
-        if (data.ok) {
-          localStorage.setItem('mgrName', data.manager.name);
-          localStorage.setItem('mgrDept', data.manager.department);
-          localStorage.setItem('mgrEmail', data.manager.email);
-          sessionStorage.setItem('mgrSessionPass', newPass);
-          serverTodayStr = data.today || "";
-          openBentoDashboard(data.manager, data.records || [], data.members || []);
-        } else {
-          alert(data.error || "Registration failed.");
-        }
-      } catch (e) {
-        alert("Connection failed while saving manager account.");
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Save Password & Open Dashboard";
-      }
-    }
-
-    async function submitManagerLogin() {
-      const email = document.getElementById('mgrLoginEmail').value.trim();
-      const password = document.getElementById('mgrLoginPass').value.trim();
-      const btn = document.getElementById('btn-mgr-login');
-
-      if (!password) return alert("Please enter your manager password.");
-
-      btn.disabled = true;
-      btn.innerText = "Authenticating...";
-
-      try {
-        const res = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "MANAGER_LOGIN",
-            email: email,
-            password: password
-          })
-        });
-        const data = await res.json();
-        if (data.ok) {
-          localStorage.setItem('mgrName', data.manager.name);
-          localStorage.setItem('mgrDept', data.manager.department);
-          localStorage.setItem('mgrEmail', data.manager.email);
-          sessionStorage.setItem('mgrSessionPass', password);
-          serverTodayStr = data.today || "";
-          openBentoDashboard(data.manager, data.records || [], data.members || []);
-        } else {
-          alert(data.error || "Invalid credentials.");
-        }
-      } catch (e) {
-        alert("Connection error while logging in.");
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Access Dashboard";
-      }
-    }
-
-    async function silentSyncManagerData() {
-      const email = localStorage.getItem('mgrEmail') || "";
-      const pass = sessionStorage.getItem('mgrSessionPass') || "";
-      if (!pass || !document.getElementById('mgr-bento-deck').classList.contains('active')) return;
-
-      try {
-        const res = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: "MANAGER_LOGIN", email: email, password: pass })
-        });
-        const data = await res.json();
-        if (data.ok) {
-          serverTodayStr = data.today || serverTodayStr;
-          updateBentoDeckData(data.manager, data.records || [], data.members || []);
-        }
-      } catch (e) {}
-    }
-
-    // Floating Dock Switcher: Swaps ONLY the inner deck-view inside the stationary card
-    function switchDeckView(viewKey) {
-      ['live', 'history', 'devices', 'missing'].forEach(k => {
-        document.getElementById(`dock-btn-${k}`).classList.toggle('active', k === viewKey);
-        document.getElementById(`deck-view-${k}`).classList.toggle('active', k === viewKey);
-      });
-    }
-
-    function populateTeamFilters(members, records) {
-      const teamSet = new Set();
-      members.forEach(m => { if (m.team) teamSet.add(String(m.team).trim()); });
-      records.forEach(r => { if (r.team) teamSet.add(String(r.team).trim()); });
-      const teams = Array.from(teamSet).sort();
-
-      ['liveTeamFilter', 'mgrFilterTeam'].forEach(selectId => {
-        const sel = document.getElementById(selectId);
-        if (!sel) return;
-        const prev = sel.value || "ALL";
-        sel.innerHTML = `<option value="ALL">All Teams</option>` +
-          teams.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
-        sel.value = teams.includes(prev) ? prev : "ALL";
-      });
-    }
-
-    function openBentoDashboard(manager, records, members) {
-      document.getElementById('centered-stage').style.display = 'none';
-      document.getElementById('standard-footer').style.display = 'none';
-      document.getElementById('nav-sub-label').innerText = "Manager Command Deck";
-      document.getElementById('mgr-bento-deck').classList.add('active');
-      document.getElementById('mgr-floating-dock').classList.add('active');
-
-      updateBentoDeckData(manager, records, members);
-
-      clearInterval(mgrAutoSyncInterval);
-      mgrAutoSyncInterval = setInterval(silentSyncManagerData, 15000);
-    }
-
-    function updateBentoDeckData(manager, records, members) {
-      cachedManagerRecords = records;
-      cachedManagerMembers = members;
-
-      document.getElementById('deck-mgr-name').innerText = manager.name;
-      document.getElementById('deck-mgr-dept').innerText = String(manager.department || "MANAGER").toUpperCase();
-
-      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      document.getElementById('deck-sync-time').innerText = `Live synced • ${nowTime}`;
-      document.getElementById('live-sync-label').innerText = `Live • ${nowTime}`;
-
-      populateTeamFilters(members, records);
-
-      const activeRecords = records.filter(r => r.timeIn && !r.timeOut);
-      const missingOutRecords = activeRecords;
-
-      document.getElementById('stat-active-shifts').innerText = activeRecords.length;
-      document.getElementById('stat-total-members').innerText = members.length;
-      document.getElementById('stat-total-logs').innerText = records.length;
-      document.getElementById('stat-missing-outs').innerText = missingOutRecords.length;
-
-      document.getElementById('dock-count-live').innerText = activeRecords.length;
-      document.getElementById('dock-count-history').innerText = records.length;
-      document.getElementById('dock-count-devices').innerText = members.length;
-      document.getElementById('dock-count-missing').innerText = missingOutRecords.length;
-
-      renderLiveTeamBoard(members, records);
-      filterManagerTable();
-      renderDevicesTable(members);
-      renderMissingTimeOutsTable(missingOutRecords);
-    }
-
-    // VIEW 1: LIVE TEAM PULSE
-    function renderLiveTeamBoard(members, records) {
-      const grid = document.getElementById('live-board-grid');
-      const teamFilterEl = document.getElementById('liveTeamFilter');
-      const selectedTeam = teamFilterEl ? teamFilterEl.value : "ALL";
-
-      const visibleMembers = selectedTeam === "ALL"
-        ? members
-        : members.filter(m => String(m.team || "").trim() === selectedTeam);
-
-      if (!visibleMembers.length) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--ink-muted);">No team members found for this filter.</div>`;
-        return;
-      }
-
-      grid.innerHTML = visibleMembers.map(m => {
-        const nameLower = String(m.name || "").toLowerCase();
-        const activeShift = records.find(r => String(r.employeeName || "").toLowerCase() === nameLower && r.timeIn && !r.timeOut);
-        const todayCompleted = records.find(r => String(r.employeeName || "").toLowerCase() === nameLower && r.date === serverTodayStr && r.timeOut);
-
-        let statusTag = `<span class="tag tag-gray">Offline</span>`;
-        let metaLeft = "No shift today";
-        let metaRight = "";
-
-        if (activeShift) {
-          statusTag = `<span class="tag tag-green">● Active</span>`;
-          metaLeft = `In: <strong>${escapeHtml(activeShift.timeIn)}</strong>`;
-          metaRight = activeShift.workArrangement === "Work From Home"
-            ? `<span class="tag tag-amber">WFH</span>`
-            : `<span class="tag tag-blue">Onsite</span>`;
-        } else if (todayCompleted) {
-          statusTag = `<span class="tag tag-blue">✓ Done</span>`;
-          metaLeft = `Total: <strong>${escapeHtml(todayCompleted.totalHours || "—")}</strong>`;
-          metaRight = escapeHtml(todayCompleted.workArrangement || "");
-        }
-
-        return `
-          <div class="roster-card ${activeShift ? 'online' : ''}">
-            <div class="roster-top">
-              <div class="person-cell">
-                <div class="person-badge ${activeShift ? 'live' : ''}">${escapeHtml(getInitials(m.name))}</div>
-                <div>
-                  <div class="person-name">${escapeHtml(m.name)}</div>
-                  <div class="person-team">${escapeHtml(m.team)}</div>
-                </div>
-              </div>
-              ${statusTag}
-            </div>
-            <div class="roster-bottom">
-              <span>${metaLeft}</span>
-              <span>${metaRight}</span>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    // VIEW 2: ATTENDANCE LOGS + EXCEL EXPORT
-    function filterManagerTable() {
-      const q = (document.getElementById('mgrSearchInput').value || "").trim().toLowerCase();
-      const teamFilter = document.getElementById('mgrFilterTeam').value;
-      const arrFilter = document.getElementById('mgrFilterArr').value;
-      const statusFilter = document.getElementById('mgrFilterStatus').value;
-
-      const filtered = cachedManagerRecords.filter(r => {
-        const matchesQuery = !q ||
-          String(r.employeeName || "").toLowerCase().includes(q) ||
-          String(r.team || "").toLowerCase().includes(q) ||
-          String(r.date || "").toLowerCase().includes(q);
-
-        const matchesTeam = teamFilter === "ALL" || String(r.team || "").trim() === teamFilter;
-        const matchesArr = arrFilter === "ALL" || String(r.workArrangement || "") === arrFilter;
-        const isActive = Boolean(r.timeIn && !r.timeOut);
-        const matchesStatus = statusFilter === "ALL" ||
-          (statusFilter === "ACTIVE" && isActive) ||
-          (statusFilter === "COMPLETED" && !isActive);
-
-        return matchesQuery && matchesTeam && matchesArr && matchesStatus;
-      });
-
-      cachedFilteredRecords = filtered;
-      document.getElementById('mgr-filtered-count').innerText = `${filtered.length} logs found`;
-      renderAttendanceRows(filtered);
-    }
-
-    function renderAttendanceRows(rows) {
-      const tbody = document.getElementById('mgr-table-body');
-      if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:42px; color:var(--ink-muted);">No matching attendance records found.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = rows.map(r => {
-        const isActive = Boolean(r.timeIn && !r.timeOut);
-        const arrBadge = r.workArrangement === "Work From Home"
-          ? `<span class="tag tag-amber">WFH</span>`
-          : `<span class="tag tag-blue">${escapeHtml(r.workArrangement || "Onsite")}</span>`;
-
-        const timeOutCell = r.timeOut
-          ? escapeHtml(r.timeOut)
-          : `<span class="tag tag-green">● Active</span>`;
-
-        const hoursCell = r.totalHours
-          ? `<strong>${escapeHtml(r.totalHours)}</strong>`
-          : `<span style="color:var(--ink-muted);">—</span>`;
-
-        return `
-          <tr>
-            <td>
-              <div class="person-cell">
-                <div class="person-badge ${isActive ? 'live' : ''}">${escapeHtml(getInitials(r.employeeName))}</div>
-                <div>
-                  <div class="person-name">${escapeHtml(r.employeeName)}</div>
-                  <div class="person-team">${escapeHtml(r.team)}</div>
-                </div>
-              </div>
-            </td>
-            <td style="font-weight:600;">${escapeHtml(r.date)}</td>
-            <td style="font-variant-numeric:tabular-nums;">${escapeHtml(r.timeIn)}</td>
-            <td style="font-variant-numeric:tabular-nums;">${timeOutCell}</td>
-            <td>${arrBadge}</td>
-            <td style="font-variant-numeric:tabular-nums;">${hoursCell}</td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    function exportAttendanceToExcel() {
-      const rowsToExport = cachedFilteredRecords.length ? cachedFilteredRecords : cachedManagerRecords;
-      if (!rowsToExport.length) return alert("No attendance records available to export.");
-      if (typeof XLSX === "undefined") return alert("Excel library still loading. Please try again in a second.");
-
-      const worksheetData = rowsToExport.map(r => ({
-        "Date": r.date || "",
-        "Employee Name": r.employeeName || "",
-        "Team / Department": r.team || "",
-        "Work Arrangement": r.workArrangement || "Onsite",
-        "Time In": r.timeIn || "",
-        "Time Out": r.timeOut || "Active Shift",
-        "Total Hours": r.totalHours || "",
-        "Device ID": r.deviceId || "",
-        "Last Updated": r.lastUpdated || ""
-      }));
-
-      const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-      worksheet["!cols"] = [
-        { wch: 13 }, { wch: 24 }, { wch: 18 }, { wch: 18 },
-        { wch: 15 }, { wch: 28 }, { wch: 13 }, { wch: 20 }, { wch: 20 }
-      ];
-
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance History");
-
-      const dateStamp = serverTodayStr || new Date().toISOString().slice(0, 10);
-      XLSX.writeFile(workbook, `Attendance_History_${dateStamp}.xlsx`);
-    }
-
-    // VIEW 3: REGISTERED DEVICES
-    function renderDevicesTable(members) {
-      const tbody = document.getElementById('mgr-devices-body');
-      if (!members.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">No registered employees found.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = members.map(m => {
-        const st = String(m.deviceStatus || "").toLowerCase();
-        let statusTag = `<span class="tag tag-green">● ${escapeHtml(m.deviceStatus || "Active")}</span>`;
-        if (st === "reset" || st === "pending") statusTag = `<span class="tag tag-amber">${escapeHtml(m.deviceStatus)}</span>`;
-        if (st === "blocked" || st === "disabled") statusTag = `<span class="tag tag-red">${escapeHtml(m.deviceStatus)}</span>`;
-
-        const isBlocked = (st === "blocked" || st === "disabled");
-        const toggleBtn = isBlocked
-          ? `<button type="button" class="btn-mini dark" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'UNBLOCK')">Unblock</button>`
-          : `<button type="button" class="btn-mini danger" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'BLOCK')">Block</button>`;
-
-        return `
-          <tr>
-            <td>
-              <div class="person-cell">
-                <div class="person-badge">${escapeHtml(getInitials(m.name))}</div>
-                <div>
-                  <div class="person-name">${escapeHtml(m.name)}</div>
-                  <div class="person-team">${escapeHtml(m.team)}</div>
-                </div>
-              </div>
-            </td>
-            <td style="color:var(--ink-secondary);">${escapeHtml(m.email || "—")}</td>
-            <td style="font-family:monospace; font-size:12.5px;">${escapeHtml(m.deviceId || "Unbound")}</td>
-            <td>${statusTag}</td>
-            <td>
-              <div style="display:flex; gap:8px;">
-                <button type="button" class="btn-mini" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET')">Reset Phone</button>
-                ${toggleBtn}
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    async function handleDeviceAction(empName, deviceAction) {
-      const label = deviceAction === "RESET"
-        ? `Reset bound mobile phone for ${empName}? Their next QR scan will register their new device.`
-        : (deviceAction === "BLOCK" ? `Suspend attendance access for ${empName}?` : `Restore access for ${empName}?`);
-      if (!confirm(label)) return;
-
-      const email = localStorage.getItem('mgrEmail') || "";
-      const pass = sessionStorage.getItem('mgrSessionPass') || "";
-
-      try {
-        const res = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "MANAGER_DEVICE_ACTION",
-            manager_email: email,
-            manager_password: pass,
-            target_employee: empName,
-            device_action: deviceAction
-          })
-        });
-        const data = await res.json();
-        if (data.ok) {
-          alert(data.message);
-          cachedManagerMembers = data.members || cachedManagerMembers;
-          renderDevicesTable(cachedManagerMembers);
-          renderLiveTeamBoard(cachedManagerMembers, cachedManagerRecords);
-        } else {
-          alert(data.error || "Action failed.");
-        }
-      } catch (e) {
-        alert("Connection error while updating device status.");
-      }
-    }
-
-    // VIEW 4: OPEN SHIFTS
-    function renderMissingTimeOutsTable(openRows) {
-      const tbody = document.getElementById('mgr-missing-body');
-      if (!openRows.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">All shifts are closed. No open shifts right now.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = openRows.map(r => `
-        <tr>
-          <td>
-            <div class="person-cell">
-              <div class="person-badge live">${escapeHtml(getInitials(r.employeeName))}</div>
-              <div>
-                <div class="person-name">${escapeHtml(r.employeeName)}</div>
-                <div class="person-team">${escapeHtml(r.team)}</div>
-              </div>
-            </div>
-          </td>
-          <td>
-            <div class="person-name">${escapeHtml(r.date)}</div>
-            <div class="person-team">In: ${escapeHtml(r.timeIn)}</div>
-          </td>
-          <td><input type="text" class="inline-field" id="resolve-out-${r._row}" placeholder="e.g. 06:00 PM"></td>
-          <td><input type="text" class="inline-field" id="resolve-note-${r._row}" placeholder="Optional reason"></td>
-          <td><button type="button" class="btn-mini dark" onclick="submitResolveShift(${r._row})">Save</button></td>
-        </tr>
-      `).join("");
-    }
-
-    async function submitResolveShift(rowNum) {
-      const timeOutVal = (document.getElementById(`resolve-out-${rowNum}`).value || "").trim();
-      const noteVal = (document.getElementById(`resolve-note-${rowNum}`).value || "").trim();
-      if (!timeOutVal) return alert("Please enter a Time Out (e.g. 06:00 PM or 18:00).");
-
-      const email = localStorage.getItem('mgrEmail') || "";
-      const pass = sessionStorage.getItem('mgrSessionPass') || "";
-
-      try {
-        const res = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "MANAGER_RESOLVE_SHIFT",
-            manager_email: email,
-            manager_password: pass,
-            row_number: rowNum,
-            manual_time_out: timeOutVal,
-            manager_note: noteVal
-          })
-        });
-        const data = await res.json();
-        if (data.ok) {
-          alert(data.message);
-          updateBentoDeckData(
-            {
-              name: localStorage.getItem('mgrName') || "Manager",
-              department: localStorage.getItem('mgrDept') || "",
-              email: email
-            },
-            data.records || [],
-            cachedManagerMembers
-          );
-        } else {
-          alert(data.error || "Unable to update shift.");
-        }
-      } catch (e) {
-        alert("Connection error while saving Time Out.");
-      }
-    }
-
-    function escapeHtml(str) {
-      return String(str || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    }
-
-    function escapeAttr(str) {
-      return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-    }
-
-    // --- PERSISTENT MOBILE DEVICE TOKEN (1-TO-1 BINDING) ---
-    function getOrCreateMobileDeviceId() {
-      let devId = localStorage.getItem('boundMobileDeviceId');
-      if (!devId) {
-        const randPart = Math.floor(100000 + Math.random() * 900000);
-        const charPart = Math.random().toString(36).substring(2, 6).toUpperCase();
-        devId = `PHONE-${randPart}-${charPart}`;
-        localStorage.setItem('boundMobileDeviceId', devId);
-      }
-      return devId;
-    }
-
-    // --- EMAIL OTP FALLBACK LOGIC ---
-    async function startEmailOTP() {
-      const actionSection = document.getElementById('action-section');
-      const otpSection = document.getElementById('otp-section');
-      const infoText = document.getElementById('otp-info-text');
-      const otpInput = document.getElementById('otp-code-input');
-      const verifyBtn = document.getElementById('otp-verify-btn');
-      const statusMsg = document.getElementById('otp-status-msg');
-
-      actionSection.style.display = 'none';
-      otpSection.style.display = 'block';
-      infoText.innerText = "Sending 6-digit code to your registered email...";
-      otpInput.value = "";
-      otpInput.disabled = true;
-      verifyBtn.disabled = true;
-      statusMsg.innerText = "";
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "SEND_OTP",
-            employee_name: localStorage.getItem('empName'),
-            team: localStorage.getItem('team')
-          })
-        });
-        const result = await response.json();
-
-        if (result.ok) {
-          infoText.innerText = result.message + " (valid for 3 mins)";
-          otpInput.disabled = false;
-          verifyBtn.disabled = false;
-          otpInput.focus();
-        } else {
-          infoText.innerText = "Unable to send OTP.";
-          statusMsg.style.color = "var(--crimson)";
-          statusMsg.innerText = "❌ " + result.error;
-        }
-      } catch (err) {
-        infoText.innerText = "Connection failed.";
-        statusMsg.style.color = "var(--crimson)";
-        statusMsg.innerText = "❌ Could not reach server.";
-      }
-    }
-
-    function cancelOTP() {
-      document.getElementById('otp-section').style.display = 'none';
-      document.getElementById('action-section').style.display = 'block';
-    }
-
-    async function submitEmailOTP() {
-      const otpCode = document.getElementById('otp-code-input').value.trim();
-      const statusMsg = document.getElementById('otp-status-msg');
-      const verifyBtn = document.getElementById('otp-verify-btn');
-      const targetAction = (currentShiftState === 'ACTIVE') ? 'TIME_OUT' : 'TIME_IN';
-
-      if (otpCode.length !== 6) {
-        statusMsg.style.color = "var(--crimson)";
-        statusMsg.innerText = "Please enter the 6-digit code.";
-        return;
-      }
-
-      verifyBtn.disabled = true;
-      statusMsg.style.color = "var(--ink)";
-      statusMsg.innerText = "Verifying OTP...";
-
-      if (targetAction === 'TIME_IN') {
-        localStorage.setItem('localShiftStart', Date.now().toString());
-      }
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "VERIFY_OTP",
-            target_action: targetAction,
-            otp_code: otpCode,
-            employee_name: localStorage.getItem('empName'),
-            team: localStorage.getItem('team'),
-            work_arrangement: document.getElementById('arrangement').value
-          })
-        });
-        const result = await response.json();
-
-        if (result.ok) {
-          statusMsg.style.color = "var(--emerald)";
-          statusMsg.innerText = "✅ " + result.message;
-          setTimeout(() => {
-            document.getElementById('otp-section').style.display = 'none';
-            fetchLiveStatus(false);
-          }, 1200);
-        } else {
-          statusMsg.style.color = "var(--crimson)";
-          statusMsg.innerText = "❌ " + result.error;
-          verifyBtn.disabled = false;
-        }
-      } catch (err) {
-        statusMsg.style.color = "var(--crimson)";
-        statusMsg.innerText = "❌ Connection error.";
-        verifyBtn.disabled = false;
-      }
-    }
-
-    // --- PROFILE PHOTO LOGIC ---
-    function applyProfilePhoto(dataUrl, fileId) {
-      const imgEl = document.getElementById('profile-photo-img');
-      const svgEl = document.getElementById('default-avatar-svg');
-      const overlayEl = document.getElementById('avatar-overlay-text');
-      const hintEl = document.getElementById('photo-action-hint');
-
-      if (dataUrl && dataUrl.startsWith('data:image')) {
-        imgEl.src = dataUrl;
-        imgEl.style.display = 'block';
-        svgEl.style.display = 'none';
-        overlayEl.innerText = 'Change';
-        hintEl.innerText = 'Change Photo';
-        hintEl.style.color = 'var(--ink-muted)';
-        localStorage.setItem('profileDataUrl', dataUrl);
-        if (fileId) localStorage.setItem('profileFileId', fileId);
-      } else if (fileId) {
-        imgEl.src = `https://lh3.googleusercontent.com/d/${fileId}=s250`;
-        imgEl.style.display = 'block';
-        svgEl.style.display = 'none';
-        overlayEl.innerText = 'Change';
-        hintEl.innerText = 'Change Photo';
-        hintEl.style.color = 'var(--ink-muted)';
-        localStorage.setItem('profileFileId', fileId);
-      } else {
-        imgEl.style.display = 'none';
-        svgEl.style.display = 'block';
-        overlayEl.innerText = 'Add Photo';
-        hintEl.innerText = '+ Add Profile Photo';
-        hintEl.style.color = 'var(--emerald)';
-        localStorage.removeItem('profileDataUrl');
-        localStorage.removeItem('profileFileId');
-      }
-    }
-
-    function applyPhoneProfilePhoto(srcOrDataUrl) {
-      const imgEl = document.getElementById('phone-profile-img');
-      const svgEl = document.getElementById('phone-default-svg');
-
-      if (srcOrDataUrl) {
-        imgEl.src = srcOrDataUrl;
-        imgEl.style.display = 'block';
-        svgEl.style.display = 'none';
-      } else {
-        imgEl.style.display = 'none';
-        svgEl.style.display = 'block';
-      }
-    }
-
-    function handleImageError() {
-      document.getElementById('profile-photo-img').style.display = 'none';
-      document.getElementById('default-avatar-svg').style.display = 'block';
-    }
-
-    function handlePhoneImageError() {
-      document.getElementById('phone-profile-img').style.display = 'none';
-      document.getElementById('phone-default-svg').style.display = 'block';
-    }
-
-    function triggerPhotoUpload() {
-      document.getElementById('photo-upload-input').click();
-    }
-
-    function handlePhotoSelected(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const loader = document.getElementById('avatar-loading-spinner');
-      loader.style.display = 'flex';
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = async function() {
-          const canvas = document.createElement('canvas');
-          const MAX_SIZE = 320;
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-          } else {
-            if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          const base64String = dataUrl.split(',')[1];
-
-          applyProfilePhoto(dataUrl, "");
-
-          try {
-            const response = await fetch(GOOGLE_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({
-                action: "UPLOAD_PHOTO",
-                employee_name: localStorage.getItem('empName'),
-                team: localStorage.getItem('team'),
-                device_id: "Kiosk-Upload",
-                image_base64: base64String,
-                mime_type: "image/jpeg"
-              })
-            });
-
-            const result = await response.json();
-            if (result.ok) {
-              applyProfilePhoto(result.profileDataUrl || dataUrl, result.fileId);
-            } else {
-              alert("Photo upload failed: " + (result.error || "Unknown error"));
-            }
-          } catch (err) {
-            alert("Connection error while uploading photo.");
-          } finally {
-            loader.style.display = 'none';
-            event.target.value = "";
-          }
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    async function initPhoneProfilePhoto(empName, empTeam, photoId) {
-      const cacheKey = `phonePhoto_${empName}`;
-      const cacheIdKey = `phonePhotoId_${empName}`;
-      const cached = localStorage.getItem(cacheKey);
-      const cachedId = localStorage.getItem(cacheIdKey);
-
-      if (photoId && photoId !== cachedId) {
-        localStorage.removeItem(cacheKey);
-        localStorage.setItem(cacheIdKey, photoId);
-        applyPhoneProfilePhoto(`https://lh3.googleusercontent.com/d/${photoId}=s250`);
-      } else if (cached) {
-        applyPhoneProfilePhoto(cached);
-      } else if (photoId) {
-        applyPhoneProfilePhoto(`https://lh3.googleusercontent.com/d/${photoId}=s250`);
-      }
-
-      if (!empName || !empTeam) return;
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "GET_DATA",
-            employee_name: empName,
-            team: empTeam,
-            device_id: getOrCreateMobileDeviceId()
-          })
-        });
-        const result = await response.json();
-        if (result.ok && result.profileDataUrl) {
-          applyPhoneProfilePhoto(result.profileDataUrl);
-          try {
-            localStorage.setItem(cacheKey, result.profileDataUrl);
-            if (result.profileFileId) localStorage.setItem(cacheIdKey, result.profileFileId);
-          } catch (err) {}
-        }
-      } catch (e) {}
-    }
-
-    // --- SMART TIME PARSER ---
-    function parseShiftTime(rawTimeIn) {
-      if (rawTimeIn) {
-        let parsed = new Date(rawTimeIn);
-        if (!isNaN(parsed.getTime())) return parsed;
-
-        const timeMatch = String(rawTimeIn).trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?$/i);
-        if (timeMatch) {
-          let hrs = parseInt(timeMatch[1], 10);
-          const mins = parseInt(timeMatch[2], 10);
-          const secs = timeMatch[3] ? parseInt(timeMatch[3], 10) : 0;
-          const period = timeMatch[4] ? timeMatch[4].toUpperCase() : null;
-
-          if (period === 'PM' && hrs < 12) hrs += 12;
-          if (period === 'AM' && hrs === 12) hrs = 0;
-
-          const now = new Date();
-          const todayShift = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hrs, mins, secs);
-          if (todayShift > now) todayShift.setDate(todayShift.getDate() - 1);
-          return todayShift;
-        }
-      }
-
-      const savedLocal = localStorage.getItem('localShiftStart');
-      if (savedLocal) {
-        const localDate = new Date(parseInt(savedLocal, 10));
-        if (!isNaN(localDate.getTime())) return localDate;
-      }
-      return new Date();
-    }
-
-    // --- LIVE CLOCK AND INLINE SHIFT TIMER ---
-    function updateClock() {
-      const now = new Date();
-      let hours = now.getHours(); let minutes = now.getMinutes();
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12; hours = hours ? hours : 12;
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      
-      const timeEl = document.getElementById('time-display');
-      if (timeEl) timeEl.innerHTML = `${hours}:${minutes} <span>${ampm}</span>`;
-      
-      const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
-      const dateEl = document.getElementById('date-display');
-      if (dateEl) dateEl.innerText = now.toLocaleDateString('en-US', options);
-
-      if (window.shiftStartTime && !isNaN(window.shiftStartTime.getTime())) {
-        const diffMs = Math.max(0, now - window.shiftStartTime);
-        const hrs = Math.floor(diffMs / (1000 * 60 * 60));
-        const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-        const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
-        
-        const pad = (num) => num.toString().padStart(2, '0');
-        const statusEl = document.getElementById('kiosk-status-text');
-        if (statusEl) {
-          statusEl.innerHTML = `Active Shift • <span class="timer-highlight">${pad(hrs)}:${pad(mins)}:${pad(secs)}</span>`;
-        }
-      }
-    }
-    setInterval(updateClock, 1000); updateClock();
-
-    async function fetchLiveStatus(isSilentPolling = false) {
-      const btnIn = document.getElementById('btn-time-in');
-      const btnOut = document.getElementById('btn-time-out');
-      const actionSection = document.getElementById('action-section');
-      const loadingState = document.getElementById('kiosk-loading');
-      const statusText = document.getElementById('kiosk-status-text');
-
-      if (!isSilentPolling) {
-        actionSection.style.display = 'none';
-        loadingState.style.display = 'block';
-      }
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "GET_DATA",
-            employee_name: localStorage.getItem('empName'),
-            team: localStorage.getItem('team'),
-            device_id: "Kiosk-Sync",
-            skip_photo: isSilentPolling
-          })
-        });
-        
-        const result = await response.json();
-        
-        if (result.ok) {
-          if (!isSilentPolling) {
-            if (!result.email) {
-              switchCard('laptop-email-complete');
-              document.getElementById('missingEmailEmpName').value = localStorage.getItem('empName');
-              return;
-            } else {
-              localStorage.setItem('empEmail', result.email);
-            }
-
-            const localPin = localStorage.getItem('authCode');
-            if (!result.hasPin && localPin) {
-              fetch(GOOGLE_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                  action: "SYNC_PIN",
-                  employee_name: localStorage.getItem('empName'),
-                  team: localStorage.getItem('team'),
-                  auth_pin: localPin
-                })
-              }).catch(() => {});
-            }
-
-            applyProfilePhoto(result.profileDataUrl || "", result.profileFileId || "");
-          }
-
-          const newShiftState = result.openRecord ? 'ACTIVE' : 'CHECKED_OUT';
-
-          if (isSilentPolling && expectedTargetState && newShiftState === expectedTargetState) {
-             clearInterval(qrPollingInterval); 
-             clearInterval(qrExpiryTimer);
-             qrPollingInterval = null;
-             qrExpiryTimer = null;
-             currentShiftState = newShiftState;
-             expectedTargetState = null;
-             
-             if (newShiftState === 'ACTIVE' && !localStorage.getItem('localShiftStart')) {
-               localStorage.setItem('localShiftStart', Date.now().toString());
-             }
-
-             const waitText = document.getElementById('qr-waiting-text');
-             waitText.innerHTML = '✅ Verified Successfully!';
-             waitText.style.color = 'var(--emerald)';
-             document.getElementById('qr-countdown-text').innerText = '';
-             
-             setTimeout(() => renderUIState(result), 1000);
-             return;
-          }
-
-          if (!isSilentPolling) {
-            currentShiftState = newShiftState;
-            renderUIState(result);
-          }
-        }
-      } catch (error) {
-        if (!isSilentPolling) {
-          statusText.innerText = "Offline";
-          loadingState.style.display = 'none';
-          actionSection.style.display = 'block';
-          btnIn.style.display = 'flex';
-          btnOut.style.display = 'none';
-        }
-      }
-    }
-
-    function renderUIState(result) {
-      const btnIn = document.getElementById('btn-time-in');
-      const btnOut = document.getElementById('btn-time-out');
-      const arrSelect = document.getElementById('arrangement');
-      const statusText = document.getElementById('kiosk-status-text');
-      
-      document.getElementById('kiosk-loading').style.display = 'none';
-      document.getElementById('qr-section').style.display = 'none';
-      document.getElementById('otp-section').style.display = 'none';
-      document.getElementById('action-section').style.display = 'block';
-
-      if (result.openRecord) {
-        if (result.openRecord.workArrangement) {
-          arrSelect.value = result.openRecord.workArrangement;
-        }
-        arrSelect.disabled = true;
-        btnIn.style.display = 'none';
-        btnOut.style.display = 'flex'; 
-
-        window.shiftStartTime = parseShiftTime(result.openRecord.timeIn);
-        updateClock();
-      } else {
-        window.shiftStartTime = null;
-        localStorage.removeItem('localShiftStart');
-        statusText.innerText = "Not Yet Clocked In";
-        arrSelect.disabled = false;
-        btnIn.style.display = 'flex';        
-        btnOut.style.display = 'none';
-      }
-    }
-
-    // --- INITIAL ENTRY ROUTING ---
-    if (mode === 'scan') {
-      document.getElementById('top-nav-bar').style.display = 'none';
-      document.getElementById('standard-footer').style.display = 'none';
-      if (!isMobile) {
-        switchCard('device-error');
-        document.getElementById('error-message').innerText = "Security Block: Verification must be done on a mobile device.";
-      } else {
-        getOrCreateMobileDeviceId();
-
-        switchCard('phone-auth');
-        const actionText = (urlParams.get('action') || '').replace('_', ' ');
-        const empName = urlParams.get('name');
-        const empTeam = urlParams.get('team');
-        const arrText = urlParams.get('arr') || 'Onsite';
-        const photoId = urlParams.get('photo') || "";
-        const qrTs = Number(urlParams.get('ts') || 0);
-        
-        document.getElementById('phone-greeting').innerText = empName;
-        document.getElementById('phone-badge').innerText = `${actionText} • ${arrText}`;
-
-        function enforcePhoneQrExpiry() {
-          if (!qrTs || (Date.now() - qrTs) > 60000) {
-            const statusDiv = document.getElementById('scan-status');
-            const submitBtn = document.getElementById('submit-btn');
-            const codeInput = document.getElementById('enteredCode');
-            statusDiv.style.color = "var(--crimson)";
-            statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = "0.5";
-            codeInput.disabled = true;
-            return true;
-          }
-          return false;
-        }
-
-        if (!enforcePhoneQrExpiry()) {
-          const phoneExpiryInterval = setInterval(() => {
-            if (enforcePhoneQrExpiry()) clearInterval(phoneExpiryInterval);
-          }, 500);
-        }
-
-        initPhoneProfilePhoto(empName, empTeam, photoId);
-      }
-    } else {
-      if (isMobile) {
-        document.getElementById('top-nav-bar').style.display = 'none';
-        switchCard('device-error');
-        document.getElementById('error-message').innerText = "Access Denied: Portal access is restricted to desktop devices.";
-      } else {
-        showRoleSelector();
-      }
-    }
-
-    async function registerLaptop() {
-      const name = document.getElementById('empName').value.trim();
-      const team = document.getElementById('team').value.trim();
-      const email = document.getElementById('empEmail').value.trim();
-      const btn = document.getElementById('btn-register-laptop');
-
-      if (!name || !team || !email) return alert("Please complete all fields including your email.");
-      if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
-
-      btn.disabled = true;
-      btn.innerText = "Saving Profile...";
-
-      const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "REGISTER_MEMBER",
-            employee_name: name,
-            team: team,
-            email: email,
-            auth_pin: newAuthCode
-          })
-        });
-        const result = await response.json();
-
-        if (!result.ok) {
-          alert("Registration error: " + result.error);
-          btn.disabled = false;
-          btn.innerText = "Secure Device & Continue";
-          return;
-        }
-
-        localStorage.setItem('empName', name);
-        localStorage.setItem('team', team);
-        localStorage.setItem('empEmail', email);
-        localStorage.setItem('authCode', newAuthCode);
-
-        switchCard('laptop-reveal');
-        document.getElementById('auth-code-display').innerText = newAuthCode;
-      } catch (err) {
-        alert("Connection failed while saving registration. Please try again.");
-        btn.disabled = false;
-        btn.innerText = "Secure Device & Continue";
-      }
-    }
-
-    async function saveMissingEmail() {
-      const email = document.getElementById('missingEmailInput').value.trim();
-      const btn = document.getElementById('btn-save-missing-email');
-
-      if (!email || email.indexOf("@") < 1) return alert("Please enter a valid email address.");
-
-      btn.disabled = true;
-      btn.innerText = "Saving Email...";
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "REGISTER_MEMBER",
-            employee_name: localStorage.getItem('empName'),
-            team: localStorage.getItem('team'),
-            email: email,
-            auth_pin: localStorage.getItem('authCode') || ""
-          })
-        });
-        const result = await response.json();
-
-        if (result.ok) {
-          localStorage.setItem('empEmail', email);
-          openEmployeeKiosk();
-        } else {
-          alert("Error: " + result.error);
-          btn.disabled = false;
-          btn.innerText = "Save Email & Continue";
-        }
-      } catch (err) {
-        alert("Connection error. Please try again.");
-        btn.disabled = false;
-        btn.innerText = "Save Email & Continue";
-      }
-    }
-
-    function cancelQR() {
-      clearInterval(qrPollingInterval);
-      clearInterval(qrExpiryTimer);
-      qrPollingInterval = null;
-      qrExpiryTimer = null;
-      expectedTargetState = null;
-      document.getElementById('qr-section').style.display = 'none';
-      document.getElementById('action-section').style.display = 'block';
-    }
-
-    function generateQR(actionType) {
-      const name = localStorage.getItem('empName');
-      const team = localStorage.getItem('team');
-      const photoId = localStorage.getItem('profileFileId') || "";
-      const arrangement = document.getElementById('arrangement').value;
-      const qrTimestamp = Date.now();
-
-      expectedTargetState = (actionType === 'TIME_IN') ? 'ACTIVE' : 'CHECKED_OUT';
-
-      if (actionType === 'TIME_IN') {
-        localStorage.setItem('localShiftStart', qrTimestamp.toString());
-      }
-
-      const currentWebsite = window.location.origin + window.location.pathname;
-      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&photo=${encodeURIComponent(photoId)}&ts=${qrTimestamp}`;
-      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
-      
-      document.getElementById('qr-image').src = qrImageUrl;
-      
-      const waitText = document.getElementById('qr-waiting-text');
-      waitText.innerHTML = '<div class="spinner"></div> Awaiting mobile verification...';
-      waitText.style.color = 'var(--emerald)';
-
-      const countdownEl = document.getElementById('qr-countdown-text');
-      let secondsLeft = 60;
-      countdownEl.innerText = `QR expires in ${secondsLeft}s`;
-      countdownEl.style.color = 'var(--ink-muted)';
-
-      document.getElementById('action-section').style.display = 'none';
-      document.getElementById('qr-section').style.display = 'block';
-
-      clearInterval(qrPollingInterval);
-      clearInterval(qrExpiryTimer);
-
-      qrPollingInterval = setInterval(() => fetchLiveStatus(true), 2000);
-      qrExpiryTimer = setInterval(() => {
-        secondsLeft--;
-        if (secondsLeft <= 15 && secondsLeft > 0) {
-          countdownEl.style.color = 'var(--crimson)';
-        }
-        if (secondsLeft <= 0) {
-          cancelQR();
-        } else {
-          countdownEl.innerText = `QR expires in ${secondsLeft}s`;
-        }
-      }, 1000);
-    }
-
-    async function verifyAndSubmit() {
-      const enteredCode = document.getElementById('enteredCode').value.trim();
-      const qrTimestamp = Number(urlParams.get('ts') || 0);
-      const statusDiv = document.getElementById('scan-status');
-      const submitBtn = document.getElementById('submit-btn');
-
-      if (!qrTimestamp || (Date.now() - qrTimestamp) > 60000) {
-        statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
-        statusDiv.style.color = "var(--crimson)";
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = "0.5";
-        return;
-      }
-
-      if (!enteredCode || enteredCode.length !== 4) {
-        statusDiv.innerText = "Please enter your 4-digit code.";
-        statusDiv.style.color = "var(--crimson)";
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.style.opacity = "0.5";
-      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:var(--ink);"></div> Verifying PIN & Device...';
-      statusDiv.style.color = "var(--ink)";
-
-      const mobileDeviceId = getOrCreateMobileDeviceId();
-
-      const payload = {
-        action: urlParams.get('action'),
-        employee_name: urlParams.get('name'),
-        team: urlParams.get('team'),
-        device_id: mobileDeviceId,
-        work_arrangement: urlParams.get('arr'),
-        entered_pin: enteredCode,
-        qr_ts: qrTimestamp
-      };
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        const result = await response.json();
-        
-        if (result.ok) {
-            statusDiv.style.color = "var(--emerald)";
-            statusDiv.innerText = "✅ SUCCESS! " + result.message;
-        } else {
-            statusDiv.style.color = "var(--crimson)";
-            statusDiv.innerText = "🚫 " + result.error;
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = "1";
-        }
-      } catch (error) {
-        statusDiv.style.color = "var(--crimson)";
-        statusDiv.innerText = "Connection failed. Check your internet.";
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = "1";
-      }
-    }
-  </script>
-</body>
-</html>
+      document.getElementBy
