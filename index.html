@@ -22,13 +22,13 @@
       --border-strong: #CBD5E1;
 
       --emerald: #059669;
-      --emerald-hover: #047857;
       --emerald-soft: #ECFDF5;
       --crimson: #DC2626;
-      --crimson-hover: #B91C1C;
       --crimson-soft: #FEF2F2;
       --amber: #D97706;
       --amber-soft: #FFFBEB;
+      --indigo: #4F46E5;
+      --indigo-soft: #EEF2FF;
       --slate-dark: #0F172A;
       --slate-dark-hover: #1E293B;
 
@@ -52,7 +52,7 @@
 
     /* --- FROSTED KIOSK TOP NAV BAR --- */
     .top-bar {
-      background: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
@@ -62,20 +62,20 @@
     }
     .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
     .brand-logo {
-      width: 38px; height: 38px; border-radius: 10px;
+      width: 40px; height: 40px; border-radius: 11px;
       background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
     }
-    .brand-logo svg { width: 20px; height: 20px; fill: #10B981; }
+    .brand-logo svg { width: 22px; height: 22px; fill: #10B981; }
     .brand-text { display: flex; flex-direction: column; }
-    .brand-title { font-weight: 800; font-size: 15px; letter-spacing: 0.6px; color: var(--text-primary); }
-    .brand-subtitle { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    .brand-title { font-weight: 800; font-size: 16px; letter-spacing: 0.5px; color: var(--text-primary); }
+    .brand-subtitle { font-size: 11.5px; color: var(--text-muted); font-weight: 500; }
     
     .nav-actions { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; }
     .status-chip {
       display: inline-flex; align-items: center; gap: 7px;
-      padding: 6px 12px; border-radius: 999px;
+      padding: 7px 14px; border-radius: 999px;
       background: var(--emerald-soft); color: var(--emerald);
       font-size: 12px; font-weight: 700; border: 1px solid rgba(5, 150, 105, 0.2);
     }
@@ -85,18 +85,18 @@
     }
     .nav-btn {
       display: inline-flex; align-items: center; gap: 7px;
-      padding: 7px 14px; border-radius: 10px;
+      padding: 8px 15px; border-radius: 10px;
       background: var(--surface-subtle); color: var(--text-secondary);
       border: 1px solid var(--border); cursor: pointer;
-      font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
+      font-size: 12.5px; font-weight: 600; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
     }
     .nav-btn:hover { background: #FFFFFF; color: var(--text-primary); border-color: var(--border-strong); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
-    .nav-btn svg { width: 15px; height: 15px; fill: currentColor; }
+    .nav-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
     /* --- MAIN STAGE --- */
     .main-wrapper {
-      flex: 1; display: flex; justify-content: center; align-items: center; padding: 36px 20px;
+      flex: 1; display: flex; justify-content: center; align-items: center; padding: 32px 24px;
     }
 
     .card {
@@ -116,18 +116,18 @@
     .card-padding { padding: 44px 44px 36px 44px; }
 
     /* --- ROLE SELECTOR ENTRY --- */
-    .role-card { max-width: 620px; padding: 46px 42px; }
+    .role-card { max-width: 640px; padding: 48px 42px; }
     .eyebrow-badge {
       display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
       letter-spacing: 0.8px; color: var(--emerald); background: var(--emerald-soft);
-      padding: 5px 12px; border-radius: 999px; margin-bottom: 14px;
+      padding: 6px 14px; border-radius: 999px; margin-bottom: 14px;
     }
     .role-card h2 { margin: 0 0 8px 0; font-size: 28px; font-weight: 800; letter-spacing: -0.6px; color: var(--text-primary); }
-    .role-card p { color: var(--text-muted); font-size: 14px; margin: 0 0 32px 0; }
-    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .role-card p { color: var(--text-muted); font-size: 14.5px; margin: 0 0 32px 0; }
+    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .role-btn {
-      background: var(--surface-subtle); border: 1.5px solid var(--border); border-radius: 20px;
-      padding: 30px 22px; cursor: pointer; text-align: center;
+      background: var(--surface-subtle); border: 1.5px solid var(--border); border-radius: 22px;
+      padding: 32px 22px; cursor: pointer; text-align: center;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex; flex-direction: column; align-items: center;
       font-family: 'Inter', sans-serif;
@@ -139,16 +139,16 @@
     .role-btn.employee-role:hover { border-color: var(--emerald); }
     .role-btn.manager-role:hover { border-color: var(--slate-dark); }
     .role-icon-circle {
-      width: 60px; height: 60px; border-radius: 16px;
+      width: 68px; height: 68px; border-radius: 20px;
       display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
     }
     .employee-role .role-icon-circle { background: var(--emerald-soft); color: var(--emerald); }
     .manager-role .role-icon-circle { background: #E2E8F0; color: var(--slate-dark); }
-    .role-icon-circle svg { width: 28px; height: 28px; fill: currentColor; }
-    .role-title { font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -0.2px; }
-    .role-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+    .role-icon-circle svg { width: 34px; height: 34px; fill: currentColor; }
+    .role-title { font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -0.2px; }
+    .role-desc { font-size: 13px; color: var(--text-muted); line-height: 1.45; }
     .role-status-pill {
-      margin-top: 14px; font-size: 11px; font-weight: 700; padding: 5px 12px;
+      margin-top: 16px; font-size: 11.5px; font-weight: 700; padding: 6px 14px;
       border-radius: 999px; background: #E2E8F0; color: var(--text-secondary);
     }
     .role-status-pill.ready { background: var(--emerald-soft); color: var(--emerald); }
@@ -156,23 +156,23 @@
     /* --- FORMS & AUTH CARDS --- */
     .setup-card { max-width: 440px; padding: 42px 38px; }
     .form-icon-header {
-      width: 52px; height: 52px; border-radius: 14px;
+      width: 58px; height: 58px; border-radius: 16px;
       background: var(--surface-subtle); border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 18px auto; color: var(--text-primary);
     }
-    .form-icon-header svg { width: 24px; height: 24px; fill: currentColor; }
+    .form-icon-header svg { width: 28px; height: 28px; fill: currentColor; }
     .setup-card h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; }
-    .setup-card p { color: var(--text-muted); font-size: 13.5px; line-height: 1.5; margin: 0 0 24px 0; }
+    .setup-card p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin: 0 0 24px 0; }
     .setup-card label {
-      display: block; font-size: 12px; font-weight: 700; margin-bottom: 7px;
+      display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 7px;
       color: var(--text-secondary); text-align: left; letter-spacing: 0.2px;
     }
     .setup-card input {
-      width: 100%; padding: 13px 15px; margin-bottom: 18px;
+      width: 100%; padding: 14px 16px; margin-bottom: 18px;
       border-radius: 12px; border: 1.5px solid var(--border);
       background: var(--surface-subtle); color: var(--text-primary);
-      font-size: 14.5px; font-weight: 500; font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
     }
     .setup-card input:focus {
@@ -181,14 +181,14 @@
     }
     
     #auth-code-display {
-      font-size: 40px; font-weight: 800; color: var(--text-primary);
+      font-size: 42px; font-weight: 800; color: var(--text-primary);
       letter-spacing: 12px; background: var(--surface-subtle);
       padding: 20px; border-radius: 16px; margin-bottom: 20px;
       border: 1.5px dashed var(--border-strong);
     }
     
     .btn-save {
-      width: 100%; padding: 15px 20px; font-size: 14.5px; font-weight: 700;
+      width: 100%; padding: 15px 20px; font-size: 15px; font-weight: 700;
       background: var(--slate-dark); color: white; border: none;
       border-radius: 12px; cursor: pointer; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
@@ -201,107 +201,159 @@
     }
     .sub-link:hover { color: var(--text-primary); text-decoration: underline; }
 
-    /* --- MANAGER COMMAND CENTER DASHBOARD --- */
-    .manager-dash-card { max-width: 1140px; text-align: left; }
+    /* --- WIDE, VISUAL MANAGER COMMAND CENTER --- */
+    .manager-dash-card {
+      max-width: 1360px; width: 96vw; text-align: left;
+    }
     .mgr-header {
       padding: 26px 32px; border-bottom: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+      background: #FFFFFF;
     }
-    .mgr-header h2 { margin: 0 0 4px 0; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
-    .mgr-header p { margin: 0; font-size: 13px; color: var(--text-muted); }
+    .mgr-title-group { display: flex; align-items: center; gap: 16px; }
+    .mgr-hero-icon {
+      width: 52px; height: 52px; border-radius: 16px;
+      background: linear-gradient(135deg, #0F172A, #334155);
+      color: #FFFFFF; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.16); flex-shrink: 0;
+    }
+    .mgr-hero-icon svg { width: 26px; height: 26px; fill: currentColor; }
+    .mgr-header h2 { margin: 0 0 4px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+    .mgr-header p { margin: 0; font-size: 13.5px; color: var(--text-muted); font-weight: 500; }
+
     .mgr-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .btn-sm {
-      padding: 9px 15px; border-radius: 10px; border: 1px solid var(--border);
-      background: #FFF; color: var(--text-primary); font-size: 12.5px; font-weight: 700;
+      padding: 10px 16px; border-radius: 11px; border: 1px solid var(--border);
+      background: #FFF; color: var(--text-primary); font-size: 13px; font-weight: 700;
       cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s;
-      display: inline-flex; align-items: center; gap: 6px;
+      display: inline-flex; align-items: center; gap: 7px;
     }
+    .btn-sm svg { width: 16px; height: 16px; fill: currentColor; }
     .btn-sm:hover { background: var(--surface-subtle); border-color: var(--border-strong); }
     .btn-sm.primary { background: var(--slate-dark); color: #FFF; border-color: var(--slate-dark); }
     .btn-sm.primary:hover { background: var(--slate-dark-hover); }
-    .btn-sm.excel { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(5, 150, 105, 0.28); }
+    .btn-sm.excel { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(5, 150, 105, 0.3); }
     .btn-sm.excel:hover { background: #D1FAE5; }
     .btn-sm.danger { background: var(--crimson-soft); color: var(--crimson); border-color: rgba(220, 38, 38, 0.25); }
     .btn-sm.danger:hover { background: #FEE2E2; }
 
+    /* Big Icon KPI Cards */
     .mgr-stats {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      border-bottom: 1px solid var(--border); background: var(--surface-subtle);
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+      padding: 22px 32px; border-bottom: 1px solid var(--border); background: var(--surface-subtle);
     }
-    .mgr-stat-box { padding: 18px 26px; border-right: 1px solid var(--border); }
-    .mgr-stat-box:last-child { border-right: none; }
-    .mgr-stat-label { font-size: 11.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
-    .mgr-stat-val { font-size: 24px; font-weight: 800; color: var(--text-primary); }
+    .mgr-stat-box {
+      background: #FFFFFF; border: 1px solid var(--border); border-radius: 18px;
+      padding: 18px 20px; display: flex; align-items: center; gap: 16px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    }
+    .stat-icon-tile {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .stat-icon-tile svg { width: 26px; height: 26px; fill: currentColor; }
+    .tile-green { background: var(--emerald-soft); color: var(--emerald); }
+    .tile-indigo { background: var(--indigo-soft); color: var(--indigo); }
+    .tile-slate { background: #F1F5F9; color: var(--slate-dark); }
+    .tile-amber { background: var(--amber-soft); color: var(--amber); }
 
-    /* Manager Tabs Navigation */
+    .mgr-stat-info { display: flex; flex-direction: column; }
+    .mgr-stat-val { font-size: 28px; font-weight: 800; color: var(--text-primary); line-height: 1.1; }
+    .mgr-stat-label { font-size: 12.5px; color: var(--text-muted); font-weight: 600; margin-top: 3px; }
+
+    /* Visual Tabs Navigation */
     .mgr-tabs {
-      display: flex; gap: 6px; padding: 12px 28px 0 28px;
-      border-bottom: 1px solid var(--border); background: #FFFFFF; overflow-x: auto;
+      display: flex; gap: 10px; padding: 14px 32px;
+      border-bottom: 1px solid var(--border); background: #FFFFFF; flex-wrap: wrap;
     }
     .mgr-tab-btn {
-      padding: 11px 16px; border: none; background: transparent;
-      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
-      color: var(--text-muted); cursor: pointer; border-bottom: 2.5px solid transparent;
-      display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+      padding: 11px 18px; border: 1.5px solid transparent; border-radius: 12px;
+      background: var(--surface-subtle); font-family: 'Inter', sans-serif;
+      font-size: 13.5px; font-weight: 700; color: var(--text-secondary);
+      cursor: pointer; display: inline-flex; align-items: center; gap: 9px;
       transition: all 0.15s ease;
     }
-    .mgr-tab-btn:hover { color: var(--text-primary); }
-    .mgr-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--slate-dark); }
-    .tab-count-badge {
-      font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
-      background: var(--surface-subtle); color: var(--text-secondary); border: 1px solid var(--border);
+    .mgr-tab-btn svg { width: 18px; height: 18px; fill: currentColor; opacity: 0.85; }
+    .mgr-tab-btn:hover { background: #F1F5F9; color: var(--text-primary); }
+    .mgr-tab-btn.active {
+      background: var(--slate-dark); color: #FFFFFF; border-color: var(--slate-dark);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
     }
-    .tab-count-badge.warn { background: var(--amber-soft); color: var(--amber); border-color: rgba(217, 119, 6, 0.25); }
-    .tab-count-badge.live { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(5, 150, 105, 0.25); }
+    .mgr-tab-btn.active svg { opacity: 1; }
+    .tab-count-badge {
+      font-size: 11.5px; font-weight: 800; padding: 2px 9px; border-radius: 999px;
+      background: rgba(15, 23, 42, 0.08); color: inherit;
+    }
+    .mgr-tab-btn.active .tab-count-badge {
+      background: rgba(255, 255, 255, 0.2); color: #FFFFFF;
+    }
 
     .mgr-tab-panel { display: none; }
     .mgr-tab-panel.active { display: block; }
 
     /* Filter Toolbar inside History Tab */
     .filter-toolbar {
-      padding: 16px 28px; border-bottom: 1px solid var(--border);
+      padding: 18px 32px; border-bottom: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
       background: #FFFFFF;
     }
-    .filter-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .filter-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .mgr-search, .mgr-filter-select {
-      padding: 9px 13px; border-radius: 10px; border: 1.5px solid var(--border);
-      background: var(--surface-subtle); font-size: 13px; font-family: 'Inter', sans-serif;
+      padding: 10px 14px; border-radius: 11px; border: 1.5px solid var(--border);
+      background: var(--surface-subtle); font-size: 13.5px; font-family: 'Inter', sans-serif;
       color: var(--text-primary); font-weight: 500;
     }
-    .mgr-search { min-width: 230px; }
+    .mgr-search { min-width: 260px; }
     .mgr-search:focus, .mgr-filter-select:focus { outline: none; background: #FFF; border-color: var(--slate-dark); }
+
+    /* Avatar + Stacked Cell Helpers */
+    .emp-cell-wrap { display: flex; align-items: center; gap: 12px; }
+    .emp-initials-avatar {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: var(--indigo-soft); color: var(--indigo);
+      font-weight: 800; font-size: 14px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .emp-initials-avatar.active-av { background: var(--emerald-soft); color: var(--emerald); }
+    .emp-cell-name { font-size: 14px; font-weight: 700; color: var(--text-primary); line-height: 1.25; }
+    .emp-cell-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
 
     /* Live Team Board Grid */
     .live-board-grid {
-      padding: 26px 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;
-      max-height: 500px; overflow-y: auto;
+      padding: 28px 32px; display: grid; grid-template-columns: repeat(auto-fill, minmax(285px, 1fr)); gap: 18px;
+      max-height: 520px; overflow-y: auto;
     }
     .member-status-card {
-      border: 1.5px solid var(--border); border-radius: 16px; padding: 18px;
-      background: var(--surface); display: flex; flex-direction: column; gap: 10px;
-      transition: border-color 0.15s;
+      border: 1.5px solid var(--border); border-radius: 18px; padding: 20px;
+      background: var(--surface); display: flex; flex-direction: column; gap: 14px;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .member-status-card.is-in { border-color: rgba(5, 150, 105, 0.4); background: #FAFFFD; }
-    .member-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-    .member-card-name { font-size: 15px; font-weight: 800; color: var(--text-primary); }
-    .member-card-team { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
-    .member-card-meta { font-size: 12px; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid var(--border); }
+    .member-status-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -6px rgba(15, 23, 42, 0.08); }
+    .member-status-card.is-in { border-color: rgba(5, 150, 105, 0.45); background: #FAFFFD; }
+    .member-card-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .member-card-meta {
+      font-size: 13px; color: var(--text-secondary);
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 12px; border-top: 1px solid var(--border);
+    }
 
-    /* Tables */
-    .table-wrap { width: 100%; overflow-x: auto; max-height: 460px; }
-    table.att-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    /* Full-Width Zero-Scroll Tables */
+    .table-wrap { width: 100%; overflow-y: auto; max-height: 500px; }
+    table.att-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
     table.att-table th {
       position: sticky; top: 0; background: #F8FAFC; color: var(--text-muted);
-      font-weight: 700; text-align: left; padding: 13px 18px; border-bottom: 1px solid var(--border);
-      white-space: nowrap; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.4px;
+      font-weight: 700; text-align: left; padding: 14px 22px; border-bottom: 1px solid var(--border);
+      font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2;
     }
     table.att-table td {
-      padding: 13px 18px; border-bottom: 1px solid var(--border); color: var(--text-primary); white-space: nowrap;
+      padding: 14px 22px; border-bottom: 1px solid var(--border); color: var(--text-primary);
+      vertical-align: middle;
     }
     table.att-table tr:hover td { background: #F8FAFC; }
+
     .badge-pill {
-      display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 11px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap;
     }
     .badge-active { background: var(--emerald-soft); color: var(--emerald); }
     .badge-onsite { background: #EFF6FF; color: #1D4ED8; }
@@ -311,12 +363,12 @@
 
     /* Inline Resolve Form in Missing Time-Out Tab */
     .inline-resolve-input {
-      padding: 7px 10px; border-radius: 8px; border: 1.5px solid var(--border);
-      font-size: 12.5px; font-family: 'Inter', sans-serif; width: 135px;
+      padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border);
+      font-size: 13px; font-family: 'Inter', sans-serif; width: 140px;
     }
     .inline-note-input {
-      padding: 7px 10px; border-radius: 8px; border: 1.5px solid var(--border);
-      font-size: 12.5px; font-family: 'Inter', sans-serif; width: 160px;
+      padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border);
+      font-size: 13px; font-family: 'Inter', sans-serif; width: 170px;
     }
 
     /* --- EMPLOYEE KIOSK UI --- */
@@ -486,10 +538,14 @@
 
     .masked-input { -webkit-text-security: disc; text-security: disc; }
 
-    @media (max-width: 720px) {
+    @media (max-width: 860px) {
+      .mgr-stats { grid-template-columns: repeat(2, 1fr); }
+      .table-wrap { overflow-x: auto; }
+    }
+    @media (max-width: 640px) {
       .top-bar { padding: 12px 18px; }
       .role-grid { grid-template-columns: 1fr; }
-      .mgr-stats { grid-template-columns: 1fr 1fr; }
+      .mgr-stats { grid-template-columns: 1fr; }
       .card-padding { padding: 32px 24px; }
       .time-display { font-size: 56px; }
     }
@@ -529,7 +585,7 @@
     <div id="role-selector" class="card role-card active-card">
       <div class="eyebrow-badge">Attendance Portal</div>
       <h2>Choose Your Workspace</h2>
-      <p>Select Employee to log your shift, or Manager to review attendance & team devices.</p>
+      <p>Select Employee to log your shift, or Manager to monitor attendance & team devices.</p>
       <div class="role-grid">
         <button type="button" class="role-btn employee-role" onclick="selectEmployeeRole()">
           <div class="role-icon-circle">
@@ -626,52 +682,94 @@
       <span class="sub-link" onclick="switchCard('manager-setup')">Register a new manager account</span>
     </div>
 
-    <!-- MANAGER 4-TAB COMMAND CENTER DASHBOARD -->
+    <!-- WIDE VISUAL MANAGER COMMAND CENTER -->
     <div id="manager-dashboard" class="card manager-dash-card">
       <div class="mgr-header">
-        <div>
-          <h2>Manager Command Center</h2>
-          <p id="mgr-welcome-meta">Manager Portal • Live Team & Attendance Records</p>
+        <div class="mgr-title-group">
+          <div class="mgr-hero-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          </div>
+          <div>
+            <h2>Manager Dashboard</h2>
+            <p id="mgr-welcome-meta">Live Team & Attendance Overview</p>
+          </div>
         </div>
         <div class="mgr-controls">
-          <button type="button" class="btn-sm excel" onclick="exportAttendanceToExcel()">⬇ Export Excel (.xlsx)</button>
-          <button type="button" class="btn-sm primary" onclick="refreshManagerDashboard()">↻ Refresh</button>
-          <button type="button" class="btn-sm" onclick="logoutManager()">Logout</button>
+          <button type="button" class="btn-sm excel" onclick="exportAttendanceToExcel()">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            Export Excel
+          </button>
+          <button type="button" class="btn-sm primary" onclick="refreshManagerDashboard()">
+            <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            Refresh
+          </button>
+          <button type="button" class="btn-sm" onclick="logoutManager()">
+            <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+            Logout
+          </button>
         </div>
       </div>
 
+      <!-- BIG ICON KPI CARDS -->
       <div class="mgr-stats">
         <div class="mgr-stat-box">
-          <div class="mgr-stat-label">Clocked In Now</div>
-          <div class="mgr-stat-val" id="stat-active-shifts" style="color:var(--emerald);">0</div>
+          <div class="stat-icon-tile tile-green">
+            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          </div>
+          <div class="mgr-stat-info">
+            <div class="mgr-stat-val" id="stat-active-shifts" style="color:var(--emerald);">0</div>
+            <div class="mgr-stat-label">Active Now</div>
+          </div>
         </div>
+
         <div class="mgr-stat-box">
-          <div class="mgr-stat-label">Registered Team</div>
-          <div class="mgr-stat-val" id="stat-total-members">0</div>
+          <div class="stat-icon-tile tile-indigo">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </div>
+          <div class="mgr-stat-info">
+            <div class="mgr-stat-val" id="stat-total-members">0</div>
+            <div class="mgr-stat-label">Team Size</div>
+          </div>
         </div>
+
         <div class="mgr-stat-box">
-          <div class="mgr-stat-label">Total Attendance Logs</div>
-          <div class="mgr-stat-val" id="stat-total-logs">0</div>
+          <div class="stat-icon-tile tile-slate">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          </div>
+          <div class="mgr-stat-info">
+            <div class="mgr-stat-val" id="stat-total-logs">0</div>
+            <div class="mgr-stat-label">Total Logs</div>
+          </div>
         </div>
+
         <div class="mgr-stat-box">
-          <div class="mgr-stat-label">Missing Time-Outs</div>
-          <div class="mgr-stat-val" id="stat-missing-outs" style="color:var(--amber);">0</div>
+          <div class="stat-icon-tile tile-amber">
+            <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+          </div>
+          <div class="mgr-stat-info">
+            <div class="mgr-stat-val" id="stat-missing-outs" style="color:var(--amber);">0</div>
+            <div class="mgr-stat-label">Open Shifts</div>
+          </div>
         </div>
       </div>
 
-      <!-- 4 DASHBOARD TABS -->
+      <!-- VISUAL TABS WITH ICONS -->
       <div class="mgr-tabs">
         <button type="button" class="mgr-tab-btn active" id="tab-btn-live" onclick="switchManagerTab('live')">
-          Live Team Board <span class="tab-count-badge live" id="badge-live-count">0</span>
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          Live Team <span class="tab-count-badge" id="badge-live-count">0</span>
         </button>
         <button type="button" class="mgr-tab-btn" id="tab-btn-history" onclick="switchManagerTab('history')">
-          Attendance History <span class="tab-count-badge" id="badge-history-count">0</span>
+          <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 00-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0013 21a9 9 0 000-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+          History <span class="tab-count-badge" id="badge-history-count">0</span>
         </button>
         <button type="button" class="mgr-tab-btn" id="tab-btn-devices" onclick="switchManagerTab('devices')">
-          Employees & Devices <span class="tab-count-badge" id="badge-devices-count">0</span>
+          <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+          Devices <span class="tab-count-badge" id="badge-devices-count">0</span>
         </button>
         <button type="button" class="mgr-tab-btn" id="tab-btn-missing" onclick="switchManagerTab('missing')">
-          Missing Time-Outs <span class="tab-count-badge warn" id="badge-missing-count">0</span>
+          <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          Fix Time-Out <span class="tab-count-badge" id="badge-missing-count">0</span>
         </button>
       </div>
 
@@ -680,36 +778,34 @@
         <div id="live-board-grid" class="live-board-grid"></div>
       </div>
 
-      <!-- TAB 2: ATTENDANCE HISTORY + EXCEL EXPORT -->
+      <!-- TAB 2: ATTENDANCE HISTORY (ZERO SIDE-SCROLL) -->
       <div id="mgr-panel-history" class="mgr-tab-panel">
         <div class="filter-toolbar">
           <div class="filter-group">
-            <input type="text" id="mgrSearchInput" class="mgr-search" placeholder="Search name, team, date..." oninput="filterManagerTable()">
+            <input type="text" id="mgrSearchInput" class="mgr-search" placeholder="Search employee, team, date..." oninput="filterManagerTable()">
             <select id="mgrFilterArr" class="mgr-filter-select" onchange="filterManagerTable()">
-              <option value="ALL">All Arrangements</option>
-              <option value="Onsite">Onsite Only</option>
-              <option value="Work From Home">WFH Only</option>
+              <option value="ALL">All Modes</option>
+              <option value="Onsite">Onsite</option>
+              <option value="Work From Home">WFH</option>
             </select>
             <select id="mgrFilterStatus" class="mgr-filter-select" onchange="filterManagerTable()">
-              <option value="ALL">All Shift Statuses</option>
-              <option value="ACTIVE">Active Shifts Only</option>
-              <option value="COMPLETED">Completed Shifts Only</option>
+              <option value="ALL">All Statuses</option>
+              <option value="ACTIVE">Active Now</option>
+              <option value="COMPLETED">Completed</option>
             </select>
           </div>
-          <div style="font-size:12px; color:var(--text-muted); font-weight:600;" id="mgr-filtered-count">Showing 0 records</div>
+          <div style="font-size:12.5px; color:var(--text-muted); font-weight:700;" id="mgr-filtered-count">0 records</div>
         </div>
         <div class="table-wrap">
           <table class="att-table">
             <thead>
               <tr>
+                <th>Employee</th>
                 <th>Date</th>
-                <th>Employee Name</th>
-                <th>Team</th>
-                <th>Arrangement</th>
+                <th>Mode</th>
                 <th>Time In</th>
                 <th>Time Out</th>
-                <th>Total Hours</th>
-                <th>Device ID</th>
+                <th>Hours</th>
               </tr>
             </thead>
             <tbody id="mgr-table-body"></tbody>
@@ -717,18 +813,17 @@
         </div>
       </div>
 
-      <!-- TAB 3: EMPLOYEES & DEVICE MANAGEMENT -->
+      <!-- TAB 3: EMPLOYEES & DEVICE MANAGEMENT (ZERO SIDE-SCROLL) -->
       <div id="mgr-panel-devices" class="mgr-tab-panel">
         <div class="table-wrap">
           <table class="att-table">
             <thead>
               <tr>
-                <th>Employee Name</th>
-                <th>Team</th>
+                <th>Employee</th>
                 <th>Email</th>
-                <th>Bound Mobile Device</th>
-                <th>Device Status</th>
-                <th>Actions</th>
+                <th>Bound Phone</th>
+                <th>Status</th>
+                <th>Manage</th>
               </tr>
             </thead>
             <tbody id="mgr-devices-body"></tbody>
@@ -736,19 +831,17 @@
         </div>
       </div>
 
-      <!-- TAB 4: MISSING TIME-OUTS / CORRECTIONS -->
+      <!-- TAB 4: MISSING TIME-OUTS / CORRECTIONS (ZERO SIDE-SCROLL) -->
       <div id="mgr-panel-missing" class="mgr-tab-panel">
         <div class="table-wrap">
           <table class="att-table">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Employee Name</th>
-                <th>Team</th>
-                <th>Time In</th>
-                <th>Set Time Out (e.g. 06:00 PM)</th>
-                <th>Manager Note</th>
-                <th>Action</th>
+                <th>Employee</th>
+                <th>Date & In</th>
+                <th>Time Out</th>
+                <th>Note</th>
+                <th>Save</th>
               </tr>
             </thead>
             <tbody id="mgr-missing-body"></tbody>
@@ -951,6 +1044,12 @@
       if (target) target.classList.add('active-card');
     }
 
+    function getInitials(name) {
+      const parts = String(name || "?").trim().split(/\s+/);
+      if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
     function showRoleSelector() {
       if (isMobile) return;
       clearInterval(qrPollingInterval);
@@ -1035,7 +1134,7 @@
       fetchLiveStatus(false);
     }
 
-    // --- MANAGER ENTRY, REGISTRATION & 4-TAB COMMAND CENTER ---
+    // --- MANAGER ENTRY, REGISTRATION & VISUAL COMMAND CENTER ---
     function selectManagerRole() {
       const savedMgrEmail = localStorage.getItem('mgrEmail');
       if (savedMgrEmail) {
@@ -1222,10 +1321,10 @@
     function renderManagerDashboard(manager, records, members) {
       cachedManagerRecords = records;
       cachedManagerMembers = members;
-      document.getElementById('mgr-welcome-meta').innerText = `${manager.name} • ${manager.department} (${manager.email})`;
+      document.getElementById('mgr-welcome-meta').innerText = `${manager.name} • ${manager.department}`;
 
       const activeRecords = records.filter(r => r.timeIn && !r.timeOut);
-      const missingOutRecords = activeRecords; // All open shifts available for manager resolution
+      const missingOutRecords = activeRecords;
 
       document.getElementById('stat-active-shifts').innerText = activeRecords.length;
       document.getElementById('stat-total-members').innerText = members.length;
@@ -1249,7 +1348,7 @@
     function renderLiveTeamBoard(members, records) {
       const grid = document.getElementById('live-board-grid');
       if (!members.length) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted);">No registered employees yet.</div>`;
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No registered employees yet.</div>`;
         return;
       }
 
@@ -1258,18 +1357,18 @@
         const activeShift = records.find(r => String(r.employeeName || "").toLowerCase() === nameLower && r.timeIn && !r.timeOut);
         const todayCompleted = records.find(r => String(r.employeeName || "").toLowerCase() === nameLower && r.date === serverTodayStr && r.timeOut);
 
-        let statusBadge = `<span class="badge-pill badge-muted">Not In Yet</span>`;
+        let statusBadge = `<span class="badge-pill badge-muted">Offline</span>`;
         let metaLeft = "No shift today";
         let metaRight = "";
 
         if (activeShift) {
-          statusBadge = `<span class="badge-pill badge-active">● Clocked In</span>`;
+          statusBadge = `<span class="badge-pill badge-active">● Active</span>`;
           metaLeft = `In: <strong>${escapeHtml(activeShift.timeIn)}</strong>`;
           metaRight = activeShift.workArrangement === "Work From Home"
             ? `<span class="badge-pill badge-wfh">WFH</span>`
             : `<span class="badge-pill badge-onsite">Onsite</span>`;
         } else if (todayCompleted) {
-          statusBadge = `<span class="badge-pill badge-onsite">Shift Done</span>`;
+          statusBadge = `<span class="badge-pill badge-onsite">✓ Done</span>`;
           metaLeft = `Total: <strong>${escapeHtml(todayCompleted.totalHours || "—")}</strong>`;
           metaRight = escapeHtml(todayCompleted.workArrangement || "");
         }
@@ -1277,9 +1376,12 @@
         return `
           <div class="member-status-card ${activeShift ? 'is-in' : ''}">
             <div class="member-card-top">
-              <div>
-                <div class="member-card-name">${escapeHtml(m.name)}</div>
-                <div class="member-card-team">${escapeHtml(m.team)}</div>
+              <div class="emp-cell-wrap">
+                <div class="emp-initials-avatar ${activeShift ? 'active-av' : ''}">${escapeHtml(getInitials(m.name))}</div>
+                <div>
+                  <div class="emp-cell-name">${escapeHtml(m.name)}</div>
+                  <div class="emp-cell-sub">${escapeHtml(m.team)}</div>
+                </div>
               </div>
               ${statusBadge}
             </div>
@@ -1314,25 +1416,26 @@
       });
 
       cachedFilteredRecords = filtered;
-      document.getElementById('mgr-filtered-count').innerText = `Showing ${filtered.length} of ${cachedManagerRecords.length} records`;
+      document.getElementById('mgr-filtered-count').innerText = `${filtered.length} records`;
       renderAttendanceRows(filtered);
     }
 
     function renderAttendanceRows(rows) {
       const tbody = document.getElementById('mgr-table-body');
       if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">No matching attendance records found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:36px; color:var(--text-muted);">No matching attendance records found.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = rows.map(r => {
+        const isActive = Boolean(r.timeIn && !r.timeOut);
         const arrBadge = r.workArrangement === "Work From Home"
           ? `<span class="badge-pill badge-wfh">WFH</span>`
           : `<span class="badge-pill badge-onsite">${escapeHtml(r.workArrangement || "Onsite")}</span>`;
 
         const timeOutCell = r.timeOut
           ? escapeHtml(r.timeOut)
-          : `<span class="badge-pill badge-active">Active Shift</span>`;
+          : `<span class="badge-pill badge-active">● Active</span>`;
 
         const hoursCell = r.totalHours
           ? `<strong>${escapeHtml(r.totalHours)}</strong>`
@@ -1340,14 +1443,20 @@
 
         return `
           <tr>
-            <td>${escapeHtml(r.date)}</td>
-            <td><strong>${escapeHtml(r.employeeName)}</strong></td>
-            <td>${escapeHtml(r.team)}</td>
+            <td>
+              <div class="emp-cell-wrap">
+                <div class="emp-initials-avatar ${isActive ? 'active-av' : ''}">${escapeHtml(getInitials(r.employeeName))}</div>
+                <div>
+                  <div class="emp-cell-name">${escapeHtml(r.employeeName)}</div>
+                  <div class="emp-cell-sub">${escapeHtml(r.team)}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-weight:600;">${escapeHtml(r.date)}</td>
             <td>${arrBadge}</td>
-            <td>${escapeHtml(r.timeIn)}</td>
-            <td>${timeOutCell}</td>
-            <td>${hoursCell}</td>
-            <td style="font-size:11px; color:var(--text-muted);">${escapeHtml(r.deviceId)}</td>
+            <td style="font-variant-numeric:tabular-nums;">${escapeHtml(r.timeIn)}</td>
+            <td style="font-variant-numeric:tabular-nums;">${timeOutCell}</td>
+            <td style="font-variant-numeric:tabular-nums;">${hoursCell}</td>
           </tr>
         `;
       }).join("");
@@ -1387,13 +1496,13 @@
     function renderDevicesTable(members) {
       const tbody = document.getElementById('mgr-devices-body');
       if (!members.length) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">No registered employees found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:36px; color:var(--text-muted);">No registered employees found.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = members.map(m => {
         const st = String(m.deviceStatus || "").toLowerCase();
-        let statusBadge = `<span class="badge-pill badge-active">${escapeHtml(m.deviceStatus || "Active")}</span>`;
+        let statusBadge = `<span class="badge-pill badge-active">● ${escapeHtml(m.deviceStatus || "Active")}</span>`;
         if (st === "reset" || st === "pending") statusBadge = `<span class="badge-pill badge-wfh">${escapeHtml(m.deviceStatus)}</span>`;
         if (st === "blocked" || st === "disabled") statusBadge = `<span class="badge-pill badge-danger">${escapeHtml(m.deviceStatus)}</span>`;
 
@@ -1404,14 +1513,23 @@
 
         return `
           <tr>
-            <td><strong>${escapeHtml(m.name)}</strong></td>
-            <td>${escapeHtml(m.team)}</td>
-            <td>${escapeHtml(m.email || "—")}</td>
-            <td style="font-family:monospace; font-size:12px;">${escapeHtml(m.deviceId || "Unbound")}</td>
+            <td>
+              <div class="emp-cell-wrap">
+                <div class="emp-initials-avatar">${escapeHtml(getInitials(m.name))}</div>
+                <div>
+                  <div class="emp-cell-name">${escapeHtml(m.name)}</div>
+                  <div class="emp-cell-sub">${escapeHtml(m.team)}</div>
+                </div>
+              </div>
+            </td>
+            <td style="color:var(--text-secondary);">${escapeHtml(m.email || "—")}</td>
+            <td style="font-family:monospace; font-size:12.5px;">${escapeHtml(m.deviceId || "Unbound")}</td>
             <td>${statusBadge}</td>
-            <td style="display:flex; gap:8px;">
-              <button type="button" class="btn-sm" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET')">Reset Phone</button>
-              ${toggleBtn}
+            <td>
+              <div style="display:flex; gap:8px;">
+                <button type="button" class="btn-sm" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET')">Reset Phone</button>
+                ${toggleBtn}
+              </div>
             </td>
           </tr>
         `;
@@ -1457,19 +1575,28 @@
     function renderMissingTimeOutsTable(openRows) {
       const tbody = document.getElementById('mgr-missing-body');
       if (!openRows.length) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">No open shifts or missing Time-Outs right now.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:36px; color:var(--text-muted);">All shifts are closed. No missing Time-Outs right now.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = openRows.map(r => `
         <tr>
-          <td>${escapeHtml(r.date)}</td>
-          <td><strong>${escapeHtml(r.employeeName)}</strong></td>
-          <td>${escapeHtml(r.team)}</td>
-          <td>${escapeHtml(r.timeIn)}</td>
+          <td>
+            <div class="emp-cell-wrap">
+              <div class="emp-initials-avatar active-av">${escapeHtml(getInitials(r.employeeName))}</div>
+              <div>
+                <div class="emp-cell-name">${escapeHtml(r.employeeName)}</div>
+                <div class="emp-cell-sub">${escapeHtml(r.team)}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="emp-cell-name">${escapeHtml(r.date)}</div>
+            <div class="emp-cell-sub">In: ${escapeHtml(r.timeIn)}</div>
+          </td>
           <td><input type="text" class="inline-resolve-input" id="resolve-out-${r._row}" placeholder="e.g. 06:00 PM"></td>
           <td><input type="text" class="inline-note-input" id="resolve-note-${r._row}" placeholder="Optional reason"></td>
-          <td><button type="button" class="btn-sm primary" onclick="submitResolveShift(${r._row})">Save Time Out</button></td>
+          <td><button type="button" class="btn-sm primary" onclick="submitResolveShift(${r._row})">Save Out</button></td>
         </tr>
       `).join("");
     }
