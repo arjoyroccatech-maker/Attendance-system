@@ -388,7 +388,7 @@
           <span class="cancel-link" onclick="cancelOTP()">Cancel</span>
         </div>
 
-        <!-- QR Display (With 60s Expiration Countdown) -->
+        <!-- QR Display (With Strict 60s Expiration Countdown) -->
         <div id="qr-section" style="display: none;">
           <div id="qrcode-container"><img id="qr-image" src="" alt="QR Code"></div>
           <div class="qr-waiting" id="qr-waiting-text"><div class="spinner"></div> Awaiting verification...</div>
@@ -419,7 +419,7 @@
       </div>
     </div>
 
-    <!-- PHONE AUTH (Server-Side PIN + 60s Expiry Check) -->
+    <!-- PHONE AUTH (Server-Side PIN + Live 60s Expiry Lock) -->
     <div id="phone-auth" class="card setup-card">
       <div class="phone-avatar-circle">
         <svg id="phone-default-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -950,14 +950,26 @@
         document.getElementById('phone-greeting').innerText = empName;
         document.getElementById('phone-badge').innerText = `${actionText} • ${arrText}`;
 
-        // Immediate client-side check if QR is already older than 60s
-        if (!qrTs || (Date.now() - qrTs) > 65000) {
-          const statusDiv = document.getElementById('scan-status');
-          const submitBtn = document.getElementById('submit-btn');
-          statusDiv.style.color = "var(--brand-red)";
-          statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
-          submitBtn.disabled = true;
-          submitBtn.style.opacity = "0.5";
+        // Live 60s expiration watcher on the phone screen
+        function enforcePhoneQrExpiry() {
+          if (!qrTs || (Date.now() - qrTs) > 60000) {
+            const statusDiv = document.getElementById('scan-status');
+            const submitBtn = document.getElementById('submit-btn');
+            const codeInput = document.getElementById('enteredCode');
+            statusDiv.style.color = "var(--brand-red)";
+            statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = "0.5";
+            codeInput.disabled = true;
+            return true;
+          }
+          return false;
+        }
+
+        if (!enforcePhoneQrExpiry()) {
+          const phoneExpiryInterval = setInterval(() => {
+            if (enforcePhoneQrExpiry()) clearInterval(phoneExpiryInterval);
+          }, 500);
         }
 
         initPhoneProfilePhoto(empName, empTeam, photoId);
@@ -1140,9 +1152,11 @@
       const statusDiv = document.getElementById('scan-status');
       const submitBtn = document.getElementById('submit-btn');
 
-      if (!qrTimestamp || (Date.now() - qrTimestamp) > 65000) {
+      if (!qrTimestamp || (Date.now() - qrTimestamp) > 60000) {
         statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
         statusDiv.style.color = "var(--brand-red)";
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.5";
         return;
       }
 
