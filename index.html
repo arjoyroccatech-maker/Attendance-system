@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DATAWORDS • Attendance & Operations Kiosk</title>
+  <title>DATAWORDS • Attendance Kiosk</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,93 +12,85 @@
   
   <style>
     :root {
-      /* Unified DATAWORDS Kiosk Design Tokens */
-      --bg-canvas: #F4F6F8;
+      --bg: #F3F5F8;
       --surface: #FFFFFF;
-      --surface-alt: #F8FAFC;
-      --navy-900: #0B132B;
-      --navy-800: #1C2541;
-      --navy-700: #2A365C;
+      --surface-soft: #F8FAFC;
+      --ink: #0F172A;
+      --ink-secondary: #475569;
+      --ink-muted: #64748B;
+      --line: #E2E8F0;
+      --line-strong: #CBD5E1;
 
-      --text-main: #0F172A;
-      --text-body: #334155;
-      --text-muted: #64748B;
-      --border: #E2E8F0;
-      --border-strong: #CBD5E1;
+      --emerald: #059669;
+      --emerald-bg: #ECFDF5;
+      --crimson: #DC2626;
+      --crimson-bg: #FEF2F2;
+      --amber: #D97706;
+      --amber-bg: #FFFBEB;
+      --blue: #2563EB;
+      --blue-bg: #EFF6FF;
 
-      --teal-600: #0D9488;
-      --teal-700: #0F766E;
-      --teal-soft: #F0FDFA;
-      --emerald-600: #059669;
-      --emerald-soft: #ECFDF5;
-      --crimson-600: #DC2626;
-      --crimson-soft: #FEF2F2;
-      --amber-600: #D97706;
-      --amber-soft: #FFFBEB;
-
-      --shadow-elevated: 0 20px 44px -12px rgba(11, 19, 43, 0.08), 0 4px 12px -2px rgba(11, 19, 43, 0.04);
-      --shadow-btn-in: 0 10px 22px -4px rgba(5, 150, 105, 0.34);
-      --shadow-btn-out: 0 10px 22px -4px rgba(220, 38, 38, 0.30);
+      --shadow-float: 0 24px 48px -12px rgba(15, 23, 42, 0.08), 0 4px 14px -2px rgba(15, 23, 42, 0.03);
+      --shadow-dock: 0 20px 40px -8px rgba(15, 23, 42, 0.22), 0 4px 12px rgba(15, 23, 42, 0.08);
     }
     
     * { box-sizing: border-box; }
 
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-canvas);
+      background-color: var(--bg);
       background-image:
-        radial-gradient(at 0% 0%, rgba(13, 148, 136, 0.06) 0px, transparent 48%),
-        radial-gradient(at 100% 100%, rgba(11, 19, 43, 0.05) 0px, transparent 52%);
-      color: var(--text-main);
+        radial-gradient(circle at 15% 10%, rgba(5, 150, 105, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 85% 90%, rgba(37, 99, 235, 0.05) 0%, transparent 45%);
+      color: var(--ink);
       margin: 0; padding: 0; display: flex; flex-direction: column;
       min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
 
-    /* --- UNIFIED TOP NAVIGATION BAR (Shared Visual DNA) --- */
+    /* --- UNIFIED TOP NAV BAR --- */
     .top-bar {
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
       padding: 14px 36px;
       display: flex; justify-content: space-between; align-items: center;
       position: sticky; top: 0; z-index: 50;
     }
     .brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
     .brand-logo {
-      width: 40px; height: 40px; border-radius: 12px;
-      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%);
+      width: 38px; height: 38px; border-radius: 11px;
+      background: var(--ink);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(11, 19, 43, 0.16);
     }
-    .brand-logo svg { width: 21px; height: 21px; fill: #2DD4BF; }
+    .brand-logo svg { width: 20px; height: 20px; fill: #34D399; }
     .brand-text { display: flex; flex-direction: column; }
-    .brand-title { font-weight: 800; font-size: 15.5px; letter-spacing: 0.6px; color: var(--navy-900); }
-    .brand-subtitle { font-size: 11.5px; color: var(--text-muted); font-weight: 500; }
+    .brand-title { font-weight: 800; font-size: 15px; letter-spacing: 0.6px; color: var(--ink); }
+    .brand-subtitle { font-size: 11px; color: var(--ink-muted); font-weight: 500; }
     
-    .nav-actions { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
     .status-chip {
       display: inline-flex; align-items: center; gap: 7px;
-      padding: 7px 14px; border-radius: 999px;
-      background: var(--teal-soft); color: var(--teal-700);
-      font-size: 12px; font-weight: 700; border: 1px solid rgba(13, 148, 136, 0.22);
+      padding: 6px 13px; border-radius: 999px;
+      background: var(--emerald-bg); color: var(--emerald);
+      font-size: 12px; font-weight: 700;
     }
     .status-dot {
-      width: 8px; height: 8px; background-color: var(--teal-600); border-radius: 50%;
-      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+      width: 7px; height: 7px; background-color: #10B981; border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.22);
     }
     .nav-btn {
       display: inline-flex; align-items: center; gap: 7px;
-      padding: 8px 15px; border-radius: 10px;
-      background: var(--surface-alt); color: var(--text-body);
-      border: 1px solid var(--border); cursor: pointer;
+      padding: 7px 14px; border-radius: 10px;
+      background: var(--surface-soft); color: var(--ink-secondary);
+      border: 1px solid var(--line); cursor: pointer;
       font-size: 12.5px; font-weight: 600; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
     }
-    .nav-btn:hover { background: #FFFFFF; color: var(--navy-900); border-color: var(--border-strong); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
-    .nav-btn svg { width: 16px; height: 16px; fill: currentColor; }
+    .nav-btn:hover { background: #FFFFFF; color: var(--ink); border-color: var(--line-strong); }
+    .nav-btn svg { width: 15px; height: 15px; fill: currentColor; }
 
-    /* --- CENTERED STAGE (Portal Selector & Employee Kiosk) --- */
+    /* --- MAIN STAGE --- */
     .main-wrapper {
       flex: 1; display: flex; justify-content: center; align-items: center; padding: 32px 24px;
     }
@@ -106,466 +98,365 @@
     .card {
       background-color: var(--surface); padding: 0; border-radius: 28px;
       width: 100%; max-width: 660px; text-align: center;
-      box-shadow: var(--shadow-elevated);
-      display: none; animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
-      border: 1px solid rgba(226, 232, 240, 0.95);
+      box-shadow: var(--shadow-float);
+      display: none; animation: popIn 0.28s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.9);
     }
     .active-card { display: block; }
     
-    @keyframes slideUp {
+    @keyframes popIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .card-padding { padding: 44px 44px 36px 44px; }
 
-    /* --- PORTAL SELECTOR ENTRY --- */
+    /* --- PORTAL SELECTOR (Kept as-is) --- */
     .role-card { max-width: 640px; padding: 48px 42px; }
     .eyebrow-badge {
       display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.8px; color: var(--teal-700); background: var(--teal-soft);
+      letter-spacing: 0.8px; color: var(--emerald); background: var(--emerald-bg);
       padding: 6px 14px; border-radius: 999px; margin-bottom: 14px;
-      border: 1px solid rgba(13, 148, 136, 0.18);
     }
-    .role-card h2 { margin: 0 0 8px 0; font-size: 28px; font-weight: 800; letter-spacing: -0.6px; color: var(--navy-900); }
-    .role-card p { color: var(--text-muted); font-size: 14.5px; margin: 0 0 32px 0; }
+    .role-card h2 { margin: 0 0 8px 0; font-size: 28px; font-weight: 800; letter-spacing: -0.6px; }
+    .role-card p { color: var(--ink-muted); font-size: 14.5px; margin: 0 0 32px 0; }
     .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .role-btn {
-      background: var(--surface-alt); border: 1.5px solid var(--border); border-radius: 22px;
+      background: var(--surface-soft); border: 1.5px solid var(--line); border-radius: 22px;
       padding: 32px 22px; cursor: pointer; text-align: center;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex; flex-direction: column; align-items: center;
       font-family: 'Inter', sans-serif;
     }
-    .role-btn:hover {
-      background: #FFFFFF; transform: translateY(-4px);
-      box-shadow: 0 16px 30px -8px rgba(11, 19, 43, 0.1);
-    }
-    .role-btn.employee-role:hover { border-color: var(--teal-600); }
-    .role-btn.manager-role:hover { border-color: var(--navy-900); }
+    .role-btn:hover { background: #FFFFFF; transform: translateY(-4px); box-shadow: 0 16px 30px -8px rgba(15, 23, 42, 0.1); }
+    .role-btn.employee-role:hover { border-color: var(--emerald); }
+    .role-btn.manager-role:hover { border-color: var(--ink); }
     .role-icon-circle {
       width: 68px; height: 68px; border-radius: 20px;
       display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
     }
-    .employee-role .role-icon-circle { background: var(--teal-soft); color: var(--teal-600); }
-    .manager-role .role-icon-circle { background: #E2E8F0; color: var(--navy-900); }
+    .employee-role .role-icon-circle { background: var(--emerald-bg); color: var(--emerald); }
+    .manager-role .role-icon-circle { background: #E2E8F0; color: var(--ink); }
     .role-icon-circle svg { width: 34px; height: 34px; fill: currentColor; }
-    .role-title { font-size: 18px; font-weight: 800; color: var(--navy-900); margin-bottom: 6px; letter-spacing: -0.2px; }
-    .role-desc { font-size: 13px; color: var(--text-muted); line-height: 1.45; }
+    .role-title { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+    .role-desc { font-size: 13px; color: var(--ink-muted); line-height: 1.45; }
     .role-status-pill {
       margin-top: 16px; font-size: 11.5px; font-weight: 700; padding: 6px 14px;
-      border-radius: 999px; background: #E2E8F0; color: var(--text-body);
+      border-radius: 999px; background: #E2E8F0; color: var(--ink-secondary);
     }
-    .role-status-pill.ready { background: var(--teal-soft); color: var(--teal-700); }
+    .role-status-pill.ready { background: var(--emerald-bg); color: var(--emerald); }
 
     /* --- FORMS & AUTH CARDS --- */
     .setup-card { max-width: 440px; padding: 42px 38px; }
     .form-icon-header {
       width: 58px; height: 58px; border-radius: 16px;
-      background: var(--surface-alt); border: 1px solid var(--border);
+      background: var(--surface-soft); border: 1px solid var(--line);
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 18px auto; color: var(--navy-900);
+      margin: 0 auto 18px auto; color: var(--ink);
     }
     .form-icon-header svg { width: 28px; height: 28px; fill: currentColor; }
-    .setup-card h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; color: var(--navy-900); }
-    .setup-card p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin: 0 0 24px 0; }
+    .setup-card h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; }
+    .setup-card p { color: var(--ink-muted); font-size: 14px; line-height: 1.5; margin: 0 0 24px 0; }
     .setup-card label {
       display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 7px;
-      color: var(--text-body); text-align: left; letter-spacing: 0.2px;
+      color: var(--ink-secondary); text-align: left;
     }
     .setup-card input {
       width: 100%; padding: 14px 16px; margin-bottom: 18px;
-      border-radius: 12px; border: 1.5px solid var(--border);
-      background: var(--surface-alt); color: var(--text-main);
+      border-radius: 12px; border: 1.5px solid var(--line);
+      background: var(--surface-soft); color: var(--ink);
       font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
     }
-    .setup-card input:focus {
-      outline: none; background: #FFFFFF; border-color: var(--navy-900);
-      box-shadow: 0 0 0 4px rgba(11, 19, 43, 0.06);
-    }
+    .setup-card input:focus { outline: none; background: #FFFFFF; border-color: var(--ink); box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06); }
     
     #auth-code-display {
-      font-size: 42px; font-weight: 800; color: var(--navy-900);
-      letter-spacing: 12px; background: var(--surface-alt);
+      font-size: 42px; font-weight: 800; color: var(--ink);
+      letter-spacing: 12px; background: var(--surface-soft);
       padding: 20px; border-radius: 16px; margin-bottom: 20px;
-      border: 1.5px dashed var(--border-strong);
+      border: 1.5px dashed var(--line-strong);
     }
     
     .btn-save {
       width: 100%; padding: 15px 20px; font-size: 15px; font-weight: 700;
-      background: var(--navy-900); color: white; border: none;
+      background: var(--ink); color: white; border: none;
       border-radius: 12px; cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: all 0.15s ease; box-shadow: 0 4px 12px rgba(11, 19, 43, 0.16);
+      transition: all 0.15s ease;
     }
-    .btn-save:hover { background: var(--navy-800); transform: translateY(-1px); }
+    .btn-save:hover { opacity: 0.92; transform: translateY(-1px); }
     .btn-save:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-    .sub-link {
-      display: inline-block; margin-top: 16px; font-size: 13px;
-      color: var(--text-muted); font-weight: 500; cursor: pointer; text-decoration: none;
-    }
-    .sub-link:hover { color: var(--navy-900); text-decoration: underline; }
+    .sub-link { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--ink-muted); font-weight: 500; cursor: pointer; text-decoration: none; }
+    .sub-link:hover { color: var(--ink); text-decoration: underline; }
 
     /* =========================================================================
-       UNIFIED THEME MANAGER WORKSPACE (Midnight Navy Sidebar + Crisp Alabaster Stage)
+       ORIGINAL BENTO COMMAND DECK + FLOATING GLASS DOCK (Manager Workspace)
        ========================================================================= */
-    .mgr-workspace-shell {
+    .bento-deck {
       display: none;
-      flex-direction: column;
-      min-height: 100vh;
       width: 100%;
-      background: var(--bg-canvas);
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 28px 28px 110px 28px;
+      flex-direction: column;
+      gap: 24px;
     }
-    .mgr-workspace-shell.active {
+    .bento-deck.active {
       display: flex;
     }
 
-    /* Matching Frosted Topbar */
-    .mgr-ws-topbar {
-      height: 68px;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 30px;
+    /* Bento Top Strip: Greeting + 4 Hero Metric Tiles */
+    .bento-top-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    .bento-tile {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px 22px;
+      box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: left;
+    }
+    .bento-hero-tile {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #FFFFFF;
+      border: none;
+    }
+    .hero-dept-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+      color: #34D399; background: rgba(52, 211, 153, 0.14);
+      padding: 4px 10px; border-radius: 999px; width: fit-content;
+    }
+    .hero-mgr-name { font-size: 20px; font-weight: 800; margin: 10px 0 2px 0; letter-spacing: -0.4px; }
+    .hero-sync-note { font-size: 12px; color: #94A3B8; font-weight: 500; }
+
+    .tile-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .tile-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tile-icon svg { width: 20px; height: 20px; fill: currentColor; }
+    .ic-emerald { background: var(--emerald-bg); color: var(--emerald); }
+    .ic-blue { background: var(--blue-bg); color: var(--blue); }
+    .ic-slate { background: #F1F5F9; color: var(--ink); }
+    .ic-amber { background: var(--amber-bg); color: var(--amber); }
+
+    .tile-big-num { font-size: 30px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -0.8px; }
+    .tile-caption { font-size: 12.5px; font-weight: 600; color: var(--ink-muted); margin-top: 4px; }
+
+    /* Stationary Active Viewport Card (Only inner view swaps when clicking Dock) */
+    .bento-viewport {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      box-shadow: var(--shadow-float);
+      min-height: 460px;
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .deck-view {
+      display: none;
+      animation: viewFade 0.18s ease-out;
+    }
+    .deck-view.active {
+      display: block;
+    }
+    @keyframes viewFade {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .view-bar {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 40;
+      flex-wrap: wrap;
+      gap: 14px;
     }
-    .mgr-ws-left { display: flex; align-items: center; gap: 20px; }
-    .mgr-ws-brand { display: flex; align-items: center; gap: 13px; }
-    .mgr-ws-logo {
-      width: 40px; height: 40px; border-radius: 12px;
-      background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%);
-      color: #2DD4BF;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 10px rgba(11, 19, 43, 0.15);
-    }
-    .mgr-ws-logo svg { width: 21px; height: 21px; fill: currentColor; }
-    .mgr-ws-title { font-size: 15.5px; font-weight: 800; letter-spacing: 0.6px; color: var(--navy-900); }
-    .mgr-ws-sub { font-size: 11px; font-weight: 600; color: var(--teal-700); letter-spacing: 0.5px; }
+    .view-heading { margin: 0; font-size: 19px; font-weight: 800; letter-spacing: -0.3px; }
+    .view-sub { font-size: 13px; color: var(--ink-muted); font-weight: 500; margin-top: 2px; }
 
-    .btn-logout-pill {
-      padding: 8px 16px;
-      border-radius: 10px;
-      border: 1px solid rgba(220, 38, 38, 0.25);
-      background: var(--crimson-soft);
-      color: var(--crimson-600);
-      font-family: 'Inter', sans-serif;
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
+    .filter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .clean-input, .clean-select {
+      padding: 9px 14px; border-radius: 11px; border: 1.5px solid var(--line);
+      background: var(--surface-soft); font-size: 13px; font-family: 'Inter', sans-serif;
+      color: var(--ink); font-weight: 500;
+    }
+    .clean-input { min-width: 220px; }
+    .clean-input:focus, .clean-select:focus { outline: none; background: #FFF; border-color: var(--ink); }
+
+    .btn-export-xlsx {
+      padding: 9px 16px; border-radius: 11px; border: none;
+      background: var(--emerald); color: #FFFFFF;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+      transition: transform 0.12s, background 0.15s;
+    }
+    .btn-export-xlsx:hover { background: #047857; transform: translateY(-1px); }
+    .btn-export-xlsx svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .btn-mini {
+      padding: 8px 13px; border-radius: 10px; border: 1px solid var(--line-strong);
+      background: #FFFFFF; color: var(--ink); font-family: 'Inter', sans-serif;
+      font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-mini:hover { background: var(--surface-soft); }
+    .btn-mini.dark { background: var(--ink); color: #FFF; border-color: var(--ink); }
+    .btn-mini.danger { background: var(--crimson-bg); color: var(--crimson); border-color: rgba(220, 38, 38, 0.25); }
+
+    /* Roster Cards Grid */
+    .roster-grid {
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 16px;
+    }
+    .roster-card {
+      border: 1.5px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: var(--surface-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: all 0.15s ease;
+    }
+    .roster-card.online {
+      background: #FFFFFF;
+      border-color: rgba(5, 150, 105, 0.45);
+      box-shadow: 0 8px 20px -8px rgba(5, 150, 105, 0.18);
+    }
+    .roster-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .roster-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 12px; border-top: 1px solid var(--line);
+      font-size: 12.5px; color: var(--ink-secondary);
+    }
+
+    /* Zero-Scroll Tables */
+    table.deck-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.deck-table th {
+      background: var(--surface-soft); color: var(--ink-muted);
+      font-weight: 700; text-align: left; padding: 14px 24px;
+      border-bottom: 1px solid var(--line); font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+    table.deck-table td {
+      padding: 15px 24px; border-bottom: 1px solid var(--line);
+      color: var(--ink); vertical-align: middle;
+    }
+    table.deck-table tr:last-child td { border-bottom: none; }
+    table.deck-table tr:hover td { background: var(--surface-soft); }
+
+    .person-cell { display: flex; align-items: center; gap: 12px; }
+    .person-badge {
+      width: 38px; height: 38px; border-radius: 12px;
+      background: #E2E8F0; color: var(--ink);
+      font-weight: 800; font-size: 13px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .person-badge.live { background: var(--emerald-bg); color: var(--emerald); }
+    .person-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .person-team { font-size: 12px; color: var(--ink-muted); font-weight: 500; }
+
+    .tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap;
+    }
+    .tag-green { background: var(--emerald-bg); color: var(--emerald); }
+    .tag-blue { background: var(--blue-bg); color: var(--blue); }
+    .tag-amber { background: var(--amber-bg); color: var(--amber); }
+    .tag-gray { background: #F1F5F9; color: var(--ink-muted); }
+    .tag-red { background: var(--crimson-bg); color: var(--crimson); }
+
+    .inline-field {
+      padding: 8px 11px; border-radius: 9px; border: 1.5px solid var(--line);
+      font-size: 13px; font-family: 'Inter', sans-serif; width: 140px;
+    }
+
+    /* FLOATING GLASS DOCK (Bottom Center Tab Bar — Original Signature Control) */
+    .floating-dock-wrap {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 60;
+      display: none;
+    }
+    .floating-dock-wrap.active {
+      display: block;
+    }
+    .floating-dock {
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 7px;
+      border-radius: 999px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.15s;
+      box-shadow: var(--shadow-dock);
+      border: 1px solid rgba(255, 255, 255, 0.14);
     }
-    .btn-logout-pill:hover { background: #FEE2E2; border-color: rgba(220, 38, 38, 0.4); }
-
-    .mgr-ws-right { display: flex; align-items: center; gap: 18px; }
-    .mgr-ws-clock-wrap { text-align: right; }
-    .mgr-ws-live-badge {
-      font-size: 10.5px; font-weight: 800; color: var(--teal-600);
-      letter-spacing: 0.6px; text-transform: uppercase;
-    }
-    .mgr-ws-clock {
-      font-size: 19px; font-weight: 800; color: var(--navy-900);
-      font-variant-numeric: tabular-nums; letter-spacing: -0.3px;
-    }
-
-    /* Two-Column Workspace: Deep Navy Sidebar + Alabaster Stage */
-    .mgr-ws-body {
-      flex: 1;
-      display: flex;
-      min-height: calc(100vh - 68px);
-    }
-
-    .mgr-sidebar {
-      width: 270px;
-      flex-shrink: 0;
-      background: var(--navy-900);
-      color: #F8FAFC;
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .signed-in-card {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 28px;
-      text-align: left;
-    }
-    .signed-in-label {
-      font-size: 10px; font-weight: 800; color: #94A3B8;
-      letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px;
-    }
-    .signed-in-name {
-      font-size: 15px; font-weight: 800; color: #FFFFFF; line-height: 1.3;
-    }
-    .signed-in-dept {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 11px; font-weight: 700; color: #2DD4BF;
-      background: rgba(45, 212, 191, 0.12);
-      padding: 3px 9px; border-radius: 999px; letter-spacing: 0.4px;
-    }
-
-    .sidebar-section-label {
-      font-size: 10.5px; font-weight: 800; color: #64748B;
-      letter-spacing: 0.8px; text-transform: uppercase;
-      padding: 0 12px; margin-bottom: 10px; text-align: left;
-    }
-
-    .sidebar-nav { display: flex; flex-direction: column; gap: 6px; }
-    .sidebar-nav-btn {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid transparent;
+    .dock-tab {
+      padding: 11px 20px;
+      border-radius: 999px;
+      border: none;
       background: transparent;
       color: #CBD5E1;
       font-family: 'Inter', sans-serif;
       font-size: 13.5px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      text-align: left;
-    }
-    .sidebar-nav-left { display: flex; align-items: center; gap: 12px; }
-    .sidebar-nav-btn svg { width: 19px; height: 19px; fill: currentColor; opacity: 0.75; }
-    .sidebar-nav-btn:hover { background: rgba(255, 255, 255, 0.06); color: #FFFFFF; }
-    .sidebar-nav-btn.active {
-      background: linear-gradient(135deg, rgba(13, 148, 136, 0.24), rgba(13, 148, 136, 0.12));
-      border-color: rgba(45, 212, 191, 0.35);
-      color: #FFFFFF;
-      font-weight: 700;
-    }
-    .sidebar-nav-btn.active svg { fill: #2DD4BF; opacity: 1; }
-
-    .sidebar-badge {
-      font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
-      background: rgba(255, 255, 255, 0.1); color: #E2E8F0;
-    }
-    .sidebar-nav-btn.active .sidebar-badge {
-      background: #2DD4BF; color: var(--navy-900);
-    }
-    .sidebar-badge.warn { background: rgba(217, 119, 6, 0.25); color: #FBBF24; }
-
-    .sidebar-footer-ver {
-      font-size: 11px; color: #64748B; font-weight: 600;
-      padding: 14px 12px 0 12px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: left;
-    }
-
-    /* Stationary Right Stage (Only inner pane changes) */
-    .mgr-main-content {
-      flex: 1;
-      padding: 32px 38px;
-      overflow-y: auto;
-      text-align: left;
-    }
-
-    .mgr-section-pane {
-      display: none;
-      animation: paneFade 0.16s ease-out;
-    }
-    .mgr-section-pane.active {
-      display: block;
-    }
-    @keyframes paneFade {
-      from { opacity: 0.45; }
-      to { opacity: 1; }
-    }
-
-    .pane-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .pane-title {
-      margin: 0 0 6px 0;
-      font-size: 27px;
-      font-weight: 800;
-      letter-spacing: -0.6px;
-      color: var(--navy-900);
-    }
-    .pane-subtitle {
-      margin: 0;
-      font-size: 14px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .pane-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .btn-action {
-      padding: 10px 16px;
-      border-radius: 10px;
-      border: 1px solid var(--border-strong);
-      background: #FFFFFF;
-      color: var(--navy-900);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      transition: all 0.15s;
+      gap: 8px;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
     }
-    .btn-action svg { width: 16px; height: 16px; fill: currentColor; }
-    .btn-action:hover { background: var(--surface-alt); }
-    .btn-action.primary { background: var(--navy-900); color: #FFFFFF; border-color: var(--navy-900); }
-    .btn-action.primary:hover { background: var(--navy-800); }
-    .btn-action.excel { background: var(--teal-soft); color: var(--teal-700); border-color: rgba(13, 148, 136, 0.3); }
-    .btn-action.excel:hover { background: #CCFBF1; }
-    .btn-action.danger { background: var(--crimson-soft); color: var(--crimson-600); border-color: rgba(220, 38, 38, 0.25); }
-
-    /* KPI Strip */
-    .kpi-grid-4 {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
-    }
-    .kpi-card {
-      background: #FFFFFF; border: 1px solid var(--border); border-radius: 18px;
-      padding: 18px 20px; display: flex; align-items: center; gap: 16px;
-      box-shadow: 0 2px 8px rgba(11, 19, 43, 0.03);
-    }
-    .kpi-icon {
-      width: 50px; height: 50px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .kpi-icon svg { width: 24px; height: 24px; fill: currentColor; }
-    .tile-teal { background: var(--teal-soft); color: var(--teal-600); }
-    .tile-navy { background: #E2E8F0; color: var(--navy-900); }
-    .tile-emerald { background: var(--emerald-soft); color: var(--emerald-600); }
-    .tile-amber { background: var(--amber-soft); color: var(--amber-600); }
-    .kpi-val { font-size: 26px; font-weight: 800; color: var(--navy-900); line-height: 1.1; }
-    .kpi-lbl { font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-top: 3px; }
-
-    /* Framed Workspace Surface */
-    .framed-panel {
+    .dock-tab svg { width: 17px; height: 17px; fill: currentColor; }
+    .dock-tab:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.08); }
+    .dock-tab.active {
       background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 6px 20px rgba(11, 19, 43, 0.04);
+      color: var(--ink);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     }
-    .panel-toolbar {
-      padding: 16px 22px;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface-alt);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
+    .dock-pill {
+      font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16); color: inherit;
     }
-    .mgr-search, .mgr-filter-select {
-      padding: 9px 13px; border-radius: 10px; border: 1.5px solid var(--border);
-      background: #FFFFFF; font-size: 13px; font-family: 'Inter', sans-serif;
-      color: var(--text-main); font-weight: 500;
-    }
-    .mgr-search { min-width: 240px; }
-    .mgr-search:focus, .mgr-filter-select:focus { outline: none; border-color: var(--teal-600); }
-
-    table.ws-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-    table.ws-table th {
-      background: var(--surface-alt);
-      color: var(--navy-800);
-      font-weight: 800;
-      text-align: left;
-      padding: 15px 22px;
-      border-bottom: 1px solid var(--border);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
-    table.ws-table td {
-      padding: 15px 22px;
-      border-bottom: 1px solid var(--border);
-      color: var(--text-main);
-      vertical-align: middle;
-    }
-    table.ws-table tr:last-child td { border-bottom: none; }
-    table.ws-table tr:hover td { background: #F8FAFC; }
-
-    .emp-cell-wrap { display: flex; align-items: center; gap: 12px; }
-    .emp-initials-avatar {
-      width: 38px; height: 38px; border-radius: 11px;
-      background: #E2E8F0; color: var(--navy-900);
-      font-weight: 800; font-size: 13px;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .emp-initials-avatar.active-av { background: var(--teal-soft); color: var(--teal-700); border: 1px solid rgba(13, 148, 136, 0.25); }
-    .emp-cell-name { font-size: 14px; font-weight: 700; color: var(--navy-900); }
-    .emp-cell-sub { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-
-    .live-board-grid {
-      padding: 22px; display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr)); gap: 16px;
-    }
-    .member-status-card {
-      border: 1.5px solid var(--border); border-radius: 16px; padding: 18px;
-      background: var(--surface); display: flex; flex-direction: column; gap: 12px;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .member-status-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -6px rgba(11, 19, 43, 0.08); }
-    .member-status-card.is-in { border-color: rgba(13, 148, 136, 0.45); background: #FAFFFE; }
-    .member-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .member-card-meta {
-      font-size: 12.5px; color: var(--text-body);
-      display: flex; justify-content: space-between; align-items: center;
-      padding-top: 10px; border-top: 1px solid var(--border);
-    }
-
-    .badge-pill {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap;
-    }
-    .badge-active { background: var(--emerald-soft); color: var(--emerald-600); }
-    .badge-onsite { background: #EFF6FF; color: #1D4ED8; }
-    .badge-wfh { background: #FEF3C7; color: #B45309; }
-    .badge-muted { background: #F1F5F9; color: var(--text-muted); }
-    .badge-danger { background: var(--crimson-soft); color: var(--crimson-600); }
-    .badge-team { background: #F1F5F9; color: var(--navy-800); border: 1px solid var(--border); }
-
-    .inline-resolve-input {
-      padding: 8px 10px; border-radius: 9px; border: 1.5px solid var(--border);
-      font-size: 13px; font-family: 'Inter', sans-serif; width: 135px;
-    }
-    .inline-note-input {
-      padding: 8px 10px; border-radius: 9px; border: 1.5px solid var(--border);
-      font-size: 13px; font-family: 'Inter', sans-serif; width: 165px;
+    .dock-tab.active .dock-pill {
+      background: var(--ink); color: #FFFFFF;
     }
 
     /* --- EMPLOYEE KIOSK UI --- */
     .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 28px; }
-    .welcome-divider { width: 1px; height: 56px; background-color: var(--border); }
+    .welcome-divider { width: 1px; height: 56px; background-color: var(--line); }
 
     .avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; flex-shrink: 0; }
     .avatar {
-      width: 100%; height: 100%; background: var(--surface-alt); border-radius: 50%;
+      width: 100%; height: 100%; background: var(--surface-soft); border-radius: 50%;
       display: flex; justify-content: center; align-items: center;
-      overflow: hidden; border: 2px solid var(--border); transition: border-color 0.2s;
+      overflow: hidden; border: 2px solid var(--line); transition: border-color 0.2s;
     }
-    .avatar-wrapper:hover .avatar { border-color: var(--navy-900); }
+    .avatar-wrapper:hover .avatar { border-color: var(--ink); }
     .avatar svg { width: 40px; height: 40px; fill: #94A3B8; }
     .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
 
     .avatar-overlay {
       position: absolute; inset: 0; border-radius: 50%;
-      background: rgba(11, 19, 43, 0.62); color: white;
+      background: rgba(15, 23, 42, 0.6); color: white;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
-      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
       opacity: 0; transition: opacity 0.2s; pointer-events: none;
     }
     .avatar-wrapper:hover .avatar-overlay { opacity: 1; }
@@ -573,9 +464,8 @@
     .camera-badge {
       position: absolute; bottom: 0; right: 0;
       width: 26px; height: 26px; border-radius: 50%;
-      background: var(--navy-900); color: white; border: 2px solid white;
+      background: var(--ink); color: white; border: 2px solid white;
       display: flex; justify-content: center; align-items: center;
-      box-shadow: 0 2px 6px rgba(11, 19, 43, 0.2);
     }
     .camera-badge svg { width: 12px; height: 12px; fill: white; }
 
@@ -586,21 +476,15 @@
     }
 
     .welcome-text { text-align: left; }
-    .welcome-text .small { font-size: 14px; color: var(--text-muted); font-weight: 500; }
-    .welcome-text .name { font-size: 24px; font-weight: 800; color: var(--navy-900); letter-spacing: -0.5px; }
-    .photo-action-hint {
-      font-size: 11.5px; font-weight: 600; color: var(--teal-600);
-      cursor: pointer; display: inline-block; margin-top: 3px;
-    }
+    .welcome-text .small { font-size: 14px; color: var(--ink-muted); font-weight: 500; }
+    .welcome-text .name { font-size: 24px; font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
+    .photo-action-hint { font-size: 11.5px; font-weight: 600; color: var(--emerald); cursor: pointer; display: inline-block; margin-top: 3px; }
     .photo-action-hint:hover { text-decoration: underline; }
 
     .clock-section { margin-bottom: 32px; }
-    .time-display {
-      font-size: 74px; font-weight: 800; color: var(--navy-900);
-      line-height: 1; letter-spacing: -2.5px; font-variant-numeric: tabular-nums;
-    }
-    .time-display span { font-size: 22px; font-weight: 700; color: var(--text-body); margin-left: 6px; letter-spacing: 0; }
-    .date-display { font-size: 16px; color: var(--text-muted); font-weight: 500; margin-top: 10px; }
+    .time-display { font-size: 74px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -2.5px; font-variant-numeric: tabular-nums; }
+    .time-display span { font-size: 22px; font-weight: 700; color: var(--ink-secondary); margin-left: 6px; letter-spacing: 0; }
+    .date-display { font-size: 16px; color: var(--ink-muted); font-weight: 500; margin-top: 10px; }
 
     .button-group { display: flex; justify-content: center; gap: 18px; margin-bottom: 16px; }
     .btn-pill {
@@ -614,82 +498,68 @@
     .btn-pill svg { width: 26px; height: 26px; fill: white; }
     .btn-divider { width: 1px; height: 26px; background: rgba(255,255,255,0.3); }
     
-    .bg-green { background: linear-gradient(135deg, #10B981, #059669); box-shadow: var(--shadow-btn-in); }
-    .bg-green:hover { box-shadow: 0 14px 28px -4px rgba(5, 150, 105, 0.42); }
-    .bg-red { background: linear-gradient(135deg, #EF4444, #DC2626); box-shadow: var(--shadow-btn-out); }
-    .bg-red:hover { box-shadow: 0 14px 28px -4px rgba(220, 38, 38, 0.4); }
+    .bg-green { background: linear-gradient(135deg, #10B981, #059669); box-shadow: 0 10px 24px -4px rgba(5, 150, 105, 0.35); }
+    .bg-red { background: linear-gradient(135deg, #EF4444, #DC2626); box-shadow: 0 10px 24px -4px rgba(220, 38, 38, 0.32); }
 
-    .otp-fallback-link {
-      font-size: 13px; color: var(--text-muted); font-weight: 600;
-      cursor: pointer; display: inline-block; margin-top: 6px;
-    }
-    .otp-fallback-link:hover { color: var(--navy-900); text-decoration: underline; }
+    .otp-fallback-link { font-size: 13px; color: var(--ink-muted); font-weight: 600; cursor: pointer; display: inline-block; margin-top: 6px; }
+    .otp-fallback-link:hover { color: var(--ink); text-decoration: underline; }
 
     #otp-section {
       max-width: 360px; margin: 0 auto; padding: 24px;
-      background: var(--surface-alt); border-radius: 18px; border: 1px solid var(--border);
+      background: var(--surface-soft); border-radius: 18px; border: 1px solid var(--line);
       display: none;
     }
     #otp-section h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 800; }
-    #otp-info-text { font-size: 13px; color: var(--text-muted); margin: 0 0 16px 0; }
+    #otp-info-text { font-size: 13px; color: var(--ink-muted); margin: 0 0 16px 0; }
     #otp-code-input {
       width: 100%; padding: 12px; font-size: 24px; font-weight: 700;
       text-align: center; letter-spacing: 6px; border-radius: 12px;
-      border: 1.5px solid var(--border); background: #FFF; margin-bottom: 12px;
+      border: 1.5px solid var(--line); background: #FFF; margin-bottom: 12px;
       font-family: 'Inter', sans-serif;
     }
     #otp-status-msg { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
 
-    .status-bar { border-top: 1px solid var(--border); display: flex; background: var(--surface-alt); }
+    .status-bar { border-top: 1px solid var(--line); display: flex; background: var(--surface-soft); }
     .status-col { flex: 1; padding: 20px 28px; display: flex; align-items: center; gap: 14px; text-align: left; }
-    .status-col:first-child { border-right: 1px solid var(--border); }
+    .status-col:first-child { border-right: 1px solid var(--line); }
     .status-icon-box {
       width: 40px; height: 40px; border-radius: 11px;
-      background: #FFFFFF; border: 1px solid var(--border);
+      background: #FFFFFF; border: 1px solid var(--line);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .status-icon-box svg { width: 20px; height: 20px; fill: var(--text-body); }
+    .status-icon-box svg { width: 20px; height: 20px; fill: var(--ink-secondary); }
     .status-text-wrap { display: flex; flex-direction: column; align-items: flex-start; }
-    .status-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
-    .status-value { font-size: 14.5px; font-weight: 700; color: var(--navy-900); font-variant-numeric: tabular-nums; }
-    .timer-highlight { color: var(--crimson-600); font-weight: 800; }
+    .status-label { font-size: 11.5px; color: var(--ink-muted); font-weight: 600; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .status-value { font-size: 14.5px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .timer-highlight { color: var(--crimson); font-weight: 800; }
     
     .status-select { 
-      font-size: 14.5px; font-weight: 700; color: var(--navy-900); border: none; background: transparent; 
+      font-size: 14.5px; font-weight: 700; color: var(--ink); border: none; background: transparent; 
       font-family: 'Inter', sans-serif; cursor: pointer; padding: 0 18px 0 0; outline: none;
     }
-    .status-select:disabled { cursor: not-allowed; color: var(--text-muted); -webkit-appearance: none; appearance: none; padding-right: 0; }
+    .status-select:disabled { cursor: not-allowed; color: var(--ink-muted); -webkit-appearance: none; appearance: none; padding-right: 0; }
 
-    .footer {
-      color: var(--text-muted); text-align: center; padding: 16px;
-      font-size: 12px; font-weight: 500;
-    }
-    .footer span { color: var(--navy-900); font-weight: 700; }
+    .footer { color: var(--ink-muted); text-align: center; padding: 16px; font-size: 12px; font-weight: 500; }
+    .footer span { color: var(--ink); font-weight: 700; }
 
     #qrcode-container {
       margin: 10px auto; padding: 18px; background: white;
       border-radius: 20px; display: inline-block;
-      border: 1.5px solid var(--border); box-shadow: 0 8px 20px rgba(11, 19, 43, 0.05);
+      border: 1.5px solid var(--line); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
     }
-    .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--teal-600); margin-top: 14px; font-size: 14.5px; }
-    .qr-countdown { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
-    .cancel-link { font-size: 13px; color: var(--text-muted); font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: 14px; display: inline-block; }
+    .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--emerald); margin-top: 14px; font-size: 14.5px; }
+    .qr-countdown { font-size: 12px; font-weight: 600; color: var(--ink-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+    .cancel-link { font-size: 13px; color: var(--ink-muted); font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: 14px; display: inline-block; }
     
     .spinner { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid currentColor; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; }
-    .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: var(--navy-900); margin: 40px auto; display: block; }
+    .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: var(--ink); margin: 40px auto; display: block; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    #phone-auth {
-      max-width: 400px;
-      padding: 40px 32px;
-      overflow: visible;
-      margin-top: 45px;
-      position: relative;
-    }
+    #phone-auth { max-width: 400px; padding: 40px 32px; overflow: visible; margin-top: 45px; position: relative; }
     .phone-avatar-circle {
       width: 90px; height: 90px; border-radius: 50%;
-      background-color: var(--surface-alt); border: 4px solid #FFFFFF;
-      box-shadow: 0 8px 20px rgba(11, 19, 43, 0.12);
+      background-color: var(--surface-soft); border: 4px solid #FFFFFF;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
       margin: -85px auto 18px auto;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden; position: relative; z-index: 2;
@@ -697,43 +567,42 @@
     .phone-avatar-circle svg { width: 46px; height: 46px; fill: #94A3B8; }
     .phone-avatar-circle img { width: 100%; height: 100%; object-fit: cover; display: none; }
     .phone-badge {
-      display: inline-block; background: var(--surface-alt); color: var(--text-body);
-      border: 1px solid var(--border);
-      font-size: 12px; font-weight: 700; padding: 5px 14px;
-      border-radius: 999px; margin-bottom: 20px; letter-spacing: 0.3px;
+      display: inline-block; background: var(--surface-soft); color: var(--ink-secondary);
+      border: 1px solid var(--line); font-size: 12px; font-weight: 700;
+      padding: 5px 14px; border-radius: 999px; margin-bottom: 20px;
     }
 
     .masked-input { -webkit-text-security: disc; text-security: disc; }
 
-    @media (max-width: 860px) {
-      .mgr-ws-body { flex-direction: column; }
-      .mgr-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
-      .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 980px) {
+      .bento-top-grid { grid-template-columns: repeat(2, 1fr); }
+      .bento-hero-tile { grid-column: 1 / -1; }
     }
     @media (max-width: 640px) {
       .top-bar { padding: 12px 18px; }
       .role-grid { grid-template-columns: 1fr; }
-      .kpi-grid-4 { grid-template-columns: 1fr; }
+      .bento-top-grid { grid-template-columns: 1fr; }
       .card-padding { padding: 32px 24px; }
       .time-display { font-size: 56px; }
+      .dock-tab { padding: 10px 14px; font-size: 12px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- STANDARD KIOSK TOP NAV (Used on Portal Selector & Employee Kiosk) -->
-  <div class="top-bar" id="standard-topbar">
+  <!-- UNIFIED TOP NAV BAR -->
+  <div class="top-bar" id="top-nav-bar">
     <div class="brand" onclick="showRoleSelector()">
       <div class="brand-logo">
         <svg viewBox="0 0 24 24"><path d="M4 10h3v10H4zM10 4h3v16h-3zM16 14h3v6h-3z"/></svg>
       </div>
       <div class="brand-text">
         <span class="brand-title">DATAWORDS</span>
-        <span class="brand-subtitle">Webmarketing Attendance Kiosk</span>
+        <span class="brand-subtitle" id="nav-sub-label">Webmarketing Attendance Kiosk</span>
       </div>
     </div>
     <div class="nav-actions">
-      <div class="status-chip"><span class="status-dot"></span> System Online</div>
+      <div class="status-chip"><span class="status-dot"></span> <span id="live-sync-label">System Online</span></div>
       <button type="button" class="nav-btn" onclick="showRoleSelector()">
         <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
         Switch Portal
@@ -742,281 +611,212 @@
   </div>
 
   <!-- =====================================================================
-       UNIFIED THEME MANAGER WORKSPACE (Midnight Navy Rail + Stationary Viewport)
+       ORIGINAL BENTO COMMAND DECK (Manager Workspace — Stationary Stage)
        ===================================================================== -->
-  <div id="mgr-workspace" class="mgr-workspace-shell">
-    <div class="mgr-ws-topbar">
-      <div class="mgr-ws-left">
-        <div class="mgr-ws-brand">
-          <div class="mgr-ws-logo">
-            <svg viewBox="0 0 24 24"><path d="M4 10h3v10H4zM10 4h3v16h-3zM16 14h3v6h-3z"/></svg>
-          </div>
-          <div>
-            <div class="mgr-ws-title">DATAWORDS</div>
-            <div class="mgr-ws-sub">MANAGER OPERATIONS PORTAL</div>
-          </div>
+  <div id="mgr-bento-deck" class="bento-deck">
+    
+    <!-- Top Bento Row: Identity Card + 4 Visual KPI Tiles -->
+    <div class="bento-top-grid">
+      <div class="bento-tile bento-hero-tile">
+        <div class="hero-dept-pill" id="deck-mgr-dept">OPERATIONS</div>
+        <div>
+          <div class="hero-mgr-name" id="deck-mgr-name">Manager Name</div>
+          <div class="hero-sync-note" id="deck-sync-time">Auto-syncing live data</div>
         </div>
-        <button type="button" class="btn-logout-pill" onclick="logoutManager()">Log out</button>
       </div>
 
-      <div class="mgr-ws-right">
-        <div class="mgr-ws-clock-wrap">
-          <div class="mgr-ws-live-badge">● LIVE SYSTEM</div>
-          <div class="mgr-ws-clock" id="mgr-live-clock">00:00:00 PM</div>
+      <div class="bento-tile">
+        <div class="tile-header-row">
+          <div class="tile-icon ic-emerald">
+            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          </div>
+        </div>
+        <div>
+          <div class="tile-big-num" id="stat-active-shifts" style="color:var(--emerald);">0</div>
+          <div class="tile-caption">Active Now</div>
+        </div>
+      </div>
+
+      <div class="bento-tile">
+        <div class="tile-header-row">
+          <div class="tile-icon ic-blue">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </div>
+        </div>
+        <div>
+          <div class="tile-big-num" id="stat-total-members">0</div>
+          <div class="tile-caption">Team Members</div>
+        </div>
+      </div>
+
+      <div class="bento-tile">
+        <div class="tile-header-row">
+          <div class="tile-icon ic-slate">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          </div>
+        </div>
+        <div>
+          <div class="tile-big-num" id="stat-total-logs">0</div>
+          <div class="tile-caption">Total Logs</div>
+        </div>
+      </div>
+
+      <div class="bento-tile">
+        <div class="tile-header-row">
+          <div class="tile-icon ic-amber">
+            <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+          </div>
+        </div>
+        <div>
+          <div class="tile-big-num" id="stat-missing-outs" style="color:var(--amber);">0</div>
+          <div class="tile-caption">Open Shifts</div>
         </div>
       </div>
     </div>
 
-    <div class="mgr-ws-body">
-      <aside class="mgr-sidebar">
-        <div>
-          <div class="signed-in-card">
-            <div class="signed-in-label">SIGNED IN AS</div>
-            <div class="signed-in-name" id="sb-mgr-name">Manager Name</div>
-            <div class="signed-in-dept" id="sb-mgr-dept">DEPARTMENT</div>
+    <!-- Stationary Viewport Card (Only inner deck-view swaps when clicking Floating Dock) -->
+    <div class="bento-viewport">
+
+      <!-- VIEW 1: TEAM ROSTER -->
+      <div id="deck-view-live" class="deck-view active">
+        <div class="view-bar">
+          <div>
+            <h2 class="view-heading">Live Team Pulse</h2>
+            <div class="view-sub">Real-time presence across your departments</div>
           </div>
-
-          <div class="sidebar-section-label">WORKSPACE</div>
-          <nav class="sidebar-nav">
-            <button type="button" class="sidebar-nav-btn active" id="sb-btn-live" onclick="switchManagerSection('live')">
-              <span class="sidebar-nav-left">
-                <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-                Overview
-              </span>
-              <span class="sidebar-badge" id="sb-count-live">0</span>
-            </button>
-
-            <button type="button" class="sidebar-nav-btn" id="sb-btn-history" onclick="switchManagerSection('history')">
-              <span class="sidebar-nav-left">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                Attendance Logs
-              </span>
-              <span class="sidebar-badge" id="sb-count-history">0</span>
-            </button>
-
-            <button type="button" class="sidebar-nav-btn" id="sb-btn-devices" onclick="switchManagerSection('devices')">
-              <span class="sidebar-nav-left">
-                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                Team & Devices
-              </span>
-              <span class="sidebar-badge" id="sb-count-devices">0</span>
-            </button>
-
-            <button type="button" class="sidebar-nav-btn" id="sb-btn-missing" onclick="switchManagerSection('missing')">
-              <span class="sidebar-nav-left">
-                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                Open Shifts
-              </span>
-              <span class="sidebar-badge warn" id="sb-count-missing">0</span>
-            </button>
-          </nav>
+          <div class="filter-row">
+            <select id="liveTeamFilter" class="clean-select" onchange="renderLiveTeamBoard(cachedManagerMembers, cachedManagerRecords)">
+              <option value="ALL">All Teams</option>
+            </select>
+          </div>
         </div>
+        <div id="live-board-grid" class="roster-grid"></div>
+      </div>
 
-        <div class="sidebar-footer-ver">DATAWORDS KIOSK • v4.0</div>
-      </aside>
-
-      <!-- STATIONARY VIEWPORT (Only the selected pane updates) -->
-      <main class="mgr-main-content">
-
-        <!-- PANE 1: OVERVIEW -->
-        <section id="pane-live" class="mgr-section-pane active">
-          <div class="pane-header-row">
-            <div>
-              <h1 class="pane-title">Team Overview</h1>
-              <p class="pane-subtitle">Live status of active shifts, teams, and daily attendance across your organization.</p>
-            </div>
-            <div class="pane-actions">
-              <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
-                <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                Refresh
-              </button>
-            </div>
+      <!-- VIEW 2: ATTENDANCE LOGS + EXCEL EXPORT -->
+      <div id="deck-view-history" class="deck-view">
+        <div class="view-bar">
+          <div>
+            <h2 class="view-heading">Attendance Records</h2>
+            <div class="view-sub" id="mgr-filtered-count">0 logs found</div>
           </div>
-
-          <div class="kpi-grid-4">
-            <div class="kpi-card">
-              <div class="kpi-icon tile-teal">
-                <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-              </div>
-              <div>
-                <div class="kpi-val" id="stat-active-shifts" style="color:var(--teal-600);">0</div>
-                <div class="kpi-lbl">Active Now</div>
-              </div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-icon tile-navy">
-                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-              </div>
-              <div>
-                <div class="kpi-val" id="stat-total-members">0</div>
-                <div class="kpi-lbl">Team Members</div>
-              </div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-icon tile-emerald">
-                <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/></svg>
-              </div>
-              <div>
-                <div class="kpi-val" id="stat-total-logs">0</div>
-                <div class="kpi-lbl">Total Logs</div>
-              </div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-icon tile-amber">
-                <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-              </div>
-              <div>
-                <div class="kpi-val" id="stat-missing-outs" style="color:var(--amber-600);">0</div>
-                <div class="kpi-lbl">Open Shifts</div>
-              </div>
-            </div>
+          <div class="filter-row">
+            <input type="text" id="mgrSearchInput" class="clean-input" placeholder="Search name or date..." oninput="filterManagerTable()">
+            <select id="mgrFilterTeam" class="clean-select" onchange="filterManagerTable()">
+              <option value="ALL">All Teams</option>
+            </select>
+            <select id="mgrFilterArr" class="clean-select" onchange="filterManagerTable()">
+              <option value="ALL">All Modes</option>
+              <option value="Onsite">Onsite</option>
+              <option value="Work From Home">WFH</option>
+            </select>
+            <select id="mgrFilterStatus" class="clean-select" onchange="filterManagerTable()">
+              <option value="ALL">All Shifts</option>
+              <option value="ACTIVE">Active Now</option>
+              <option value="COMPLETED">Completed</option>
+            </select>
+            <button type="button" class="btn-export-xlsx" onclick="exportAttendanceToExcel()">
+              <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              Export Excel
+            </button>
           </div>
+        </div>
+        <table class="deck-table">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Date</th>
+              <th>Time In</th>
+              <th>Time Out</th>
+              <th>Mode</th>
+              <th>Hours</th>
+            </tr>
+          </thead>
+          <tbody id="mgr-table-body"></tbody>
+        </table>
+      </div>
 
-          <div class="framed-panel">
-            <div class="panel-toolbar">
-              <div style="font-size:13px; font-weight:700; color:var(--navy-900);">Live Team Roster</div>
-              <select id="liveTeamFilter" class="mgr-filter-select" onchange="renderLiveTeamBoard(cachedManagerMembers, cachedManagerRecords)">
-                <option value="ALL">All Teams</option>
-              </select>
-            </div>
-            <div id="live-board-grid" class="live-board-grid"></div>
+      <!-- VIEW 3: DEVICES & ACCESS -->
+      <div id="deck-view-devices" class="deck-view">
+        <div class="view-bar">
+          <div>
+            <h2 class="view-heading">Registered Devices</h2>
+            <div class="view-sub">1-to-1 mobile hardware bindings and access status</div>
           </div>
-        </section>
+        </div>
+        <table class="deck-table">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Email</th>
+              <th>Mobile Token</th>
+              <th>Status</th>
+              <th>Controls</th>
+            </tr>
+          </thead>
+          <tbody id="mgr-devices-body"></tbody>
+        </table>
+      </div>
 
-        <!-- PANE 2: ATTENDANCE LOGS -->
-        <section id="pane-history" class="mgr-section-pane">
-          <div class="pane-header-row">
-            <div>
-              <h1 class="pane-title">Attendance Logs</h1>
-              <p class="pane-subtitle">Filter by team, employee, or work arrangement and export reports to Excel.</p>
-            </div>
-            <div class="pane-actions">
-              <button type="button" class="btn-action excel" onclick="exportAttendanceToExcel()">
-                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                Export Excel
-              </button>
-              <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
-                <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                Refresh
-              </button>
-            </div>
+      <!-- VIEW 4: OPEN SHIFTS -->
+      <div id="deck-view-missing" class="deck-view">
+        <div class="view-bar">
+          <div>
+            <h2 class="view-heading">Open Shifts</h2>
+            <div class="view-sub">Manually close shifts missing a Time Out scan</div>
           </div>
+        </div>
+        <table class="deck-table">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Date & In</th>
+              <th>Closing Time</th>
+              <th>Reason</th>
+              <th>Save</th>
+            </tr>
+          </thead>
+          <tbody id="mgr-missing-body"></tbody>
+        </table>
+      </div>
 
-          <div class="framed-panel">
-            <div class="panel-toolbar">
-              <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <input type="text" id="mgrSearchInput" class="mgr-search" placeholder="Search employee or date..." oninput="filterManagerTable()">
-                <select id="mgrFilterTeam" class="mgr-filter-select" onchange="filterManagerTable()">
-                  <option value="ALL">All Teams</option>
-                </select>
-                <select id="mgrFilterArr" class="mgr-filter-select" onchange="filterManagerTable()">
-                  <option value="ALL">All Arrangements</option>
-                  <option value="Onsite">Onsite</option>
-                  <option value="Work From Home">Work From Home</option>
-                </select>
-                <select id="mgrFilterStatus" class="mgr-filter-select" onchange="filterManagerTable()">
-                  <option value="ALL">All Statuses</option>
-                  <option value="ACTIVE">Active Now</option>
-                  <option value="COMPLETED">Completed</option>
-                </select>
-              </div>
-              <div style="font-size:12.5px; color:var(--text-muted); font-weight:700;" id="mgr-filtered-count">0 records</div>
-            </div>
+    </div>
+  </div>
 
-            <table class="ws-table">
-              <thead>
-                <tr>
-                  <th>Employee & Team</th>
-                  <th>Date</th>
-                  <th>Time In</th>
-                  <th>Time Out</th>
-                  <th>Arrangement</th>
-                  <th>Hours</th>
-                </tr>
-              </thead>
-              <tbody id="mgr-table-body"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- PANE 3: TEAM & DEVICES -->
-        <section id="pane-devices" class="mgr-section-pane">
-          <div class="pane-header-row">
-            <div>
-              <h1 class="pane-title">Team & Devices</h1>
-              <p class="pane-subtitle">Manage registered team members, unbind lost phones, or suspend access.</p>
-            </div>
-            <div class="pane-actions">
-              <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
-                <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                Refresh
-              </button>
-            </div>
-          </div>
-
-          <div class="framed-panel">
-            <table class="ws-table">
-              <thead>
-                <tr>
-                  <th>Employee & Team</th>
-                  <th>Email</th>
-                  <th>Bound Device</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="mgr-devices-body"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- PANE 4: OPEN SHIFTS -->
-        <section id="pane-missing" class="mgr-section-pane">
-          <div class="pane-header-row">
-            <div>
-              <h1 class="pane-title">Open Shifts</h1>
-              <p class="pane-subtitle">Close shifts manually when a team member forgets to scan Time Out.</p>
-            </div>
-            <div class="pane-actions">
-              <button type="button" class="btn-action" onclick="refreshManagerDashboard()">
-                <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                Refresh
-              </button>
-            </div>
-          </div>
-
-          <div class="framed-panel">
-            <table class="ws-table">
-              <thead>
-                <tr>
-                  <th>Employee & Team</th>
-                  <th>Date & Time In</th>
-                  <th>Set Time Out</th>
-                  <th>Manager Note</th>
-                  <th>Save</th>
-                </tr>
-              </thead>
-              <tbody id="mgr-missing-body"></tbody>
-            </table>
-          </div>
-        </section>
-
-      </main>
+  <!-- FLOATING GLASS DOCK (Switches only the inner view inside the Bento Viewport) -->
+  <div id="mgr-floating-dock" class="floating-dock-wrap">
+    <div class="floating-dock">
+      <button type="button" class="dock-tab active" id="dock-btn-live" onclick="switchDeckView('live')">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Team <span class="dock-pill" id="dock-count-live">0</span>
+      </button>
+      <button type="button" class="dock-tab" id="dock-btn-history" onclick="switchDeckView('history')">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        Logs <span class="dock-pill" id="dock-count-history">0</span>
+      </button>
+      <button type="button" class="dock-tab" id="dock-btn-devices" onclick="switchDeckView('devices')">
+        <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+        Devices <span class="dock-pill" id="dock-count-devices">0</span>
+      </button>
+      <button type="button" class="dock-tab" id="dock-btn-missing" onclick="switchDeckView('missing')">
+        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        Open Shifts <span class="dock-pill" id="dock-count-missing">0</span>
+      </button>
     </div>
   </div>
 
   <!-- =====================================================================
-       STANDARD CENTERED STAGE (Portal Selector, Employee Kiosk & Auth Forms)
+       CENTERED STAGE (Portal Selector, Employee Kiosk & Auth Forms)
        ===================================================================== -->
   <div class="main-wrapper" id="centered-stage">
     <!-- DEVICE BLOCK -->
     <div id="device-error" class="card setup-card">
       <div style="font-size: 44px; margin-bottom:12px;">🚫</div>
-      <h2 style="color:var(--crimson-600);">Access Denied</h2>
+      <h2 style="color:var(--crimson);">Access Denied</h2>
       <p id="error-message">Device not allowed.</p>
     </div>
 
-    <!-- PORTAL SELECTOR ENTRY SCREEN -->
+    <!-- PORTAL SELECTOR ENTRY SCREEN (Kept as-is) -->
     <div id="role-selector" class="card role-card active-card">
       <div class="eyebrow-badge">Attendance Portal</div>
       <h2>Choose Your Workspace</h2>
@@ -1052,7 +852,7 @@
       <label style="text-align:center;">Your 4-Digit Auth Code</label>
       <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="empLoginCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') submitEmployeeLogin()">
       <button class="btn-save" onclick="submitEmployeeLogin()">Unlock Kiosk</button>
-      <div id="emp-login-error" style="color:var(--crimson-600); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
+      <div id="emp-login-error" style="color:var(--crimson); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
       <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
     </div>
 
@@ -1150,13 +950,13 @@
 
     <!-- CODE REVEAL -->
     <div id="laptop-reveal" class="card setup-card">
-      <div class="form-icon-header" style="background:var(--teal-soft); color:var(--teal-600); border-color:rgba(13,148,136,0.2);">
+      <div class="form-icon-header" style="background:var(--emerald-bg); color:var(--emerald);">
         <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
       </div>
       <h2>Registration Complete</h2>
       <p>Save your 4-digit Authentication Code. You will need it to open your kiosk and verify QR scans.</p>
       <div id="auth-code-display">0000</div>
-      <p style="color: var(--crimson-600); font-weight: 600; font-size: 13px;">⚠️ Write this down or keep it private.</p>
+      <p style="color: var(--crimson); font-weight: 600; font-size: 13px;">⚠️ Write this down or keep it private.</p>
       <button class="btn-save" onclick="openEmployeeKiosk()">I Have Saved It, Continue</button>
     </div>
 
@@ -1177,7 +977,7 @@
               <svg viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
             </div>
             <div class="avatar-loading" id="avatar-loading-spinner">
-              <div class="spinner" style="border-top-color:var(--navy-900);"></div>
+              <div class="spinner" style="border-top-color:var(--ink);"></div>
             </div>
           </div>
 
@@ -1268,7 +1068,7 @@
       </div>
 
       <h2 style="font-size:22px; margin-bottom:6px;">Verify Attendance</h2>
-      <p id="phone-greeting" style="font-weight: 700; color:var(--navy-900); margin-bottom: 10px;">Employee Name</p>
+      <p id="phone-greeting" style="font-weight: 700; color:var(--ink); margin-bottom: 10px;">Employee Name</p>
       <div id="phone-badge" class="phone-badge">TIME IN • Onsite</div>
 
       <label style="text-align:center;">Authentication Code</label>
@@ -1298,6 +1098,7 @@
     let expectedTargetState = null;
     let qrPollingInterval = null;
     let qrExpiryTimer = null;
+    let mgrAutoSyncInterval = null;
     let pendingManagerDraft = null;
     let cachedManagerRecords = [];
     let cachedFilteredRecords = [];
@@ -1306,10 +1107,15 @@
     window.shiftStartTime = null;
 
     function switchCard(cardId) {
-      document.getElementById('mgr-workspace').classList.remove('active');
-      document.getElementById('standard-topbar').style.display = 'flex';
+      clearInterval(mgrAutoSyncInterval);
+      mgrAutoSyncInterval = null;
+
+      document.getElementById('mgr-bento-deck').classList.remove('active');
+      document.getElementById('mgr-floating-dock').classList.remove('active');
       document.getElementById('centered-stage').style.display = 'flex';
       document.getElementById('standard-footer').style.display = 'block';
+      document.getElementById('nav-sub-label').innerText = "Webmarketing Attendance Kiosk";
+      document.getElementById('live-sync-label').innerText = "System Online";
 
       document.querySelectorAll('.card').forEach(el => el.classList.remove('active-card'));
       const target = document.getElementById(cardId);
@@ -1326,8 +1132,10 @@
       if (isMobile) return;
       clearInterval(qrPollingInterval);
       clearInterval(qrExpiryTimer);
+      clearInterval(mgrAutoSyncInterval);
       qrPollingInterval = null;
       qrExpiryTimer = null;
+      mgrAutoSyncInterval = null;
       window.shiftStartTime = null;
 
       const savedEmp = localStorage.getItem('empName');
@@ -1406,7 +1214,7 @@
       fetchLiveStatus(false);
     }
 
-    // --- MANAGER ENTRY, REGISTRATION & SIDEBAR WORKSPACE ---
+    // --- MANAGER ENTRY, REGISTRATION & BENTO COMMAND DECK ---
     function selectManagerRole() {
       const savedMgrEmail = localStorage.getItem('mgrEmail');
       if (savedMgrEmail) {
@@ -1511,7 +1319,7 @@
           localStorage.setItem('mgrEmail', data.manager.email);
           sessionStorage.setItem('mgrSessionPass', newPass);
           serverTodayStr = data.today || "";
-          renderManagerDashboard(data.manager, data.records || [], data.members || []);
+          openBentoDashboard(data.manager, data.records || [], data.members || []);
         } else {
           alert(data.error || "Registration failed.");
         }
@@ -1550,7 +1358,7 @@
           localStorage.setItem('mgrEmail', data.manager.email);
           sessionStorage.setItem('mgrSessionPass', password);
           serverTodayStr = data.today || "";
-          renderManagerDashboard(data.manager, data.records || [], data.members || []);
+          openBentoDashboard(data.manager, data.records || [], data.members || []);
         } else {
           alert(data.error || "Invalid credentials.");
         }
@@ -1562,10 +1370,10 @@
       }
     }
 
-    async function refreshManagerDashboard() {
+    async function silentSyncManagerData() {
       const email = localStorage.getItem('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
-      if (!pass) return openManagerLogin();
+      if (!pass || !document.getElementById('mgr-bento-deck').classList.contains('active')) return;
 
       try {
         const res = await fetch(GOOGLE_URL, {
@@ -1576,18 +1384,16 @@
         const data = await res.json();
         if (data.ok) {
           serverTodayStr = data.today || serverTodayStr;
-          renderManagerDashboard(data.manager, data.records || [], data.members || []);
+          updateBentoDeckData(data.manager, data.records || [], data.members || []);
         }
-      } catch (e) {
-        alert("Failed to refresh dashboard data.");
-      }
+      } catch (e) {}
     }
 
-    // Swaps ONLY the right content pane while keeping sidebar & topbar locked in place
-    function switchManagerSection(sectionKey) {
+    // Floating Dock Switcher: Swaps ONLY the inner deck-view inside the stationary card
+    function switchDeckView(viewKey) {
       ['live', 'history', 'devices', 'missing'].forEach(k => {
-        document.getElementById(`sb-btn-${k}`).classList.toggle('active', k === sectionKey);
-        document.getElementById(`pane-${k}`).classList.toggle('active', k === sectionKey);
+        document.getElementById(`dock-btn-${k}`).classList.toggle('active', k === viewKey);
+        document.getElementById(`deck-view-${k}`).classList.toggle('active', k === viewKey);
       });
     }
 
@@ -1607,12 +1413,29 @@
       });
     }
 
-    function renderManagerDashboard(manager, records, members) {
+    function openBentoDashboard(manager, records, members) {
+      document.getElementById('centered-stage').style.display = 'none';
+      document.getElementById('standard-footer').style.display = 'none';
+      document.getElementById('nav-sub-label').innerText = "Manager Command Deck";
+      document.getElementById('mgr-bento-deck').classList.add('active');
+      document.getElementById('mgr-floating-dock').classList.add('active');
+
+      updateBentoDeckData(manager, records, members);
+
+      clearInterval(mgrAutoSyncInterval);
+      mgrAutoSyncInterval = setInterval(silentSyncManagerData, 15000);
+    }
+
+    function updateBentoDeckData(manager, records, members) {
       cachedManagerRecords = records;
       cachedManagerMembers = members;
 
-      document.getElementById('sb-mgr-name').innerText = manager.name;
-      document.getElementById('sb-mgr-dept').innerText = String(manager.department || "").toUpperCase();
+      document.getElementById('deck-mgr-name').innerText = manager.name;
+      document.getElementById('deck-mgr-dept').innerText = String(manager.department || "MANAGER").toUpperCase();
+
+      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('deck-sync-time').innerText = `Live synced • ${nowTime}`;
+      document.getElementById('live-sync-label').innerText = `Live • ${nowTime}`;
 
       populateTeamFilters(members, records);
 
@@ -1624,23 +1447,18 @@
       document.getElementById('stat-total-logs').innerText = records.length;
       document.getElementById('stat-missing-outs').innerText = missingOutRecords.length;
 
-      document.getElementById('sb-count-live').innerText = activeRecords.length;
-      document.getElementById('sb-count-history').innerText = records.length;
-      document.getElementById('sb-count-devices').innerText = members.length;
-      document.getElementById('sb-count-missing').innerText = missingOutRecords.length;
+      document.getElementById('dock-count-live').innerText = activeRecords.length;
+      document.getElementById('dock-count-history').innerText = records.length;
+      document.getElementById('dock-count-devices').innerText = members.length;
+      document.getElementById('dock-count-missing').innerText = missingOutRecords.length;
 
       renderLiveTeamBoard(members, records);
       filterManagerTable();
       renderDevicesTable(members);
       renderMissingTimeOutsTable(missingOutRecords);
-
-      document.getElementById('standard-topbar').style.display = 'none';
-      document.getElementById('centered-stage').style.display = 'none';
-      document.getElementById('standard-footer').style.display = 'none';
-      document.getElementById('mgr-workspace').classList.add('active');
     }
 
-    // PANE 1: LIVE TEAM OVERVIEW
+    // VIEW 1: LIVE TEAM PULSE
     function renderLiveTeamBoard(members, records) {
       const grid = document.getElementById('live-board-grid');
       const teamFilterEl = document.getElementById('liveTeamFilter');
@@ -1651,7 +1469,7 @@
         : members.filter(m => String(m.team || "").trim() === selectedTeam);
 
       if (!visibleMembers.length) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No team members found for this filter.</div>`;
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--ink-muted);">No team members found for this filter.</div>`;
         return;
       }
 
@@ -1660,35 +1478,35 @@
         const activeShift = records.find(r => String(r.employeeName || "").toLowerCase() === nameLower && r.timeIn && !r.timeOut);
         const todayCompleted = records.find(r => String(r.employeeName || "").toLowerCase() === nameLower && r.date === serverTodayStr && r.timeOut);
 
-        let statusBadge = `<span class="badge-pill badge-muted">Offline</span>`;
+        let statusTag = `<span class="tag tag-gray">Offline</span>`;
         let metaLeft = "No shift today";
         let metaRight = "";
 
         if (activeShift) {
-          statusBadge = `<span class="badge-pill badge-active">● Active</span>`;
+          statusTag = `<span class="tag tag-green">● Active</span>`;
           metaLeft = `In: <strong>${escapeHtml(activeShift.timeIn)}</strong>`;
           metaRight = activeShift.workArrangement === "Work From Home"
-            ? `<span class="badge-pill badge-wfh">WFH</span>`
-            : `<span class="badge-pill badge-onsite">Onsite</span>`;
+            ? `<span class="tag tag-amber">WFH</span>`
+            : `<span class="tag tag-blue">Onsite</span>`;
         } else if (todayCompleted) {
-          statusBadge = `<span class="badge-pill badge-onsite">✓ Done</span>`;
+          statusTag = `<span class="tag tag-blue">✓ Done</span>`;
           metaLeft = `Total: <strong>${escapeHtml(todayCompleted.totalHours || "—")}</strong>`;
           metaRight = escapeHtml(todayCompleted.workArrangement || "");
         }
 
         return `
-          <div class="member-status-card ${activeShift ? 'is-in' : ''}">
-            <div class="member-card-top">
-              <div class="emp-cell-wrap">
-                <div class="emp-initials-avatar ${activeShift ? 'active-av' : ''}">${escapeHtml(getInitials(m.name))}</div>
+          <div class="roster-card ${activeShift ? 'online' : ''}">
+            <div class="roster-top">
+              <div class="person-cell">
+                <div class="person-badge ${activeShift ? 'live' : ''}">${escapeHtml(getInitials(m.name))}</div>
                 <div>
-                  <div class="emp-cell-name">${escapeHtml(m.name)}</div>
-                  <div class="emp-cell-sub">${escapeHtml(m.team)}</div>
+                  <div class="person-name">${escapeHtml(m.name)}</div>
+                  <div class="person-team">${escapeHtml(m.team)}</div>
                 </div>
               </div>
-              ${statusBadge}
+              ${statusTag}
             </div>
-            <div class="member-card-meta">
+            <div class="roster-bottom">
               <span>${metaLeft}</span>
               <span>${metaRight}</span>
             </div>
@@ -1697,7 +1515,7 @@
       }).join("");
     }
 
-    // PANE 2: ATTENDANCE LOGS + TEAM FILTER + EXCEL EXPORT
+    // VIEW 2: ATTENDANCE LOGS + EXCEL EXPORT
     function filterManagerTable() {
       const q = (document.getElementById('mgrSearchInput').value || "").trim().toLowerCase();
       const teamFilter = document.getElementById('mgrFilterTeam').value;
@@ -1721,39 +1539,39 @@
       });
 
       cachedFilteredRecords = filtered;
-      document.getElementById('mgr-filtered-count').innerText = `${filtered.length} records`;
+      document.getElementById('mgr-filtered-count').innerText = `${filtered.length} logs found`;
       renderAttendanceRows(filtered);
     }
 
     function renderAttendanceRows(rows) {
       const tbody = document.getElementById('mgr-table-body');
       if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:36px; color:var(--text-muted);">No matching attendance records found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:42px; color:var(--ink-muted);">No matching attendance records found.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = rows.map(r => {
         const isActive = Boolean(r.timeIn && !r.timeOut);
         const arrBadge = r.workArrangement === "Work From Home"
-          ? `<span class="badge-pill badge-wfh">Work From Home</span>`
-          : `<span class="badge-pill badge-onsite">${escapeHtml(r.workArrangement || "Onsite")}</span>`;
+          ? `<span class="tag tag-amber">WFH</span>`
+          : `<span class="tag tag-blue">${escapeHtml(r.workArrangement || "Onsite")}</span>`;
 
         const timeOutCell = r.timeOut
           ? escapeHtml(r.timeOut)
-          : `<span class="badge-pill badge-active">● Active Shift</span>`;
+          : `<span class="tag tag-green">● Active</span>`;
 
         const hoursCell = r.totalHours
           ? `<strong>${escapeHtml(r.totalHours)}</strong>`
-          : `<span style="color:var(--text-muted);">—</span>`;
+          : `<span style="color:var(--ink-muted);">—</span>`;
 
         return `
           <tr>
             <td>
-              <div class="emp-cell-wrap">
-                <div class="emp-initials-avatar ${isActive ? 'active-av' : ''}">${escapeHtml(getInitials(r.employeeName))}</div>
+              <div class="person-cell">
+                <div class="person-badge ${isActive ? 'live' : ''}">${escapeHtml(getInitials(r.employeeName))}</div>
                 <div>
-                  <div class="emp-cell-name">${escapeHtml(r.employeeName)}</div>
-                  <div style="margin-top:3px;"><span class="badge-pill badge-team">${escapeHtml(r.team)}</span></div>
+                  <div class="person-name">${escapeHtml(r.employeeName)}</div>
+                  <div class="person-team">${escapeHtml(r.team)}</div>
                 </div>
               </div>
             </td>
@@ -1797,42 +1615,42 @@
       XLSX.writeFile(workbook, `Attendance_History_${dateStamp}.xlsx`);
     }
 
-    // PANE 3: TEAM & DEVICES
+    // VIEW 3: REGISTERED DEVICES
     function renderDevicesTable(members) {
       const tbody = document.getElementById('mgr-devices-body');
       if (!members.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:36px; color:var(--text-muted);">No registered employees found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">No registered employees found.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = members.map(m => {
         const st = String(m.deviceStatus || "").toLowerCase();
-        let statusBadge = `<span class="badge-pill badge-active">● ${escapeHtml(m.deviceStatus || "Active")}</span>`;
-        if (st === "reset" || st === "pending") statusBadge = `<span class="badge-pill badge-wfh">${escapeHtml(m.deviceStatus)}</span>`;
-        if (st === "blocked" || st === "disabled") statusBadge = `<span class="badge-pill badge-danger">${escapeHtml(m.deviceStatus)}</span>`;
+        let statusTag = `<span class="tag tag-green">● ${escapeHtml(m.deviceStatus || "Active")}</span>`;
+        if (st === "reset" || st === "pending") statusTag = `<span class="tag tag-amber">${escapeHtml(m.deviceStatus)}</span>`;
+        if (st === "blocked" || st === "disabled") statusTag = `<span class="tag tag-red">${escapeHtml(m.deviceStatus)}</span>`;
 
         const isBlocked = (st === "blocked" || st === "disabled");
         const toggleBtn = isBlocked
-          ? `<button type="button" class="btn-action primary" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'UNBLOCK')">Unblock</button>`
-          : `<button type="button" class="btn-action danger" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'BLOCK')">Block</button>`;
+          ? `<button type="button" class="btn-mini dark" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'UNBLOCK')">Unblock</button>`
+          : `<button type="button" class="btn-mini danger" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'BLOCK')">Block</button>`;
 
         return `
           <tr>
             <td>
-              <div class="emp-cell-wrap">
-                <div class="emp-initials-avatar">${escapeHtml(getInitials(m.name))}</div>
+              <div class="person-cell">
+                <div class="person-badge">${escapeHtml(getInitials(m.name))}</div>
                 <div>
-                  <div class="emp-cell-name">${escapeHtml(m.name)}</div>
-                  <div style="margin-top:3px;"><span class="badge-pill badge-team">${escapeHtml(m.team)}</span></div>
+                  <div class="person-name">${escapeHtml(m.name)}</div>
+                  <div class="person-team">${escapeHtml(m.team)}</div>
                 </div>
               </div>
             </td>
-            <td style="color:var(--text-body);">${escapeHtml(m.email || "—")}</td>
+            <td style="color:var(--ink-secondary);">${escapeHtml(m.email || "—")}</td>
             <td style="font-family:monospace; font-size:12.5px;">${escapeHtml(m.deviceId || "Unbound")}</td>
-            <td>${statusBadge}</td>
+            <td>${statusTag}</td>
             <td>
               <div style="display:flex; gap:8px;">
-                <button type="button" class="btn-action" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET')">Reset Phone</button>
+                <button type="button" class="btn-mini" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET')">Reset Phone</button>
                 ${toggleBtn}
               </div>
             </td>
@@ -1876,32 +1694,32 @@
       }
     }
 
-    // PANE 4: OPEN SHIFTS / MANUAL CORRECTIONS
+    // VIEW 4: OPEN SHIFTS
     function renderMissingTimeOutsTable(openRows) {
       const tbody = document.getElementById('mgr-missing-body');
       if (!openRows.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:36px; color:var(--text-muted);">All shifts are closed. No open shifts right now.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">All shifts are closed. No open shifts right now.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = openRows.map(r => `
         <tr>
           <td>
-            <div class="emp-cell-wrap">
-              <div class="emp-initials-avatar active-av">${escapeHtml(getInitials(r.employeeName))}</div>
+            <div class="person-cell">
+              <div class="person-badge live">${escapeHtml(getInitials(r.employeeName))}</div>
               <div>
-                <div class="emp-cell-name">${escapeHtml(r.employeeName)}</div>
-                <div style="margin-top:3px;"><span class="badge-pill badge-team">${escapeHtml(r.team)}</span></div>
+                <div class="person-name">${escapeHtml(r.employeeName)}</div>
+                <div class="person-team">${escapeHtml(r.team)}</div>
               </div>
             </div>
           </td>
           <td>
-            <div class="emp-cell-name">${escapeHtml(r.date)}</div>
-            <div class="emp-cell-sub">In: ${escapeHtml(r.timeIn)}</div>
+            <div class="person-name">${escapeHtml(r.date)}</div>
+            <div class="person-team">In: ${escapeHtml(r.timeIn)}</div>
           </td>
-          <td><input type="text" class="inline-resolve-input" id="resolve-out-${r._row}" placeholder="e.g. 06:00 PM"></td>
-          <td><input type="text" class="inline-note-input" id="resolve-note-${r._row}" placeholder="Optional reason"></td>
-          <td><button type="button" class="btn-action primary" onclick="submitResolveShift(${r._row})">Save Out</button></td>
+          <td><input type="text" class="inline-field" id="resolve-out-${r._row}" placeholder="e.g. 06:00 PM"></td>
+          <td><input type="text" class="inline-field" id="resolve-note-${r._row}" placeholder="Optional reason"></td>
+          <td><button type="button" class="btn-mini dark" onclick="submitResolveShift(${r._row})">Save</button></td>
         </tr>
       `).join("");
     }
@@ -1930,7 +1748,7 @@
         const data = await res.json();
         if (data.ok) {
           alert(data.message);
-          renderManagerDashboard(
+          updateBentoDeckData(
             {
               name: localStorage.getItem('mgrName') || "Manager",
               department: localStorage.getItem('mgrDept') || "",
@@ -1945,11 +1763,6 @@
       } catch (e) {
         alert("Connection error while saving Time Out.");
       }
-    }
-
-    function logoutManager() {
-      sessionStorage.removeItem('mgrSessionPass');
-      showRoleSelector();
     }
 
     function escapeHtml(str) {
@@ -2012,12 +1825,12 @@
           otpInput.focus();
         } else {
           infoText.innerText = "Unable to send OTP.";
-          statusMsg.style.color = "var(--crimson-600)";
+          statusMsg.style.color = "var(--crimson)";
           statusMsg.innerText = "❌ " + result.error;
         }
       } catch (err) {
         infoText.innerText = "Connection failed.";
-        statusMsg.style.color = "var(--crimson-600)";
+        statusMsg.style.color = "var(--crimson)";
         statusMsg.innerText = "❌ Could not reach server.";
       }
     }
@@ -2034,13 +1847,13 @@
       const targetAction = (currentShiftState === 'ACTIVE') ? 'TIME_OUT' : 'TIME_IN';
 
       if (otpCode.length !== 6) {
-        statusMsg.style.color = "var(--crimson-600)";
+        statusMsg.style.color = "var(--crimson)";
         statusMsg.innerText = "Please enter the 6-digit code.";
         return;
       }
 
       verifyBtn.disabled = true;
-      statusMsg.style.color = "var(--navy-900)";
+      statusMsg.style.color = "var(--ink)";
       statusMsg.innerText = "Verifying OTP...";
 
       if (targetAction === 'TIME_IN') {
@@ -2063,19 +1876,19 @@
         const result = await response.json();
 
         if (result.ok) {
-          statusMsg.style.color = "var(--teal-600)";
+          statusMsg.style.color = "var(--emerald)";
           statusMsg.innerText = "✅ " + result.message;
           setTimeout(() => {
             document.getElementById('otp-section').style.display = 'none';
             fetchLiveStatus(false);
           }, 1200);
         } else {
-          statusMsg.style.color = "var(--crimson-600)";
+          statusMsg.style.color = "var(--crimson)";
           statusMsg.innerText = "❌ " + result.error;
           verifyBtn.disabled = false;
         }
       } catch (err) {
-        statusMsg.style.color = "var(--crimson-600)";
+        statusMsg.style.color = "var(--crimson)";
         statusMsg.innerText = "❌ Connection error.";
         verifyBtn.disabled = false;
       }
@@ -2094,7 +1907,7 @@
         svgEl.style.display = 'none';
         overlayEl.innerText = 'Change';
         hintEl.innerText = 'Change Photo';
-        hintEl.style.color = 'var(--text-muted)';
+        hintEl.style.color = 'var(--ink-muted)';
         localStorage.setItem('profileDataUrl', dataUrl);
         if (fileId) localStorage.setItem('profileFileId', fileId);
       } else if (fileId) {
@@ -2103,14 +1916,14 @@
         svgEl.style.display = 'none';
         overlayEl.innerText = 'Change';
         hintEl.innerText = 'Change Photo';
-        hintEl.style.color = 'var(--text-muted)';
+        hintEl.style.color = 'var(--ink-muted)';
         localStorage.setItem('profileFileId', fileId);
       } else {
         imgEl.style.display = 'none';
         svgEl.style.display = 'block';
         overlayEl.innerText = 'Add Photo';
         hintEl.innerText = '+ Add Profile Photo';
-        hintEl.style.color = 'var(--teal-600)';
+        hintEl.style.color = 'var(--emerald)';
         localStorage.removeItem('profileDataUrl');
         localStorage.removeItem('profileFileId');
       }
@@ -2278,20 +2091,16 @@
       return new Date();
     }
 
-    // --- LIVE CLOCKS ---
+    // --- LIVE CLOCK AND INLINE SHIFT TIMER ---
     function updateClock() {
       const now = new Date();
-      let hours = now.getHours(); let minutes = now.getMinutes(); let seconds = now.getSeconds();
+      let hours = now.getHours(); let minutes = now.getMinutes();
       const ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12; hours = hours ? hours : 12;
-      const minPad = minutes < 10 ? '0' + minutes : minutes;
-      const secPad = seconds < 10 ? '0' + seconds : seconds;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
       
       const timeEl = document.getElementById('time-display');
-      if (timeEl) timeEl.innerHTML = `${hours}:${minPad} <span>${ampm}</span>`;
-
-      const mgrClockEl = document.getElementById('mgr-live-clock');
-      if (mgrClockEl) mgrClockEl.innerText = `${hours}:${minPad}:${secPad} ${ampm}`;
+      if (timeEl) timeEl.innerHTML = `${hours}:${minutes} <span>${ampm}</span>`;
       
       const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
       const dateEl = document.getElementById('date-display');
@@ -2382,7 +2191,7 @@
 
              const waitText = document.getElementById('qr-waiting-text');
              waitText.innerHTML = '✅ Verified Successfully!';
-             waitText.style.color = 'var(--teal-600)';
+             waitText.style.color = 'var(--emerald)';
              document.getElementById('qr-countdown-text').innerText = '';
              
              setTimeout(() => renderUIState(result), 1000);
@@ -2438,7 +2247,7 @@
 
     // --- INITIAL ENTRY ROUTING ---
     if (mode === 'scan') {
-      document.getElementById('standard-topbar').style.display = 'none';
+      document.getElementById('top-nav-bar').style.display = 'none';
       document.getElementById('standard-footer').style.display = 'none';
       if (!isMobile) {
         switchCard('device-error');
@@ -2462,7 +2271,7 @@
             const statusDiv = document.getElementById('scan-status');
             const submitBtn = document.getElementById('submit-btn');
             const codeInput = document.getElementById('enteredCode');
-            statusDiv.style.color = "var(--crimson-600)";
+            statusDiv.style.color = "var(--crimson)";
             statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
             submitBtn.disabled = true;
             submitBtn.style.opacity = "0.5";
@@ -2482,7 +2291,7 @@
       }
     } else {
       if (isMobile) {
-        document.getElementById('standard-topbar').style.display = 'none';
+        document.getElementById('top-nav-bar').style.display = 'none';
         switchCard('device-error');
         document.getElementById('error-message').innerText = "Access Denied: Portal access is restricted to desktop devices.";
       } else {
@@ -2608,12 +2417,12 @@
       
       const waitText = document.getElementById('qr-waiting-text');
       waitText.innerHTML = '<div class="spinner"></div> Awaiting mobile verification...';
-      waitText.style.color = 'var(--teal-600)';
+      waitText.style.color = 'var(--emerald)';
 
       const countdownEl = document.getElementById('qr-countdown-text');
       let secondsLeft = 60;
       countdownEl.innerText = `QR expires in ${secondsLeft}s`;
-      countdownEl.style.color = 'var(--text-muted)';
+      countdownEl.style.color = 'var(--ink-muted)';
 
       document.getElementById('action-section').style.display = 'none';
       document.getElementById('qr-section').style.display = 'block';
@@ -2625,7 +2434,7 @@
       qrExpiryTimer = setInterval(() => {
         secondsLeft--;
         if (secondsLeft <= 15 && secondsLeft > 0) {
-          countdownEl.style.color = 'var(--crimson-600)';
+          countdownEl.style.color = 'var(--crimson)';
         }
         if (secondsLeft <= 0) {
           cancelQR();
@@ -2643,7 +2452,7 @@
 
       if (!qrTimestamp || (Date.now() - qrTimestamp) > 60000) {
         statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
-        statusDiv.style.color = "var(--crimson-600)";
+        statusDiv.style.color = "var(--crimson)";
         submitBtn.disabled = true;
         submitBtn.style.opacity = "0.5";
         return;
@@ -2651,14 +2460,14 @@
 
       if (!enteredCode || enteredCode.length !== 4) {
         statusDiv.innerText = "Please enter your 4-digit code.";
-        statusDiv.style.color = "var(--crimson-600)";
+        statusDiv.style.color = "var(--crimson)";
         return;
       }
 
       submitBtn.disabled = true;
       submitBtn.style.opacity = "0.5";
-      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:var(--navy-900);"></div> Verifying PIN & Device...';
-      statusDiv.style.color = "var(--navy-900)";
+      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:var(--ink);"></div> Verifying PIN & Device...';
+      statusDiv.style.color = "var(--ink)";
 
       const mobileDeviceId = getOrCreateMobileDeviceId();
 
@@ -2681,16 +2490,16 @@
         const result = await response.json();
         
         if (result.ok) {
-            statusDiv.style.color = "var(--teal-600)";
+            statusDiv.style.color = "var(--emerald)";
             statusDiv.innerText = "✅ SUCCESS! " + result.message;
         } else {
-            statusDiv.style.color = "var(--crimson-600)";
+            statusDiv.style.color = "var(--crimson)";
             statusDiv.innerText = "🚫 " + result.error;
             submitBtn.disabled = false;
             submitBtn.style.opacity = "1";
         }
       } catch (error) {
-        statusDiv.style.color = "var(--crimson-600)";
+        statusDiv.style.color = "var(--crimson)";
         statusDiv.innerText = "Connection failed. Check your internet.";
         submitBtn.disabled = false;
         submitBtn.style.opacity = "1";
