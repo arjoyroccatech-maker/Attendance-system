@@ -691,9 +691,15 @@
 
     async function initPhoneProfilePhoto(empName, empTeam, photoId) {
       const cacheKey = `phonePhoto_${empName}`;
+      const cacheIdKey = `phonePhotoId_${empName}`;
       const cached = localStorage.getItem(cacheKey);
-      
-      if (cached) {
+      const cachedId = localStorage.getItem(cacheIdKey);
+
+      if (photoId && photoId !== cachedId) {
+        localStorage.removeItem(cacheKey);
+        localStorage.setItem(cacheIdKey, photoId);
+        applyPhoneProfilePhoto(`https://lh3.googleusercontent.com/d/${photoId}=s250`);
+      } else if (cached) {
         applyPhoneProfilePhoto(cached);
       } else if (photoId) {
         applyPhoneProfilePhoto(`https://lh3.googleusercontent.com/d/${photoId}=s250`);
@@ -714,7 +720,10 @@
         const result = await response.json();
         if (result.ok && result.profileDataUrl) {
           applyPhoneProfilePhoto(result.profileDataUrl);
-          try { localStorage.setItem(cacheKey, result.profileDataUrl); } catch (err) {}
+          try {
+            localStorage.setItem(cacheKey, result.profileDataUrl);
+            if (result.profileFileId) localStorage.setItem(cacheIdKey, result.profileFileId);
+          } catch (err) {}
         }
       } catch (e) {}
     }
