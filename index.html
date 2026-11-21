@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- SheetJS for Native Excel (.xlsx) Export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   
   <style>
     :root {
@@ -25,6 +27,8 @@
       --crimson: #DC2626;
       --crimson-hover: #B91C1C;
       --crimson-soft: #FEF2F2;
+      --amber: #D97706;
+      --amber-soft: #FFFBEB;
       --slate-dark: #0F172A;
       --slate-dark-hover: #1E293B;
 
@@ -197,45 +201,103 @@
     }
     .sub-link:hover { color: var(--text-primary); text-decoration: underline; }
 
-    /* --- MANAGER DASHBOARD --- */
-    .manager-dash-card { max-width: 1080px; text-align: left; }
+    /* --- MANAGER COMMAND CENTER DASHBOARD --- */
+    .manager-dash-card { max-width: 1140px; text-align: left; }
     .mgr-header {
-      padding: 28px 32px; border-bottom: 1px solid var(--border);
+      padding: 26px 32px; border-bottom: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
     }
     .mgr-header h2 { margin: 0 0 4px 0; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
     .mgr-header p { margin: 0; font-size: 13px; color: var(--text-muted); }
     .mgr-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .mgr-search {
-      padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border);
-      background: var(--surface-subtle); font-size: 13px; font-family: 'Inter', sans-serif; min-width: 240px;
-    }
-    .mgr-search:focus { outline: none; background: #FFF; border-color: var(--slate-dark); }
     .btn-sm {
-      padding: 10px 16px; border-radius: 10px; border: 1px solid var(--border);
-      background: #FFF; color: var(--text-primary); font-size: 13px; font-weight: 600;
+      padding: 9px 15px; border-radius: 10px; border: 1px solid var(--border);
+      background: #FFF; color: var(--text-primary); font-size: 12.5px; font-weight: 700;
       cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s;
+      display: inline-flex; align-items: center; gap: 6px;
     }
-    .btn-sm:hover { background: var(--surface-subtle); }
+    .btn-sm:hover { background: var(--surface-subtle); border-color: var(--border-strong); }
     .btn-sm.primary { background: var(--slate-dark); color: #FFF; border-color: var(--slate-dark); }
     .btn-sm.primary:hover { background: var(--slate-dark-hover); }
+    .btn-sm.excel { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(5, 150, 105, 0.28); }
+    .btn-sm.excel:hover { background: #D1FAE5; }
+    .btn-sm.danger { background: var(--crimson-soft); color: var(--crimson); border-color: rgba(220, 38, 38, 0.25); }
+    .btn-sm.danger:hover { background: #FEE2E2; }
+
     .mgr-stats {
-      display: grid; grid-template-columns: repeat(3, 1fr);
+      display: grid; grid-template-columns: repeat(4, 1fr);
       border-bottom: 1px solid var(--border); background: var(--surface-subtle);
     }
-    .mgr-stat-box { padding: 20px 32px; border-right: 1px solid var(--border); }
+    .mgr-stat-box { padding: 18px 26px; border-right: 1px solid var(--border); }
     .mgr-stat-box:last-child { border-right: none; }
-    .mgr-stat-label { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
-    .mgr-stat-val { font-size: 26px; font-weight: 800; color: var(--text-primary); }
-    .table-wrap { width: 100%; overflow-x: auto; max-height: 480px; }
+    .mgr-stat-label { font-size: 11.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+    .mgr-stat-val { font-size: 24px; font-weight: 800; color: var(--text-primary); }
+
+    /* Manager Tabs Navigation */
+    .mgr-tabs {
+      display: flex; gap: 6px; padding: 12px 28px 0 28px;
+      border-bottom: 1px solid var(--border); background: #FFFFFF; overflow-x: auto;
+    }
+    .mgr-tab-btn {
+      padding: 11px 16px; border: none; background: transparent;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+      color: var(--text-muted); cursor: pointer; border-bottom: 2.5px solid transparent;
+      display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .mgr-tab-btn:hover { color: var(--text-primary); }
+    .mgr-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--slate-dark); }
+    .tab-count-badge {
+      font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
+      background: var(--surface-subtle); color: var(--text-secondary); border: 1px solid var(--border);
+    }
+    .tab-count-badge.warn { background: var(--amber-soft); color: var(--amber); border-color: rgba(217, 119, 6, 0.25); }
+    .tab-count-badge.live { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(5, 150, 105, 0.25); }
+
+    .mgr-tab-panel { display: none; }
+    .mgr-tab-panel.active { display: block; }
+
+    /* Filter Toolbar inside History Tab */
+    .filter-toolbar {
+      padding: 16px 28px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+      background: #FFFFFF;
+    }
+    .filter-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .mgr-search, .mgr-filter-select {
+      padding: 9px 13px; border-radius: 10px; border: 1.5px solid var(--border);
+      background: var(--surface-subtle); font-size: 13px; font-family: 'Inter', sans-serif;
+      color: var(--text-primary); font-weight: 500;
+    }
+    .mgr-search { min-width: 230px; }
+    .mgr-search:focus, .mgr-filter-select:focus { outline: none; background: #FFF; border-color: var(--slate-dark); }
+
+    /* Live Team Board Grid */
+    .live-board-grid {
+      padding: 26px 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;
+      max-height: 500px; overflow-y: auto;
+    }
+    .member-status-card {
+      border: 1.5px solid var(--border); border-radius: 16px; padding: 18px;
+      background: var(--surface); display: flex; flex-direction: column; gap: 10px;
+      transition: border-color 0.15s;
+    }
+    .member-status-card.is-in { border-color: rgba(5, 150, 105, 0.4); background: #FAFFFD; }
+    .member-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .member-card-name { font-size: 15px; font-weight: 800; color: var(--text-primary); }
+    .member-card-team { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+    .member-card-meta { font-size: 12px; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid var(--border); }
+
+    /* Tables */
+    .table-wrap { width: 100%; overflow-x: auto; max-height: 460px; }
     table.att-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     table.att-table th {
       position: sticky; top: 0; background: #F8FAFC; color: var(--text-muted);
-      font-weight: 700; text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--border);
-      white-space: nowrap; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px;
+      font-weight: 700; text-align: left; padding: 13px 18px; border-bottom: 1px solid var(--border);
+      white-space: nowrap; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.4px;
     }
     table.att-table td {
-      padding: 14px 18px; border-bottom: 1px solid var(--border); color: var(--text-primary); white-space: nowrap;
+      padding: 13px 18px; border-bottom: 1px solid var(--border); color: var(--text-primary); white-space: nowrap;
     }
     table.att-table tr:hover td { background: #F8FAFC; }
     .badge-pill {
@@ -244,8 +306,20 @@
     .badge-active { background: var(--emerald-soft); color: var(--emerald); }
     .badge-onsite { background: #EFF6FF; color: #1D4ED8; }
     .badge-wfh { background: #FEF3C7; color: #B45309; }
+    .badge-muted { background: #F1F5F9; color: var(--text-muted); }
+    .badge-danger { background: var(--crimson-soft); color: var(--crimson); }
 
-    /* --- KIOSK UI & INTERACTIVE PROFILE PHOTO --- */
+    /* Inline Resolve Form in Missing Time-Out Tab */
+    .inline-resolve-input {
+      padding: 7px 10px; border-radius: 8px; border: 1.5px solid var(--border);
+      font-size: 12.5px; font-family: 'Inter', sans-serif; width: 135px;
+    }
+    .inline-note-input {
+      padding: 7px 10px; border-radius: 8px; border: 1.5px solid var(--border);
+      font-size: 12.5px; font-family: 'Inter', sans-serif; width: 160px;
+    }
+
+    /* --- EMPLOYEE KIOSK UI --- */
     .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 28px; }
     .welcome-divider { width: 1px; height: 56px; background-color: var(--border); }
 
@@ -412,10 +486,10 @@
 
     .masked-input { -webkit-text-security: disc; text-security: disc; }
 
-    @media (max-width: 640px) {
+    @media (max-width: 720px) {
       .top-bar { padding: 12px 18px; }
       .role-grid { grid-template-columns: 1fr; }
-      .mgr-stats { grid-template-columns: 1fr; }
+      .mgr-stats { grid-template-columns: 1fr 1fr; }
       .card-padding { padding: 32px 24px; }
       .time-display { font-size: 56px; }
     }
@@ -455,7 +529,7 @@
     <div id="role-selector" class="card role-card active-card">
       <div class="eyebrow-badge">Attendance Portal</div>
       <h2>Choose Your Workspace</h2>
-      <p>Select Employee to log your shift, or Manager to review attendance history.</p>
+      <p>Select Employee to log your shift, or Manager to review attendance & team devices.</p>
       <div class="role-grid">
         <button type="button" class="role-btn employee-role" onclick="selectEmployeeRole()">
           <div class="role-icon-circle">
@@ -471,7 +545,7 @@
             <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
           </div>
           <div class="role-title">MANAGER</div>
-          <div class="role-desc">View full team attendance logs & records</div>
+          <div class="role-desc">Live team board, Excel exports & device controls</div>
           <div class="role-status-pill" id="mgr-role-pill">Register / Login</div>
         </button>
       </div>
@@ -552,53 +626,134 @@
       <span class="sub-link" onclick="switchCard('manager-setup')">Register a new manager account</span>
     </div>
 
-    <!-- MANAGER ATTENDANCE HISTORY DASHBOARD -->
+    <!-- MANAGER 4-TAB COMMAND CENTER DASHBOARD -->
     <div id="manager-dashboard" class="card manager-dash-card">
       <div class="mgr-header">
         <div>
-          <h2>Attendance History</h2>
-          <p id="mgr-welcome-meta">Manager Portal • All Employee Records</p>
+          <h2>Manager Command Center</h2>
+          <p id="mgr-welcome-meta">Manager Portal • Live Team & Attendance Records</p>
         </div>
         <div class="mgr-controls">
-          <input type="text" id="mgrSearchInput" class="mgr-search" placeholder="Search name, team, date..." oninput="filterManagerTable()">
-          <button type="button" class="btn-sm primary" onclick="refreshManagerDashboard()">Refresh</button>
+          <button type="button" class="btn-sm excel" onclick="exportAttendanceToExcel()">⬇ Export Excel (.xlsx)</button>
+          <button type="button" class="btn-sm primary" onclick="refreshManagerDashboard()">↻ Refresh</button>
           <button type="button" class="btn-sm" onclick="logoutManager()">Logout</button>
         </div>
       </div>
 
       <div class="mgr-stats">
         <div class="mgr-stat-box">
+          <div class="mgr-stat-label">Clocked In Now</div>
+          <div class="mgr-stat-val" id="stat-active-shifts" style="color:var(--emerald);">0</div>
+        </div>
+        <div class="mgr-stat-box">
+          <div class="mgr-stat-label">Registered Team</div>
+          <div class="mgr-stat-val" id="stat-total-members">0</div>
+        </div>
+        <div class="mgr-stat-box">
           <div class="mgr-stat-label">Total Attendance Logs</div>
           <div class="mgr-stat-val" id="stat-total-logs">0</div>
         </div>
         <div class="mgr-stat-box">
-          <div class="mgr-stat-label">Active Shifts (No Time Out)</div>
-          <div class="mgr-stat-val" id="stat-active-shifts" style="color:var(--emerald);">0</div>
-        </div>
-        <div class="mgr-stat-box">
-          <div class="mgr-stat-label">Completed Shifts</div>
-          <div class="mgr-stat-val" id="stat-completed-shifts">0</div>
+          <div class="mgr-stat-label">Missing Time-Outs</div>
+          <div class="mgr-stat-val" id="stat-missing-outs" style="color:var(--amber);">0</div>
         </div>
       </div>
 
-      <div class="table-wrap">
-        <table class="att-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Employee Name</th>
-              <th>Team</th>
-              <th>Arrangement</th>
-              <th>Time In</th>
-              <th>Time Out</th>
-              <th>Total Hours</th>
-              <th>Device ID</th>
-            </tr>
-          </thead>
-          <tbody id="mgr-table-body">
-            <tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">Loading records...</td></tr>
-          </tbody>
-        </table>
+      <!-- 4 DASHBOARD TABS -->
+      <div class="mgr-tabs">
+        <button type="button" class="mgr-tab-btn active" id="tab-btn-live" onclick="switchManagerTab('live')">
+          Live Team Board <span class="tab-count-badge live" id="badge-live-count">0</span>
+        </button>
+        <button type="button" class="mgr-tab-btn" id="tab-btn-history" onclick="switchManagerTab('history')">
+          Attendance History <span class="tab-count-badge" id="badge-history-count">0</span>
+        </button>
+        <button type="button" class="mgr-tab-btn" id="tab-btn-devices" onclick="switchManagerTab('devices')">
+          Employees & Devices <span class="tab-count-badge" id="badge-devices-count">0</span>
+        </button>
+        <button type="button" class="mgr-tab-btn" id="tab-btn-missing" onclick="switchManagerTab('missing')">
+          Missing Time-Outs <span class="tab-count-badge warn" id="badge-missing-count">0</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: LIVE TEAM BOARD -->
+      <div id="mgr-panel-live" class="mgr-tab-panel active">
+        <div id="live-board-grid" class="live-board-grid"></div>
+      </div>
+
+      <!-- TAB 2: ATTENDANCE HISTORY + EXCEL EXPORT -->
+      <div id="mgr-panel-history" class="mgr-tab-panel">
+        <div class="filter-toolbar">
+          <div class="filter-group">
+            <input type="text" id="mgrSearchInput" class="mgr-search" placeholder="Search name, team, date..." oninput="filterManagerTable()">
+            <select id="mgrFilterArr" class="mgr-filter-select" onchange="filterManagerTable()">
+              <option value="ALL">All Arrangements</option>
+              <option value="Onsite">Onsite Only</option>
+              <option value="Work From Home">WFH Only</option>
+            </select>
+            <select id="mgrFilterStatus" class="mgr-filter-select" onchange="filterManagerTable()">
+              <option value="ALL">All Shift Statuses</option>
+              <option value="ACTIVE">Active Shifts Only</option>
+              <option value="COMPLETED">Completed Shifts Only</option>
+            </select>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); font-weight:600;" id="mgr-filtered-count">Showing 0 records</div>
+        </div>
+        <div class="table-wrap">
+          <table class="att-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Employee Name</th>
+                <th>Team</th>
+                <th>Arrangement</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Total Hours</th>
+                <th>Device ID</th>
+              </tr>
+            </thead>
+            <tbody id="mgr-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: EMPLOYEES & DEVICE MANAGEMENT -->
+      <div id="mgr-panel-devices" class="mgr-tab-panel">
+        <div class="table-wrap">
+          <table class="att-table">
+            <thead>
+              <tr>
+                <th>Employee Name</th>
+                <th>Team</th>
+                <th>Email</th>
+                <th>Bound Mobile Device</th>
+                <th>Device Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="mgr-devices-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 4: MISSING TIME-OUTS / CORRECTIONS -->
+      <div id="mgr-panel-missing" class="mgr-tab-panel">
+        <div class="table-wrap">
+          <table class="att-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Employee Name</th>
+                <th>Team</th>
+                <th>Time In</th>
+                <th>Set Time Out (e.g. 06:00 PM)</th>
+                <th>Manager Note</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="mgr-missing-body"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -785,6 +940,9 @@
     let qrExpiryTimer = null;
     let pendingManagerDraft = null;
     let cachedManagerRecords = [];
+    let cachedFilteredRecords = [];
+    let cachedManagerMembers = [];
+    let serverTodayStr = "";
     window.shiftStartTime = null;
 
     function switchCard(cardId) {
@@ -877,7 +1035,7 @@
       fetchLiveStatus(false);
     }
 
-    // --- MANAGER ENTRY & REGISTRATION FLOW ---
+    // --- MANAGER ENTRY, REGISTRATION & 4-TAB COMMAND CENTER ---
     function selectManagerRole() {
       const savedMgrEmail = localStorage.getItem('mgrEmail');
       if (savedMgrEmail) {
@@ -981,7 +1139,8 @@
           localStorage.setItem('mgrDept', data.manager.department);
           localStorage.setItem('mgrEmail', data.manager.email);
           sessionStorage.setItem('mgrSessionPass', newPass);
-          renderManagerDashboard(data.manager, data.records || []);
+          serverTodayStr = data.today || "";
+          renderManagerDashboard(data.manager, data.records || [], data.members || []);
         } else {
           alert(data.error || "Registration failed.");
         }
@@ -1019,7 +1178,8 @@
           localStorage.setItem('mgrDept', data.manager.department);
           localStorage.setItem('mgrEmail', data.manager.email);
           sessionStorage.setItem('mgrSessionPass', password);
-          renderManagerDashboard(data.manager, data.records || []);
+          serverTodayStr = data.today || "";
+          renderManagerDashboard(data.manager, data.records || [], data.members || []);
         } else {
           alert(data.error || "Invalid credentials.");
         }
@@ -1036,9 +1196,6 @@
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
       if (!pass) return openManagerLogin();
 
-      const tbody = document.getElementById('mgr-table-body');
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--text-muted);">Refreshing attendance history...</td></tr>`;
-
       try {
         const res = await fetch(GOOGLE_URL, {
           method: 'POST',
@@ -1047,46 +1204,124 @@
         });
         const data = await res.json();
         if (data.ok) {
-          renderManagerDashboard(data.manager, data.records || []);
+          serverTodayStr = data.today || serverTodayStr;
+          renderManagerDashboard(data.manager, data.records || [], data.members || []);
         }
       } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--crimson);">Failed to refresh records.</td></tr>`;
+        alert("Failed to refresh dashboard data.");
       }
     }
 
-    function renderManagerDashboard(manager, records) {
+    function switchManagerTab(tabKey) {
+      ['live', 'history', 'devices', 'missing'].forEach(k => {
+        document.getElementById(`tab-btn-${k}`).classList.toggle('active', k === tabKey);
+        document.getElementById(`mgr-panel-${k}`).classList.toggle('active', k === tabKey);
+      });
+    }
+
+    function renderManagerDashboard(manager, records, members) {
       cachedManagerRecords = records;
+      cachedManagerMembers = members;
       document.getElementById('mgr-welcome-meta').innerText = `${manager.name} • ${manager.department} (${manager.email})`;
-      document.getElementById('mgrSearchInput').value = "";
 
-      const activeCount = records.filter(r => r.timeIn && !r.timeOut).length;
-      const completedCount = records.filter(r => r.timeIn && r.timeOut).length;
+      const activeRecords = records.filter(r => r.timeIn && !r.timeOut);
+      const missingOutRecords = activeRecords; // All open shifts available for manager resolution
 
+      document.getElementById('stat-active-shifts').innerText = activeRecords.length;
+      document.getElementById('stat-total-members').innerText = members.length;
       document.getElementById('stat-total-logs').innerText = records.length;
-      document.getElementById('stat-active-shifts').innerText = activeCount;
-      document.getElementById('stat-completed-shifts').innerText = completedCount;
+      document.getElementById('stat-missing-outs').innerText = missingOutRecords.length;
 
-      renderAttendanceRows(records);
+      document.getElementById('badge-live-count').innerText = activeRecords.length;
+      document.getElementById('badge-history-count').innerText = records.length;
+      document.getElementById('badge-devices-count').innerText = members.length;
+      document.getElementById('badge-missing-count').innerText = missingOutRecords.length;
+
+      renderLiveTeamBoard(members, records);
+      filterManagerTable();
+      renderDevicesTable(members);
+      renderMissingTimeOutsTable(missingOutRecords);
+
       switchCard('manager-dashboard');
     }
 
-    function filterManagerTable() {
-      const q = document.getElementById('mgrSearchInput').value.trim().toLowerCase();
-      if (!q) return renderAttendanceRows(cachedManagerRecords);
+    // TAB 1: LIVE TEAM BOARD
+    function renderLiveTeamBoard(members, records) {
+      const grid = document.getElementById('live-board-grid');
+      if (!members.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted);">No registered employees yet.</div>`;
+        return;
+      }
 
-      const filtered = cachedManagerRecords.filter(r =>
-        String(r.employeeName || "").toLowerCase().includes(q) ||
-        String(r.team || "").toLowerCase().includes(q) ||
-        String(r.date || "").toLowerCase().includes(q) ||
-        String(r.workArrangement || "").toLowerCase().includes(q)
-      );
+      grid.innerHTML = members.map(m => {
+        const nameLower = String(m.name || "").toLowerCase();
+        const activeShift = records.find(r => String(r.employeeName || "").toLowerCase() === nameLower && r.timeIn && !r.timeOut);
+        const todayCompleted = records.find(r => String(r.employeeName || "").toLowerCase() === nameLower && r.date === serverTodayStr && r.timeOut);
+
+        let statusBadge = `<span class="badge-pill badge-muted">Not In Yet</span>`;
+        let metaLeft = "No shift today";
+        let metaRight = "";
+
+        if (activeShift) {
+          statusBadge = `<span class="badge-pill badge-active">● Clocked In</span>`;
+          metaLeft = `In: <strong>${escapeHtml(activeShift.timeIn)}</strong>`;
+          metaRight = activeShift.workArrangement === "Work From Home"
+            ? `<span class="badge-pill badge-wfh">WFH</span>`
+            : `<span class="badge-pill badge-onsite">Onsite</span>`;
+        } else if (todayCompleted) {
+          statusBadge = `<span class="badge-pill badge-onsite">Shift Done</span>`;
+          metaLeft = `Total: <strong>${escapeHtml(todayCompleted.totalHours || "—")}</strong>`;
+          metaRight = escapeHtml(todayCompleted.workArrangement || "");
+        }
+
+        return `
+          <div class="member-status-card ${activeShift ? 'is-in' : ''}">
+            <div class="member-card-top">
+              <div>
+                <div class="member-card-name">${escapeHtml(m.name)}</div>
+                <div class="member-card-team">${escapeHtml(m.team)}</div>
+              </div>
+              ${statusBadge}
+            </div>
+            <div class="member-card-meta">
+              <span>${metaLeft}</span>
+              <span>${metaRight}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // TAB 2: ATTENDANCE HISTORY + FILTERS + EXCEL (.XLSX) EXPORT
+    function filterManagerTable() {
+      const q = (document.getElementById('mgrSearchInput').value || "").trim().toLowerCase();
+      const arrFilter = document.getElementById('mgrFilterArr').value;
+      const statusFilter = document.getElementById('mgrFilterStatus').value;
+
+      const filtered = cachedManagerRecords.filter(r => {
+        const matchesQuery = !q ||
+          String(r.employeeName || "").toLowerCase().includes(q) ||
+          String(r.team || "").toLowerCase().includes(q) ||
+          String(r.date || "").toLowerCase().includes(q);
+
+        const matchesArr = arrFilter === "ALL" || String(r.workArrangement || "") === arrFilter;
+        const isActive = Boolean(r.timeIn && !r.timeOut);
+        const matchesStatus = statusFilter === "ALL" ||
+          (statusFilter === "ACTIVE" && isActive) ||
+          (statusFilter === "COMPLETED" && !isActive);
+
+        return matchesQuery && matchesArr && matchesStatus;
+      });
+
+      cachedFilteredRecords = filtered;
+      document.getElementById('mgr-filtered-count').innerText = `Showing ${filtered.length} of ${cachedManagerRecords.length} records`;
       renderAttendanceRows(filtered);
     }
 
     function renderAttendanceRows(rows) {
       const tbody = document.getElementById('mgr-table-body');
       if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">No attendance records found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">No matching attendance records found.</td></tr>`;
         return;
       }
 
@@ -1118,6 +1353,168 @@
       }).join("");
     }
 
+    function exportAttendanceToExcel() {
+      const rowsToExport = cachedFilteredRecords.length ? cachedFilteredRecords : cachedManagerRecords;
+      if (!rowsToExport.length) return alert("No attendance records available to export.");
+      if (typeof XLSX === "undefined") return alert("Excel library still loading. Please try again in a second.");
+
+      const worksheetData = rowsToExport.map(r => ({
+        "Date": r.date || "",
+        "Employee Name": r.employeeName || "",
+        "Team / Department": r.team || "",
+        "Work Arrangement": r.workArrangement || "Onsite",
+        "Time In": r.timeIn || "",
+        "Time Out": r.timeOut || "Active Shift",
+        "Total Hours": r.totalHours || "",
+        "Device ID": r.deviceId || "",
+        "Last Updated": r.lastUpdated || ""
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+      worksheet["!cols"] = [
+        { wch: 13 }, { wch: 24 }, { wch: 18 }, { wch: 18 },
+        { wch: 15 }, { wch: 28 }, { wch: 13 }, { wch: 20 }, { wch: 20 }
+      ];
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance History");
+
+      const dateStamp = serverTodayStr || new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(workbook, `Attendance_History_${dateStamp}.xlsx`);
+    }
+
+    // TAB 3: EMPLOYEES & DEVICE MANAGEMENT
+    function renderDevicesTable(members) {
+      const tbody = document.getElementById('mgr-devices-body');
+      if (!members.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">No registered employees found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = members.map(m => {
+        const st = String(m.deviceStatus || "").toLowerCase();
+        let statusBadge = `<span class="badge-pill badge-active">${escapeHtml(m.deviceStatus || "Active")}</span>`;
+        if (st === "reset" || st === "pending") statusBadge = `<span class="badge-pill badge-wfh">${escapeHtml(m.deviceStatus)}</span>`;
+        if (st === "blocked" || st === "disabled") statusBadge = `<span class="badge-pill badge-danger">${escapeHtml(m.deviceStatus)}</span>`;
+
+        const isBlocked = (st === "blocked" || st === "disabled");
+        const toggleBtn = isBlocked
+          ? `<button type="button" class="btn-sm primary" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'UNBLOCK')">Unblock</button>`
+          : `<button type="button" class="btn-sm danger" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'BLOCK')">Block</button>`;
+
+        return `
+          <tr>
+            <td><strong>${escapeHtml(m.name)}</strong></td>
+            <td>${escapeHtml(m.team)}</td>
+            <td>${escapeHtml(m.email || "—")}</td>
+            <td style="font-family:monospace; font-size:12px;">${escapeHtml(m.deviceId || "Unbound")}</td>
+            <td>${statusBadge}</td>
+            <td style="display:flex; gap:8px;">
+              <button type="button" class="btn-sm" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET')">Reset Phone</button>
+              ${toggleBtn}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function handleDeviceAction(empName, deviceAction) {
+      const label = deviceAction === "RESET"
+        ? `Reset bound mobile phone for ${empName}? Their next QR scan will register their new device.`
+        : (deviceAction === "BLOCK" ? `Suspend attendance access for ${empName}?` : `Restore access for ${empName}?`);
+      if (!confirm(label)) return;
+
+      const email = localStorage.getItem('mgrEmail') || "";
+      const pass = sessionStorage.getItem('mgrSessionPass') || "";
+
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "MANAGER_DEVICE_ACTION",
+            manager_email: email,
+            manager_password: pass,
+            target_employee: empName,
+            device_action: deviceAction
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          alert(data.message);
+          cachedManagerMembers = data.members || cachedManagerMembers;
+          renderDevicesTable(cachedManagerMembers);
+          renderLiveTeamBoard(cachedManagerMembers, cachedManagerRecords);
+        } else {
+          alert(data.error || "Action failed.");
+        }
+      } catch (e) {
+        alert("Connection error while updating device status.");
+      }
+    }
+
+    // TAB 4: MISSING TIME-OUTS / MANUAL CORRECTIONS
+    function renderMissingTimeOutsTable(openRows) {
+      const tbody = document.getElementById('mgr-missing-body');
+      if (!openRows.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">No open shifts or missing Time-Outs right now.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = openRows.map(r => `
+        <tr>
+          <td>${escapeHtml(r.date)}</td>
+          <td><strong>${escapeHtml(r.employeeName)}</strong></td>
+          <td>${escapeHtml(r.team)}</td>
+          <td>${escapeHtml(r.timeIn)}</td>
+          <td><input type="text" class="inline-resolve-input" id="resolve-out-${r._row}" placeholder="e.g. 06:00 PM"></td>
+          <td><input type="text" class="inline-note-input" id="resolve-note-${r._row}" placeholder="Optional reason"></td>
+          <td><button type="button" class="btn-sm primary" onclick="submitResolveShift(${r._row})">Save Time Out</button></td>
+        </tr>
+      `).join("");
+    }
+
+    async function submitResolveShift(rowNum) {
+      const timeOutVal = (document.getElementById(`resolve-out-${rowNum}`).value || "").trim();
+      const noteVal = (document.getElementById(`resolve-note-${rowNum}`).value || "").trim();
+      if (!timeOutVal) return alert("Please enter a Time Out (e.g. 06:00 PM or 18:00).");
+
+      const email = localStorage.getItem('mgrEmail') || "";
+      const pass = sessionStorage.getItem('mgrSessionPass') || "";
+
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "MANAGER_RESOLVE_SHIFT",
+            manager_email: email,
+            manager_password: pass,
+            row_number: rowNum,
+            manual_time_out: timeOutVal,
+            manager_note: noteVal
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          alert(data.message);
+          renderManagerDashboard(
+            {
+              name: localStorage.getItem('mgrName') || "Manager",
+              department: localStorage.getItem('mgrDept') || "",
+              email: email
+            },
+            data.records || [],
+            cachedManagerMembers
+          );
+        } else {
+          alert(data.error || "Unable to update shift.");
+        }
+      } catch (e) {
+        alert("Connection error while saving Time Out.");
+      }
+    }
+
     function logoutManager() {
       sessionStorage.removeItem('mgrSessionPass');
       showRoleSelector();
@@ -1129,6 +1526,10 @@
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;");
+    }
+
+    function escapeAttr(str) {
+      return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
     }
 
     // --- PERSISTENT MOBILE DEVICE TOKEN (1-TO-1 BINDING) ---
