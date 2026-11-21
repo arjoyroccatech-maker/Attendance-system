@@ -158,7 +158,6 @@
       display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
     }
     .badge-active { background: rgba(16, 163, 80, 0.14); color: var(--brand-green); }
-    .badge-done { background: #E9ECEF; color: #495057; }
     .badge-onsite { background: #E7F1FF; color: #0B5ED7; }
     .badge-wfh { background: #FFF3CD; color: #997404; }
 
@@ -348,8 +347,8 @@
       <p id="error-message">Device not allowed.</p>
     </div>
 
-    <!-- ROLE SELECTOR ENTRY SCREEN -->
-    <div id="role-selector" class="card role-card">
+    <!-- ROLE SELECTOR ENTRY SCREEN (Always shown first on desktop) -->
+    <div id="role-selector" class="card role-card active-card">
       <h2>Select Your Portal</h2>
       <p>Choose your role to continue to attendance or management.</p>
       <div class="role-grid">
@@ -368,9 +367,20 @@
           </div>
           <div class="role-title">MANAGER</div>
           <div class="role-desc">View full team attendance logs & records</div>
-          <div class="role-status-pill" id="mgr-role-pill">Admin Access</div>
+          <div class="role-status-pill" id="mgr-role-pill">Register / Login</div>
         </button>
       </div>
+    </div>
+
+    <!-- EMPLOYEE RETURNING LOGIN (Requires 4-Digit Auth Code) -->
+    <div id="employee-login" class="card setup-card">
+      <h2>Employee Login</h2>
+      <p id="emp-login-subtitle">Enter your 4-digit Authentication Code to open your kiosk.</p>
+      <label style="text-align:center;">Your 4-Digit Auth Code</label>
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="empLoginCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') submitEmployeeLogin()">
+      <button class="btn-save" onclick="submitEmployeeLogin()">Unlock Kiosk</button>
+      <div id="emp-login-error" style="color:var(--brand-red); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
+      <span class="sub-link" onclick="showRoleSelector()">Back to Role Selection</span>
     </div>
 
     <!-- MANAGER STEP 1: REGISTRATION FORM -->
@@ -392,7 +402,7 @@
       <h2>Developer Authorization</h2>
       <p>Enter the default developer pass code to authorize manager registration.</p>
       <label>Default Pass Code</label>
-      <input type="password" id="devPassInput" placeholder="Enter developer pass" autocomplete="off">
+      <input type="password" id="devPassInput" placeholder="Enter developer pass" autocomplete="off" onkeydown="if(event.key==='Enter') verifyDevPass()">
       <button class="btn-save" id="btn-verify-dev" onclick="verifyDevPass()">Verify Developer Pass</button>
       <span class="sub-link" onclick="switchCard('manager-setup')">Back to Registration</span>
     </div>
@@ -404,7 +414,7 @@
       <label>New Manager Password (min. 4 characters)</label>
       <input type="password" id="mgrNewPass" placeholder="••••••••" autocomplete="new-password">
       <label>Confirm Password</label>
-      <input type="password" id="mgrConfirmPass" placeholder="••••••••" autocomplete="new-password">
+      <input type="password" id="mgrConfirmPass" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter') completeManagerRegistration()">
       <button class="btn-save" id="btn-save-mgr" onclick="completeManagerRegistration()">Save Password & Open Dashboard</button>
     </div>
 
@@ -630,8 +640,18 @@
     // =========================================================================
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxZxXqtW1_Olqvux2zHJN_cTeG0bpBHypvcv2LH4bjvXoBsJv4KJdtTTQuFIGYDdHcl2w/exec";
 
+    // --- GLOBAL STATE DECLARATIONS ---
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+
+    let currentShiftState = null; 
+    let expectedTargetState = null;
+    let qrPollingInterval = null;
+    let qrExpiryTimer = null;
     let pendingManagerDraft = null;
     let cachedManagerRecords = [];
+    window.shiftStartTime = null;
 
     function switchCard(cardId) {
       document.querySelectorAll('.card').forEach(el => el.classList.remove('active-card'));
@@ -650,36 +670,65 @@
       const savedEmp = localStorage.getItem('empName');
       const savedCode = localStorage.getItem('authCode');
       const empPill = document.getElementById('emp-role-pill');
-      if (savedEmp && savedCode) {
-        empPill.innerText = `Registered: ${savedEmp}`;
-        empPill.classList.add('ready');
-      } else {
-        empPill.innerText = "New Setup";
-        empPill.classList.remove('ready');
+      if (empPill) {
+        if (savedEmp && savedCode) {
+          empPill.innerText = `Login: ${savedEmp}`;
+          empPill.classList.add('ready');
+        } else {
+          empPill.innerText = "New Setup";
+          empPill.classList.remove('ready');
+        }
       }
 
       const savedMgrEmail = localStorage.getItem('mgrEmail');
       const mgrPill = document.getElementById('mgr-role-pill');
-      if (savedMgrEmail) {
-        mgrPill.innerText = "Login Ready";
-        mgrPill.classList.add('ready');
-      } else {
-        mgrPill.innerText = "Register / Login";
-        mgrPill.classList.remove('ready');
+      if (mgrPill) {
+        if (savedMgrEmail) {
+          mgrPill.innerText = "Login Ready";
+          mgrPill.classList.add('ready');
+        } else {
+          mgrPill.innerText = "Register / Login";
+          mgrPill.classList.remove('ready');
+        }
       }
 
       switchCard('role-selector');
     }
 
-    // --- EMPLOYEE ENTRY ROUTING ---
+    // --- EMPLOYEE ENTRY & AUTH CODE LOGIN ROUTING ---
     function selectEmployeeRole() {
       const savedName = localStorage.getItem('empName');
       const authCode = localStorage.getItem('authCode');
       if (savedName && authCode) {
-        openEmployeeKiosk();
+        document.getElementById('emp-login-subtitle').innerText = `Welcome back, ${savedName}. Enter your 4-digit Authentication Code to continue.`;
+        document.getElementById('empLoginCode').value = "";
+        document.getElementById('emp-login-error').innerText = "";
+        switchCard('employee-login');
+        setTimeout(() => document.getElementById('empLoginCode').focus(), 100);
       } else {
         switchCard('laptop-setup');
       }
+    }
+
+    function submitEmployeeLogin() {
+      const enteredCode = document.getElementById('empLoginCode').value.trim();
+      const savedCode = localStorage.getItem('authCode');
+      const errEl = document.getElementById('emp-login-error');
+
+      if (!enteredCode || enteredCode.length !== 4) {
+        errEl.innerText = "Please enter your 4-digit Auth Code.";
+        return;
+      }
+
+      if (enteredCode !== savedCode) {
+        errEl.innerText = "Incorrect Authentication Code. Please try again.";
+        document.getElementById('empLoginCode').value = "";
+        document.getElementById('empLoginCode').focus();
+        return;
+      }
+
+      errEl.innerText = "";
+      openEmployeeKiosk();
     }
 
     function openEmployeeKiosk() {
@@ -1291,17 +1340,6 @@
       }
     }
     setInterval(updateClock, 1000); updateClock();
-
-    // --- CORE LOGIC & ROUTING ---
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode');
-
-    let currentShiftState = null; 
-    let expectedTargetState = null;
-    let qrPollingInterval = null;
-    let qrExpiryTimer = null;
-    window.shiftStartTime = null;
 
     async function fetchLiveStatus(isSilentPolling = false) {
       const btnIn = document.getElementById('btn-time-in');
