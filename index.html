@@ -45,7 +45,8 @@
     .online-indicator { display: flex; align-items: center; gap: 6px; }
     .dot { width: 10px; height: 10px; background-color: #0fcc5c; border-radius: 50%; }
     .nav-divider { width: 1px; height: 20px; background-color: #333; }
-    .nav-icon { display: flex; align-items: center; gap: 6px; cursor: pointer; color: #ddd; }
+    .nav-icon { display: flex; align-items: center; gap: 6px; cursor: pointer; color: #ddd; transition: color 0.15s; }
+    .nav-icon:hover { color: #fff; }
     .nav-icon svg { width: 16px; height: 16px; fill: currentColor; }
 
     /* --- MAIN CONTAINER --- */
@@ -203,7 +204,8 @@
     /* QR State inside Kiosk */
     #qrcode-container { margin: 10px auto; padding: 20px; background: white; border-radius: 16px; display: inline-block; border: 1px solid var(--border); }
     .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 600; color: var(--brand-green); margin-top: 15px; font-size: 15px;}
-    .cancel-link { font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; margin-top: 16px; display: inline-block; }
+    .qr-countdown { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+    .cancel-link { font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; margin-top: 14px; display: inline-block; }
     
     .spinner { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid currentColor; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; }
     .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: #111; margin: 40px auto; display: block; }
@@ -288,7 +290,7 @@
       <p id="error-message">Device not allowed.</p>
     </div>
 
-    <!-- INITIAL REGISTRATION (Includes Email for OTP) -->
+    <!-- INITIAL REGISTRATION (Includes Email & Server-Synced Auth PIN) -->
     <div id="laptop-setup" class="card setup-card">
       <h2>Device Setup</h2>
       <p>Register your profile to permanently lock this device as your kiosk.</p>
@@ -386,10 +388,11 @@
           <span class="cancel-link" onclick="cancelOTP()">Cancel</span>
         </div>
 
-        <!-- QR Display -->
+        <!-- QR Display (With 60s Expiration Countdown) -->
         <div id="qr-section" style="display: none;">
           <div id="qrcode-container"><img id="qr-image" src="" alt="QR Code"></div>
           <div class="qr-waiting" id="qr-waiting-text"><div class="spinner"></div> Awaiting verification...</div>
+          <div class="qr-countdown" id="qr-countdown-text">QR expires in 60s</div>
           <span class="cancel-link" onclick="cancelQR()">Cancel</span>
         </div>
       </div>
@@ -416,7 +419,7 @@
       </div>
     </div>
 
-    <!-- PHONE AUTH -->
+    <!-- PHONE AUTH (Server-Side PIN + 60s Expiry Check) -->
     <div id="phone-auth" class="card setup-card">
       <div class="phone-avatar-circle">
         <svg id="phone-default-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -797,6 +800,7 @@
     let currentShiftState = null; 
     let expectedTargetState = null;
     let qrPollingInterval = null;
+    let qrExpiryTimer = null;
     window.shiftStartTime = null;
 
     async function fetchLiveStatus(isSilentPolling = false) {
@@ -819,7 +823,8 @@
             action: "GET_DATA",
             employee_name: localStorage.getItem('empName'),
             team: localStorage.getItem('team'),
-            device_id: "Kiosk-Sync"
+            device_id: "Kiosk-Sync",
+            skip_photo: isSilentPolling
           })
         });
         
@@ -836,6 +841,21 @@
               localStorage.setItem('empEmail', result.email);
             }
 
+            // Seamlessly backfill existing user's Auth PIN to Members sheet if not yet stored
+            const localPin = localStorage.getItem('authCode');
+            if (!result.hasPin && localPin) {
+              fetch(GOOGLE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                  action: "SYNC_PIN",
+                  employee_name: localStorage.getItem('empName'),
+                  team: localStorage.getItem('team'),
+                  auth_pin: localPin
+                })
+              }).catch(() => {});
+            }
+
             applyProfilePhoto(result.profileDataUrl || "", result.profileFileId || "");
           }
 
@@ -843,7 +863,9 @@
 
           if (isSilentPolling && expectedTargetState && newShiftState === expectedTargetState) {
              clearInterval(qrPollingInterval); 
+             clearInterval(qrExpiryTimer);
              qrPollingInterval = null;
+             qrExpiryTimer = null;
              currentShiftState = newShiftState;
              expectedTargetState = null;
              
@@ -854,6 +876,7 @@
              const waitText = document.getElementById('qr-waiting-text');
              waitText.innerHTML = '✅ Verified Successfully!';
              waitText.style.color = 'var(--brand-green)';
+             document.getElementById('qr-countdown-text').innerText = '';
              
              setTimeout(() => renderUIState(result), 1000);
              return;
@@ -917,14 +940,26 @@
         getOrCreateMobileDeviceId();
 
         document.getElementById('phone-auth').classList.add('active-card');
-        const actionText = urlParams.get('action').replace('_', ' ');
+        const actionText = (urlParams.get('action') || '').replace('_', ' ');
         const empName = urlParams.get('name');
         const empTeam = urlParams.get('team');
         const arrText = urlParams.get('arr') || 'Onsite';
         const photoId = urlParams.get('photo') || "";
+        const qrTs = Number(urlParams.get('ts') || 0);
         
         document.getElementById('phone-greeting').innerText = empName;
         document.getElementById('phone-badge').innerText = `${actionText} • ${arrText}`;
+
+        // Immediate client-side check if QR is already older than 60s
+        if (!qrTs || (Date.now() - qrTs) > 65000) {
+          const statusDiv = document.getElementById('scan-status');
+          const submitBtn = document.getElementById('submit-btn');
+          statusDiv.style.color = "var(--brand-red)";
+          statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = "0.5";
+        }
+
         initPhoneProfilePhoto(empName, empTeam, photoId);
       }
     } else {
@@ -962,6 +997,8 @@
       btn.disabled = true;
       btn.innerText = "Saving Profile...";
 
+      const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
+
       try {
         const response = await fetch(GOOGLE_URL, {
           method: 'POST',
@@ -970,7 +1007,8 @@
             action: "REGISTER_MEMBER",
             employee_name: name,
             team: team,
-            email: email
+            email: email,
+            auth_pin: newAuthCode
           })
         });
         const result = await response.json();
@@ -982,7 +1020,6 @@
           return;
         }
 
-        const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
         localStorage.setItem('empName', name);
         localStorage.setItem('team', team);
         localStorage.setItem('empEmail', email);
@@ -1015,7 +1052,8 @@
             action: "REGISTER_MEMBER",
             employee_name: localStorage.getItem('empName'),
             team: localStorage.getItem('team'),
-            email: email
+            email: email,
+            auth_pin: localStorage.getItem('authCode') || ""
           })
         });
         const result = await response.json();
@@ -1038,8 +1076,10 @@
     function goToDashboard() { window.location.reload(); }
 
     function cancelQR() {
-      clearInterval(qrPollingInterval); 
+      clearInterval(qrPollingInterval);
+      clearInterval(qrExpiryTimer);
       qrPollingInterval = null;
+      qrExpiryTimer = null;
       expectedTargetState = null;
       document.getElementById('qr-section').style.display = 'none';
       document.getElementById('action-section').style.display = 'block';
@@ -1048,18 +1088,19 @@
     function generateQR(actionType) {
       const name = localStorage.getItem('empName');
       const team = localStorage.getItem('team');
-      const code = localStorage.getItem('authCode'); 
       const photoId = localStorage.getItem('profileFileId') || "";
       const arrangement = document.getElementById('arrangement').value;
+      const qrTimestamp = Date.now();
 
       expectedTargetState = (actionType === 'TIME_IN') ? 'ACTIVE' : 'CHECKED_OUT';
 
       if (actionType === 'TIME_IN') {
-        localStorage.setItem('localShiftStart', Date.now().toString());
+        localStorage.setItem('localShiftStart', qrTimestamp.toString());
       }
 
+      // PIN is NOT included in the URL; verified server-side instead
       const currentWebsite = window.location.origin + window.location.pathname;
-      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&code=${encodeURIComponent(code)}&photo=${encodeURIComponent(photoId)}`;
+      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&photo=${encodeURIComponent(photoId)}&ts=${qrTimestamp}`;
       const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
       
       document.getElementById('qr-image').src = qrImageUrl;
@@ -1068,33 +1109,52 @@
       waitText.innerHTML = '<div class="spinner"></div> Awaiting verification...';
       waitText.style.color = 'var(--brand-green)';
 
+      const countdownEl = document.getElementById('qr-countdown-text');
+      let secondsLeft = 60;
+      countdownEl.innerText = `QR expires in ${secondsLeft}s`;
+      countdownEl.style.color = 'var(--text-muted)';
+
       document.getElementById('action-section').style.display = 'none';
       document.getElementById('qr-section').style.display = 'block';
 
       clearInterval(qrPollingInterval);
+      clearInterval(qrExpiryTimer);
+
       qrPollingInterval = setInterval(() => fetchLiveStatus(true), 2000);
+      qrExpiryTimer = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 15 && secondsLeft > 0) {
+          countdownEl.style.color = 'var(--brand-red)';
+        }
+        if (secondsLeft <= 0) {
+          cancelQR();
+        } else {
+          countdownEl.innerText = `QR expires in ${secondsLeft}s`;
+        }
+      }, 1000);
     }
 
     async function verifyAndSubmit() {
       const enteredCode = document.getElementById('enteredCode').value.trim();
-      const expectedCode = urlParams.get('code');
+      const qrTimestamp = Number(urlParams.get('ts') || 0);
       const statusDiv = document.getElementById('scan-status');
       const submitBtn = document.getElementById('submit-btn');
 
-      if (!enteredCode) {
-        statusDiv.innerText = "Please enter your code.";
+      if (!qrTimestamp || (Date.now() - qrTimestamp) > 65000) {
+        statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
         statusDiv.style.color = "var(--brand-red)";
         return;
       }
-      if (enteredCode !== expectedCode) {
-        statusDiv.innerText = "❌ Incorrect Authentication Code.";
+
+      if (!enteredCode || enteredCode.length !== 4) {
+        statusDiv.innerText = "Please enter your 4-digit code.";
         statusDiv.style.color = "var(--brand-red)";
         return;
       }
 
       submitBtn.disabled = true;
       submitBtn.style.opacity = "0.5";
-      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:#111;"></div> Verifying Device & Submitting...';
+      statusDiv.innerHTML = '<div class="spinner" style="border-top-color:#111;"></div> Verifying PIN & Device...';
       statusDiv.style.color = "#111";
 
       const mobileDeviceId = getOrCreateMobileDeviceId();
@@ -1104,7 +1164,9 @@
         employee_name: urlParams.get('name'),
         team: urlParams.get('team'),
         device_id: mobileDeviceId,
-        work_arrangement: urlParams.get('arr')
+        work_arrangement: urlParams.get('arr'),
+        entered_pin: enteredCode,
+        qr_ts: qrTimestamp
       };
 
       try {
