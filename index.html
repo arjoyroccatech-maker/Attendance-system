@@ -190,7 +190,7 @@
     .sub-link:hover { color: var(--ink); text-decoration: underline; }
 
     /* =========================================================================
-       KIOSK-GRADE MANAGER COMMAND TERMINAL (Integrated Segmented Control)
+       KIOSK-GRADE MANAGER COMMAND TERMINAL (Live Employee Photos Everywhere)
        ========================================================================= */
     .kiosk-terminal-deck {
       display: none;
@@ -205,7 +205,6 @@
       display: flex;
     }
 
-    /* Top KPI Strip: High-Contrast Kiosk Cards with Left Accent Strips */
     .terminal-kpi-grid {
       display: grid;
       grid-template-columns: 1.35fr 1fr 1fr 1fr 1fr;
@@ -257,7 +256,6 @@
     .kpi-hero-val { font-size: 34px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
     .kpi-hero-lbl { font-size: 13px; font-weight: 700; color: var(--ink-muted); margin-top: 6px; }
 
-    /* Main Terminal Console Card (Integrated Top Tab Bar + Stationary Content Stage) */
     .terminal-console {
       background: var(--surface);
       border: 1.5px solid var(--border);
@@ -267,7 +265,6 @@
       text-align: left;
     }
 
-    /* Integrated Hardware-Style Segmented Control Bar */
     .terminal-tab-bar {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -369,32 +366,75 @@
     .btn-kiosk-sm.dark { background: var(--ink); color: #FFF; border-color: var(--ink); }
     .btn-kiosk-sm.danger { background: var(--crimson-bg); color: var(--crimson); border-color: rgba(220, 38, 38, 0.3); }
 
-    /* Roster Cards Grid */
+    /* Roster Cards Grid (Larger Circular Portraits on Live Team Pulse) */
     .roster-grid {
       padding: 24px 28px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(295px, 1fr));
+      gap: 18px;
     }
     .roster-card {
       border: 1.5px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
+      border-radius: 20px;
+      padding: 20px;
       background: var(--surface-recessed);
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .roster-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px -6px rgba(15, 23, 42, 0.08);
     }
     .roster-card.online {
       background: #FFFFFF;
       border-color: var(--emerald);
-      box-shadow: 0 6px 18px -6px rgba(5, 150, 105, 0.18);
+      box-shadow: 0 8px 20px -6px rgba(5, 150, 105, 0.20);
     }
-    .roster-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .roster-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .roster-bottom {
       display: flex; justify-content: space-between; align-items: center;
       padding-top: 12px; border-top: 1px solid var(--border-subtle);
       font-size: 13px; color: var(--ink-secondary);
+    }
+
+    /* Live Employee Photo Avatar System (Used across Roster Cards & All Tables) */
+    .emp-photo-avatar {
+      border-radius: 50%;
+      background: #E2E8F0;
+      color: var(--ink);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      position: relative;
+    }
+    .emp-photo-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .emp-photo-avatar.size-lg {
+      width: 58px;
+      height: 58px;
+      font-size: 17px;
+      border-width: 2.5px;
+    }
+    .emp-photo-avatar.size-md {
+      width: 44px;
+      height: 44px;
+      font-size: 14px;
+    }
+    .emp-photo-avatar.is-live {
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.18);
+      background: var(--emerald-bg);
+      color: var(--emerald);
     }
 
     /* High-Legibility Zero-Scroll Tables */
@@ -406,20 +446,13 @@
       text-transform: uppercase; letter-spacing: 0.6px;
     }
     table.deck-table td {
-      padding: 16px 24px; border-bottom: 1px solid var(--border-subtle);
+      padding: 15px 24px; border-bottom: 1px solid var(--border-subtle);
       color: var(--ink); vertical-align: middle;
     }
     table.deck-table tr:last-child td { border-bottom: none; }
     table.deck-table tr:hover td { background: var(--surface-recessed); }
 
-    .person-cell { display: flex; align-items: center; gap: 13px; }
-    .person-badge {
-      width: 42px; height: 42px; border-radius: 12px;
-      background: #E2E8F0; color: var(--ink);
-      font-weight: 800; font-size: 14px;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .person-badge.live { background: var(--emerald-bg); color: var(--emerald); border: 1px solid rgba(5, 150, 105, 0.25); }
+    .person-cell { display: flex; align-items: center; gap: 14px; }
     .person-name { font-size: 14.5px; font-weight: 700; color: var(--ink); }
     .person-team { font-size: 12px; color: var(--ink-muted); font-weight: 600; margin-top: 2px; }
 
@@ -613,7 +646,7 @@
   </div>
 
   <!-- =====================================================================
-       KIOSK-GRADE MANAGER COMMAND TERMINAL (Integrated Segmented Control)
+       KIOSK-GRADE MANAGER COMMAND TERMINAL (Live Employee Photos Everywhere)
        ===================================================================== -->
   <div id="mgr-terminal-deck" class="kiosk-terminal-deck">
     
@@ -676,7 +709,7 @@
       </div>
     </div>
 
-    <!-- Main Terminal Console (Integrated Segmented Tabs + Stationary Viewport) -->
+    <!-- Main Terminal Console -->
     <div class="terminal-console">
       
       <!-- Integrated Kiosk Segmented Control -->
@@ -699,7 +732,7 @@
         </button>
       </div>
 
-      <!-- VIEW 1: LIVE TEAM -->
+      <!-- VIEW 1: LIVE TEAM PULSE (Large Circular Profile Portraits) -->
       <div id="deck-view-live" class="deck-view active">
         <div class="view-bar">
           <div>
@@ -1103,8 +1136,68 @@
     let cachedManagerRecords = [];
     let cachedFilteredRecords = [];
     let cachedManagerMembers = [];
+    let memberPhotoCache = {}; // { nameLower: { fileId, dataUrl } }
     let serverTodayStr = "";
     window.shiftStartTime = null;
+
+    // Load cached member photos from localStorage so Manager Terminal shows photos instantly
+    try {
+      const savedPhotoCache = localStorage.getItem('mgrMemberPhotoCache');
+      if (savedPhotoCache) memberPhotoCache = JSON.parse(savedPhotoCache);
+    } catch (e) {}
+
+    function persistMemberPhotos(members) {
+      let changed = false;
+      members.forEach(m => {
+        const key = String(m.name || "").trim().toLowerCase();
+        if (!key) return;
+        if (!m.profileFileId) {
+          if (memberPhotoCache[key]) {
+            delete memberPhotoCache[key];
+            changed = true;
+          }
+          return;
+        }
+        const existing = memberPhotoCache[key];
+        if (!existing || existing.fileId !== m.profileFileId || m.profileDataUrl) {
+          memberPhotoCache[key] = {
+            fileId: m.profileFileId,
+            dataUrl: m.profileDataUrl || (existing && existing.fileId === m.profileFileId ? existing.dataUrl : "")
+          };
+          changed = true;
+        }
+      });
+      if (changed) {
+        try { localStorage.setItem('mgrMemberPhotoCache', JSON.stringify(memberPhotoCache)); } catch (e) {}
+      }
+    }
+
+    function getKnownFileIdsMap() {
+      const map = {};
+      Object.keys(memberPhotoCache).forEach(k => {
+        if (memberPhotoCache[k] && memberPhotoCache[k].fileId && memberPhotoCache[k].dataUrl) {
+          map[k] = memberPhotoCache[k].fileId;
+        }
+      });
+      return map;
+    }
+
+    function renderEmployeeAvatarHtml(empName, sizeClass, isLive) {
+      const key = String(empName || "").trim().toLowerCase();
+      const cached = memberPhotoCache[key];
+      const initials = escapeHtml(getInitials(empName));
+      const liveCls = isLive ? " is-live" : "";
+
+      if (cached && (cached.dataUrl || cached.fileId)) {
+        const src = cached.dataUrl || `https://lh3.googleusercontent.com/d/${cached.fileId}=s200`;
+        return `
+          <div class="emp-photo-avatar ${sizeClass}${liveCls}">
+            <img src="${src}" alt="${escapeHtml(empName)}" onerror="this.parentElement.innerHTML='${initials}'">
+          </div>
+        `;
+      }
+      return `<div class="emp-photo-avatar ${sizeClass}${liveCls}">${initials}</div>`;
+    }
 
     function switchCard(cardId) {
       clearInterval(mgrAutoSyncInterval);
@@ -1347,7 +1440,8 @@
           body: JSON.stringify({
             action: "MANAGER_LOGIN",
             email: email,
-            password: password
+            password: password,
+            known_file_ids: getKnownFileIdsMap()
           })
         });
         const data = await res.json();
@@ -1378,7 +1472,12 @@
         const res = await fetch(GOOGLE_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: "MANAGER_LOGIN", email: email, password: pass })
+          body: JSON.stringify({
+            action: "MANAGER_LOGIN",
+            email: email,
+            password: pass,
+            known_file_ids: getKnownFileIdsMap()
+          })
         });
         const data = await res.json();
         if (data.ok) {
@@ -1426,6 +1525,7 @@
     function updateTerminalDeckData(manager, records, members) {
       cachedManagerRecords = records;
       cachedManagerMembers = members;
+      persistMemberPhotos(members);
 
       document.getElementById('deck-mgr-name').innerText = manager.name;
       document.getElementById('deck-mgr-dept').innerText = String(manager.department || "MANAGER").toUpperCase();
@@ -1455,7 +1555,7 @@
       renderMissingTimeOutsTable(missingOutRecords);
     }
 
-    // VIEW 1: LIVE TEAM
+    // VIEW 1: LIVE TEAM PULSE (Large Circular Profile Portraits)
     function renderLiveTeamBoard(members, records) {
       const grid = document.getElementById('live-board-grid');
       const teamFilterEl = document.getElementById('liveTeamFilter');
@@ -1495,7 +1595,7 @@
           <div class="roster-card ${activeShift ? 'online' : ''}">
             <div class="roster-top">
               <div class="person-cell">
-                <div class="person-badge ${activeShift ? 'live' : ''}">${escapeHtml(getInitials(m.name))}</div>
+                ${renderEmployeeAvatarHtml(m.name, "size-lg", Boolean(activeShift))}
                 <div>
                   <div class="person-name">${escapeHtml(m.name)}</div>
                   <div class="person-team">${escapeHtml(m.team)}</div>
@@ -1565,7 +1665,7 @@
           <tr>
             <td>
               <div class="person-cell">
-                <div class="person-badge ${isActive ? 'live' : ''}">${escapeHtml(getInitials(r.employeeName))}</div>
+                ${renderEmployeeAvatarHtml(r.employeeName, "size-md", isActive)}
                 <div>
                   <div class="person-name">${escapeHtml(r.employeeName)}</div>
                   <div class="person-team">${escapeHtml(r.team)}</div>
@@ -1635,7 +1735,7 @@
           <tr>
             <td>
               <div class="person-cell">
-                <div class="person-badge">${escapeHtml(getInitials(m.name))}</div>
+                ${renderEmployeeAvatarHtml(m.name, "size-md", false)}
                 <div>
                   <div class="person-name">${escapeHtml(m.name)}</div>
                   <div class="person-team">${escapeHtml(m.team)}</div>
@@ -1674,13 +1774,15 @@
             manager_email: email,
             manager_password: pass,
             target_employee: empName,
-            device_action: deviceAction
+            device_action: deviceAction,
+            known_file_ids: getKnownFileIdsMap()
           })
         });
         const data = await res.json();
         if (data.ok) {
           alert(data.message);
           cachedManagerMembers = data.members || cachedManagerMembers;
+          persistMemberPhotos(cachedManagerMembers);
           renderDevicesTable(cachedManagerMembers);
           renderLiveTeamBoard(cachedManagerMembers, cachedManagerRecords);
         } else {
@@ -1703,7 +1805,7 @@
         <tr>
           <td>
             <div class="person-cell">
-              <div class="person-badge live">${escapeHtml(getInitials(r.employeeName))}</div>
+              ${renderEmployeeAvatarHtml(r.employeeName, "size-md", true)}
               <div>
                 <div class="person-name">${escapeHtml(r.employeeName)}</div>
                 <div class="person-team">${escapeHtml(r.team)}</div>
@@ -2002,6 +2104,14 @@
 
             const result = await response.json();
             if (result.ok) {
+              const empKey = String(localStorage.getItem('empName') || "").trim().toLowerCase();
+              if (empKey) {
+                memberPhotoCache[empKey] = {
+                  fileId: result.fileId,
+                  dataUrl: result.profileDataUrl || dataUrl
+                };
+                try { localStorage.setItem('mgrMemberPhotoCache', JSON.stringify(memberPhotoCache)); } catch (err) {}
+              }
               applyProfilePhoto(result.profileDataUrl || dataUrl, result.fileId);
             } else {
               alert("Photo upload failed: " + (result.error || "Unknown error"));
