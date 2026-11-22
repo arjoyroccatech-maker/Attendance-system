@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>87seconds-Group • Attendance Terminal</title>
+  <title>PulseDeck • Workforce Attendance & Operations Terminal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -66,7 +66,7 @@
     }
     .brand-logo svg { width: 22px; height: 22px; fill: #34D399; }
     .brand-text { display: flex; flex-direction: column; }
-    .brand-title { font-weight: 800; font-size: 16px; letter-spacing: 0.6px; color: var(--ink); }
+    .brand-title { font-weight: 800; font-size: 16px; letter-spacing: 0.5px; color: var(--ink); }
     .brand-subtitle { font-size: 11.5px; color: var(--ink-muted); font-weight: 600; }
     
     .nav-actions { display: flex; align-items: center; gap: 12px; }
@@ -151,25 +151,25 @@
     .role-status-pill.ready { background: var(--emerald-bg); color: var(--emerald); }
 
     /* --- FORMS & AUTH CARDS --- */
-    .setup-card { max-width: 440px; padding: 42px 38px; }
+    .setup-card { max-width: 460px; padding: 40px 36px; }
     .form-icon-header {
       width: 58px; height: 58px; border-radius: 16px;
       background: var(--surface-recessed); border: 1.5px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 18px auto; color: var(--ink);
+      margin: 0 auto 16px auto; color: var(--ink);
     }
     .form-icon-header svg { width: 28px; height: 28px; fill: currentColor; }
     .setup-card h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; }
-    .setup-card p { color: var(--ink-muted); font-size: 14px; line-height: 1.5; margin: 0 0 24px 0; }
+    .setup-card p { color: var(--ink-muted); font-size: 14px; line-height: 1.5; margin: 0 0 22px 0; }
     .setup-card label {
-      display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 7px;
+      display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px;
       color: var(--ink-secondary); text-align: left;
     }
     .setup-card input {
-      width: 100%; padding: 14px 16px; margin-bottom: 18px;
+      width: 100%; padding: 13px 15px; margin-bottom: 16px;
       border-radius: 12px; border: 1.5px solid var(--border);
       background: var(--surface-recessed); color: var(--ink);
-      font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif;
+      font-size: 14.5px; font-weight: 600; font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
     }
     .setup-card input.uppercase-field {
@@ -177,6 +177,20 @@
       letter-spacing: 0.4px;
     }
     .setup-card input:focus { outline: none; background: #FFFFFF; border-color: var(--ink); box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.08); }
+
+    .advanced-toggle {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12.5px; font-weight: 700; color: var(--blue);
+      cursor: pointer; margin-bottom: 14px; user-select: none;
+    }
+    .advanced-toggle:hover { text-decoration: underline; }
+    .advanced-box {
+      display: none; background: var(--surface-recessed);
+      border: 1.5px dashed var(--border); border-radius: 14px;
+      padding: 14px 14px 2px 14px; margin-bottom: 16px; text-align: left;
+    }
+    .advanced-box.open { display: block; }
+    .advanced-hint { font-size: 11.5px; color: var(--ink-muted); margin: -10px 0 12px 0; line-height: 1.4; }
     
     #auth-code-display {
       font-size: 42px; font-weight: 800; color: var(--ink);
@@ -186,7 +200,7 @@
     }
     
     .btn-save {
-      width: 100%; padding: 16px 20px; font-size: 15px; font-weight: 700;
+      width: 100%; padding: 15px 20px; font-size: 15px; font-weight: 700;
       background: var(--ink); color: white; border: none;
       border-radius: 14px; cursor: pointer; font-family: 'Inter', sans-serif;
       transition: all 0.14s ease;
@@ -194,11 +208,11 @@
     .btn-save:hover { opacity: 0.92; transform: translateY(-1px); }
     .btn-save:active { transform: scale(0.98); }
     .btn-save:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-    .sub-link { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--ink-muted); font-weight: 600; cursor: pointer; text-decoration: none; }
+    .sub-link { display: inline-block; margin-top: 14px; font-size: 13px; color: var(--ink-muted); font-weight: 600; cursor: pointer; text-decoration: none; }
     .sub-link:hover { color: var(--ink); text-decoration: underline; }
 
     /* =========================================================================
-       KIOSK-GRADE MANAGER COMMAND TERMINAL (5 Tabs Including Insights)
+       KIOSK-GRADE MANAGER COMMAND TERMINAL
        ========================================================================= */
     .kiosk-terminal-deck {
       display: none;
@@ -215,7 +229,7 @@
 
     .terminal-kpi-grid {
       display: grid;
-      grid-template-columns: 1.35fr 1fr 1fr 1fr 1fr;
+      grid-template-columns: 1.45fr 1fr 1fr 1fr 1fr;
       gap: 16px;
     }
     .terminal-kpi-card {
@@ -241,12 +255,20 @@
       color: #FFFFFF;
       border-color: var(--ink);
     }
+    .id-top-badges { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
     .id-dept-badge {
       display: inline-flex; align-items: center; gap: 6px;
       font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px;
       color: #34D399; background: rgba(52, 211, 153, 0.14);
-      padding: 5px 11px; border-radius: 8px; width: fit-content;
+      padding: 5px 10px; border-radius: 8px;
     }
+    .id-code-pill {
+      font-family: monospace; font-size: 12px; font-weight: 800;
+      color: #FDE68A; background: rgba(251, 191, 36, 0.16);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      padding: 4px 10px; border-radius: 8px; cursor: pointer;
+    }
+    .id-code-pill:hover { background: rgba(251, 191, 36, 0.28); }
     .id-mgr-title { font-size: 20px; font-weight: 800; margin: 12px 0 3px 0; letter-spacing: -0.4px; }
     .id-sync-sub { font-size: 12px; color: #94A3B8; font-weight: 500; }
 
@@ -379,9 +401,7 @@
     .btn-kiosk-sm.danger { background: var(--crimson-bg); color: var(--crimson); border-color: rgba(220, 38, 38, 0.3); }
     .btn-kiosk-sm.danger:hover { background: #FEE2E2; }
 
-    /* =========================================================================
-       INSIGHTS TAB VISUAL ANALYTICS SUITE
-       ========================================================================= */
+    /* INSIGHTS TAB */
     .insights-body {
       padding: 24px 28px 30px 28px;
       background: var(--surface-recessed);
@@ -735,8 +755,8 @@
         <svg viewBox="0 0 24 24"><path d="M4 10h3v10H4zM10 4h3v16h-3zM16 14h3v6h-3z"/></svg>
       </div>
       <div class="brand-text">
-        <span class="brand-title">87seconds-Group</span>
-        <span class="brand-subtitle" id="nav-sub-label">PulseDeck — Attendance & Workforce Operations Portal</span>
+        <span class="brand-title">PulseDeck</span>
+        <span class="brand-subtitle" id="nav-sub-label">Workforce Attendance & Operations Terminal</span>
       </div>
     </div>
     <div class="nav-actions">
@@ -749,14 +769,17 @@
   </div>
 
   <!-- =====================================================================
-       KIOSK-GRADE MANAGER COMMAND TERMINAL (With Executive Insights Tab)
+       KIOSK-GRADE MANAGER COMMAND TERMINAL
        ===================================================================== -->
   <div id="mgr-terminal-deck" class="kiosk-terminal-deck">
     
     <!-- Top KPI Strip -->
     <div class="terminal-kpi-grid">
       <div class="terminal-kpi-card terminal-id-card">
-        <div class="id-dept-badge" id="deck-mgr-dept">OPERATIONS</div>
+        <div class="id-top-badges">
+          <div class="id-dept-badge" id="deck-mgr-dept">OPERATIONS</div>
+          <div class="id-code-pill" id="deck-mgr-code" onclick="copyManagerCode()" title="Click to copy your Manager Code for employees">CODE: PD-0000</div>
+        </div>
         <div>
           <div class="id-mgr-title" id="deck-mgr-name">MANAGER NAME</div>
           <div class="id-sync-sub" id="deck-sync-time">Auto-syncing terminal</div>
@@ -844,7 +867,7 @@
         <div class="view-bar">
           <div>
             <h2 class="view-heading">Live Team Pulse</h2>
-            <div class="view-sub">Real-time presence across your departments</div>
+            <div class="view-sub">Real-time presence across your isolated workspace</div>
           </div>
           <div class="filter-row">
             <select id="liveTeamFilter" class="kiosk-select" onchange="renderLiveTeamBoard(cachedManagerMembers, cachedManagerRecords)">
@@ -855,7 +878,7 @@
         <div id="live-board-grid" class="roster-grid"></div>
       </div>
 
-      <!-- VIEW 2: EXECUTIVE WORKFORCE INSIGHTS (Charts & Analytics) -->
+      <!-- VIEW 2: EXECUTIVE WORKFORCE INSIGHTS -->
       <div id="deck-view-insights" class="deck-view">
         <div class="view-bar">
           <div>
@@ -870,7 +893,6 @@
         </div>
 
         <div class="insights-body">
-          <!-- 4 Executive Insight Highlight Pills -->
           <div class="insights-highlight-row">
             <div class="insight-pill-card">
               <div class="kpi-badge-icon ic-emerald">
@@ -913,7 +935,6 @@
             </div>
           </div>
 
-          <!-- Primary Charts Row: 7-Day Trend + Work Arrangement Doughnut -->
           <div class="charts-grid-2col">
             <div class="chart-card">
               <div class="chart-card-header">
@@ -940,7 +961,6 @@
             </div>
           </div>
 
-          <!-- Secondary Charts Row: Hours by Team + Peak Clock-In Hours -->
           <div class="charts-grid-equal">
             <div class="chart-card">
               <div class="chart-card-header">
@@ -1072,7 +1092,7 @@
 
     <!-- PORTAL SELECTOR ENTRY SCREEN -->
     <div id="role-selector" class="card role-card active-card">
-      <div class="eyebrow-badge">Attendance Terminal</div>
+      <div class="eyebrow-badge">PulseDeck Terminal</div>
       <h2>Choose Your Workspace</h2>
       <p>Select Employee to log your shift, or Manager to monitor attendance & team insights.</p>
       <div class="role-grid">
@@ -1090,7 +1110,7 @@
             <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
           </div>
           <div class="role-title">MANAGER</div>
-          <div class="role-desc">Live team overview, insights, Excel exports & device controls</div>
+          <div class="role-desc">Isolated team dashboard, insights, Excel exports & controls</div>
           <div class="role-status-pill" id="mgr-role-pill">Register / Login</div>
         </button>
       </div>
@@ -1110,19 +1130,29 @@
       <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
     </div>
 
-    <!-- MANAGER STEP 1: REGISTRATION FORM (ALL UPPERCASE ON NAME & DEPT) -->
+    <!-- MANAGER STEP 1: REGISTRATION FORM (Multi-Manager Isolated Spreadsheet + Optional Custom Endpoint) -->
     <div id="manager-setup" class="card setup-card">
       <div class="form-icon-header">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
       </div>
       <h2>Manager Registration</h2>
-      <p>Create your manager account to access team attendance records.</p>
+      <p>Create your isolated manager workspace and receive a unique Manager Code for your team.</p>
       <label>Full Name</label>
       <input type="text" id="mgrName" class="uppercase-field" placeholder="E.G. JANE SMITH" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Department</label>
       <input type="text" id="mgrDept" class="uppercase-field" placeholder="E.G. OPERATIONS" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Work Email</label>
       <input type="email" id="mgrEmail" placeholder="e.g. jane.smith@company.com" autocomplete="off">
+
+      <div class="advanced-toggle" onclick="toggleAdvancedBox('mgr-adv-box')">⚙️ Optional: Custom Google Sheet / Apps Script URL</div>
+      <div id="mgr-adv-box" class="advanced-box">
+        <label>Your Google Sheet URL or ID (Leave blank to auto-create)</label>
+        <input type="text" id="mgrCustomSheet" placeholder="https://docs.google.com/spreadsheets/d/..." autocomplete="off">
+        <label>Custom Apps Script Web App URL (Optional)</label>
+        <input type="url" id="mgrCustomScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
+        <div class="advanced-hint">Leave blank to automatically generate a dedicated Google Spreadsheet for your department.</div>
+      </div>
+
       <button class="btn-save" onclick="proceedToDevPass()">Continue to Verification</button>
       <span class="sub-link" onclick="openManagerLogin()">Already registered? Log in here</span>
     </div>
@@ -1171,21 +1201,51 @@
       <span class="sub-link" onclick="switchCard('manager-setup')">Register a new manager account</span>
     </div>
 
-    <!-- EMPLOYEE INITIAL REGISTRATION (ALL UPPERCASE ON NAME & TEAM) -->
+    <!-- EMPLOYEE INITIAL REGISTRATION (With Manager Code + Custom Apps Script Option + Recovery Link) -->
     <div id="laptop-setup" class="card setup-card">
       <div class="form-icon-header">
         <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
       </div>
       <h2>Kiosk Device Setup</h2>
-      <p>Register your profile to bind this workstation as your personal attendance kiosk.</p>
+      <p>Bind this workstation to your Manager's workspace so your attendance routes automatically.</p>
+      <label>Manager Code (Ask your manager, e.g. PD-1234)</label>
+      <input type="text" id="empMgrCode" class="uppercase-field" placeholder="PD-XXXX (OPTIONAL FOR DEFAULT)" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Employee Name</label>
       <input type="text" id="empName" class="uppercase-field" placeholder="E.G. JOHN DOE" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Team / Department</label>
       <input type="text" id="team" class="uppercase-field" placeholder="E.G. SALES" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
-      <label>Work Email (For Backup OTP)</label>
+      <label>Work Email (For Backup OTP & Kiosk Recovery)</label>
       <input type="email" id="empEmail" placeholder="e.g. john.doe@company.com" autocomplete="off">
+
+      <div class="advanced-toggle" onclick="toggleAdvancedBox('emp-adv-box')">⚙️ Optional: Save Custom Apps Script URL</div>
+      <div id="emp-adv-box" class="advanced-box">
+        <label>Manager's Apps Script Web App URL</label>
+        <input type="url" id="empCustomScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
+        <div class="advanced-hint">Only needed if your manager deployed their own separate Apps Script backend.</div>
+      </div>
+
       <button class="btn-save" id="btn-register-laptop" onclick="registerLaptop()">Secure Device & Continue</button>
-      <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
+      <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <span class="sub-link" style="margin-top:0; color:var(--emerald);" onclick="switchCard('employee-recover')">Cleared browser cache? Restore Existing Kiosk →</span>
+        <span class="sub-link" style="margin-top:0;" onclick="showRoleSelector()">← Back to Portal Selection</span>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE KIOSK RECOVERY (Restores Session After Full Browser Wipe) -->
+    <div id="employee-recover" class="card setup-card">
+      <div class="form-icon-header" style="background:var(--blue-bg); color:var(--blue);">
+        <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+      </div>
+      <h2>Restore Existing Kiosk</h2>
+      <p>Enter your registered Work Email and 4-digit PIN to restore your profile and photo from the database.</p>
+      <label>Manager Code (If assigned, e.g. PD-1234)</label>
+      <input type="text" id="recMgrCode" class="uppercase-field" placeholder="PD-XXXX (OPTIONAL)" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+      <label>Registered Work Email</label>
+      <input type="email" id="recEmail" placeholder="e.g. john.doe@company.com" autocomplete="email">
+      <label>Your 4-Digit Auth PIN</label>
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="recPin" class="masked-input" placeholder="••••" style="text-align: center; font-size: 24px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') submitKioskRecovery()">
+      <button class="btn-save" id="btn-recover-kiosk" onclick="submitKioskRecovery()">Restore My Kiosk</button>
+      <span class="sub-link" onclick="switchCard('laptop-setup')">← Back to New Device Setup</span>
     </div>
 
     <!-- UPDATE MISSING EMAIL PROMPT -->
@@ -1334,14 +1394,161 @@
 
   <!-- FOOTER -->
   <div class="footer" id="standard-footer">
-    Attendance Terminal • <span>Data Driven. People Focused.</span>
+    PulseDeck • <span>Workforce Attendance & Operations Terminal</span>
   </div>
 
   <script>
     // =========================================================================
-    // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
+    // PASTE YOUR DEFAULT GOOGLE APPS SCRIPT URL HERE
     // =========================================================================
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxZxXqtW1_Olqvux2zHJN_cTeG0bpBHypvcv2LH4bjvXoBsJv4KJdtTTQuFIGYDdHcl2w/exec";
+    const DEFAULT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxZxXqtW1_Olqvux2zHJN_cTeG0bpBHypvcv2LH4bjvXoBsJv4KJdtTTQuFIGYDdHcl2w/exec";
+
+    // =========================================================================
+    // 3-LAYER SELF-HEALING STORAGE ENGINE (localStorage + IndexedDB + Cookie)
+    // =========================================================================
+    const PulseVault = (() => {
+      const DB_NAME = "PulseDeckVaultDB";
+      const STORE_NAME = "kv_store";
+      const SESSION_KEYS = [
+        "empName", "team", "empEmail", "authCode",
+        "empManagerCode", "empTargetSheetId", "empCustomScriptUrl",
+        "mgrName", "mgrDept", "mgrEmail", "mgrCode", "mgrTargetSheetId", "mgrCustomScriptUrl",
+        "boundMobileDeviceId", "profileFileId"
+      ];
+
+      function setCookie(key, val) {
+        if (!val) {
+          document.cookie = `pd_${key}=; path=/; max-age=0; SameSite=Lax`;
+          return;
+        }
+        document.cookie = `pd_${key}=${encodeURIComponent(val)}; path=/; max-age=31536000; SameSite=Lax`;
+      }
+
+      function getCookie(key) {
+        const prefix = `pd_${key}=`;
+        const parts = document.cookie.split(";");
+        for (let i = 0; i < parts.length; i++) {
+          const c = parts[i].trim();
+          if (c.indexOf(prefix) === 0) return decodeURIComponent(c.substring(prefix.length));
+        }
+        return "";
+      }
+
+      function openDb() {
+        return new Promise((resolve) => {
+          if (!window.indexedDB) return resolve(null);
+          const req = indexedDB.open(DB_NAME, 1);
+          req.onupgradeneeded = () => {
+            const db = req.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME);
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => resolve(null);
+        });
+      }
+
+      async function idbSet(key, val) {
+        const db = await openDb();
+        if (!db) return;
+        try {
+          const tx = db.transaction(STORE_NAME, "readwrite");
+          if (val === null || val === undefined || val === "") tx.objectStore(STORE_NAME).delete(key);
+          else tx.objectStore(STORE_NAME).put(val, key);
+        } catch (e) {}
+      }
+
+      async function idbGetAll() {
+        const db = await openDb();
+        if (!db) return {};
+        return new Promise((resolve) => {
+          try {
+            const tx = db.transaction(STORE_NAME, "readonly");
+            const store = tx.objectStore(STORE_NAME);
+            const out = {};
+            const req = store.openCursor();
+            req.onsuccess = (ev) => {
+              const cursor = ev.target.result;
+              if (cursor) {
+                out[cursor.key] = cursor.value;
+                cursor.continue();
+              } else {
+                resolve(out);
+              }
+            };
+            req.onerror = () => resolve({});
+          } catch (e) { resolve({}); }
+        });
+      }
+
+      function save(key, val) {
+        if (!val) {
+          remove(key);
+          return;
+        }
+        try { localStorage.setItem(key, val); } catch (e) {}
+        if (SESSION_KEYS.includes(key)) setCookie(key, val);
+        idbSet(key, val);
+      }
+
+      function get(key) {
+        const ls = localStorage.getItem(key);
+        if (ls) return ls;
+        const ck = getCookie(key);
+        if (ck) {
+          try { localStorage.setItem(key, ck); } catch (e) {}
+          return ck;
+        }
+        return "";
+      }
+
+      function remove(key) {
+        try { localStorage.removeItem(key); } catch (e) {}
+        if (SESSION_KEYS.includes(key)) setCookie(key, "");
+        idbSet(key, null);
+      }
+
+      async function healFromVault() {
+        const all = await idbGetAll();
+        Object.keys(all).forEach((k) => {
+          if (all[k] && !localStorage.getItem(k)) {
+            try { localStorage.setItem(k, all[k]); } catch (e) {}
+            if (SESSION_KEYS.includes(k)) setCookie(k, all[k]);
+          }
+        });
+        SESSION_KEYS.forEach((k) => {
+          const ls = localStorage.getItem(k);
+          const ck = getCookie(k);
+          if (ls && !ck) setCookie(k, ls);
+          else if (!ls && ck) {
+            try { localStorage.setItem(k, ck); } catch (e) {}
+            idbSet(k, ck);
+          }
+        });
+        return all;
+      }
+
+      return { save, get, remove, healFromVault };
+    })();
+
+    // --- DYNAMIC ENDPOINT & TARGET SHEET ROUTING ---
+    function getEmployeeEndpoint() {
+      return PulseVault.get("empCustomScriptUrl") || DEFAULT_GOOGLE_URL;
+    }
+
+    function getManagerEndpoint() {
+      return PulseVault.get("mgrCustomScriptUrl") || DEFAULT_GOOGLE_URL;
+    }
+
+    function getPhoneEndpoint() {
+      return urlParams.get("api") || PulseVault.get("empCustomScriptUrl") || DEFAULT_GOOGLE_URL;
+    }
+
+    function getEmployeeRoutingPayload() {
+      return {
+        manager_code: PulseVault.get("empManagerCode") || "",
+        target_sheet_id: PulseVault.get("empTargetSheetId") || ""
+      };
+    }
 
     // --- GLOBAL STATE DECLARATIONS ---
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -1362,10 +1569,17 @@
     let serverTodayStr = "";
     window.shiftStartTime = null;
 
-    try {
-      const savedPhotoCache = localStorage.getItem('mgrMemberPhotoCache');
-      if (savedPhotoCache) memberPhotoCache = JSON.parse(savedPhotoCache);
-    } catch (e) {}
+    function toggleAdvancedBox(boxId) {
+      const el = document.getElementById(boxId);
+      if (el) el.classList.toggle("open");
+    }
+
+    function copyManagerCode() {
+      const code = PulseVault.get("mgrCode");
+      if (!code) return;
+      if (navigator.clipboard) navigator.clipboard.writeText(code);
+      alert(`Manager Code (${code}) copied! Share this code with your employees during their Kiosk Device Setup.`);
+    }
 
     function persistMemberPhotos(members) {
       let changed = false;
@@ -1389,7 +1603,7 @@
         }
       });
       if (changed) {
-        try { localStorage.setItem('mgrMemberPhotoCache', JSON.stringify(memberPhotoCache)); } catch (e) {}
+        PulseVault.save("mgrMemberPhotoCache", JSON.stringify(memberPhotoCache));
       }
     }
 
@@ -1427,9 +1641,12 @@
       qrExpiryTimer = null;
       window.shiftStartTime = null;
 
-      ['empName', 'team', 'empEmail', 'authCode', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
-        localStorage.removeItem(k);
-      });
+      [
+        'empName', 'team', 'empEmail', 'authCode',
+        'empManagerCode', 'empTargetSheetId', 'empCustomScriptUrl',
+        'profileDataUrl', 'profileFileId', 'localShiftStart'
+      ].forEach(k => PulseVault.remove(k));
+
       switchCard('laptop-setup');
     }
 
@@ -1440,7 +1657,7 @@
       document.getElementById('mgr-terminal-deck').classList.remove('active');
       document.getElementById('centered-stage').style.display = 'flex';
       document.getElementById('standard-footer').style.display = 'block';
-      document.getElementById('nav-sub-label').innerText = "PulseDeck — Attendance & Workforce Operations Portal";
+      document.getElementById('nav-sub-label').innerText = "Workforce Attendance & Operations Terminal";
       document.getElementById('live-sync-label').innerText = "System Online";
 
       document.querySelectorAll('.card').forEach(el => el.classList.remove('active-card'));
@@ -1464,8 +1681,8 @@
       mgrAutoSyncInterval = null;
       window.shiftStartTime = null;
 
-      const savedEmp = (localStorage.getItem('empName') || "").toUpperCase();
-      const savedCode = localStorage.getItem('authCode');
+      const savedEmp = (PulseVault.get('empName') || "").toUpperCase();
+      const savedCode = PulseVault.get('authCode');
       const empPill = document.getElementById('emp-role-pill');
       if (empPill) {
         if (savedEmp && savedCode) {
@@ -1477,7 +1694,7 @@
         }
       }
 
-      const savedMgrEmail = localStorage.getItem('mgrEmail');
+      const savedMgrEmail = PulseVault.get('mgrEmail');
       const mgrPill = document.getElementById('mgr-role-pill');
       if (mgrPill) {
         if (savedMgrEmail) {
@@ -1492,10 +1709,10 @@
       switchCard('role-selector');
     }
 
-    // --- EMPLOYEE ENTRY & AUTH CODE LOGIN ROUTING ---
+    // --- EMPLOYEE ENTRY, AUTH CODE LOGIN & DATABASE RECOVERY ---
     function selectEmployeeRole() {
-      const savedName = (localStorage.getItem('empName') || "").toUpperCase();
-      const authCode = localStorage.getItem('authCode');
+      const savedName = (PulseVault.get('empName') || "").toUpperCase();
+      const authCode = PulseVault.get('authCode');
       if (savedName && authCode) {
         document.getElementById('emp-login-subtitle').innerText = `Welcome back, ${savedName}. Enter your 4-digit Authentication Code to continue.`;
         document.getElementById('empLoginCode').value = "";
@@ -1509,7 +1726,7 @@
 
     function submitEmployeeLogin() {
       const enteredCode = document.getElementById('empLoginCode').value.trim();
-      const savedCode = localStorage.getItem('authCode');
+      const savedCode = PulseVault.get('authCode');
       const errEl = document.getElementById('emp-login-error');
 
       if (!enteredCode || enteredCode.length !== 4) {
@@ -1528,13 +1745,60 @@
       openEmployeeKiosk();
     }
 
+    async function submitKioskRecovery() {
+      const mgrCode = document.getElementById('recMgrCode').value.trim().toUpperCase();
+      const email = document.getElementById('recEmail').value.trim().toLowerCase();
+      const pin = document.getElementById('recPin').value.trim();
+      const btn = document.getElementById('btn-recover-kiosk');
+
+      if (!email || email.indexOf("@") < 1) return alert("Please enter your registered Work Email.");
+      if (!pin || pin.length !== 4) return alert("Please enter your 4-digit Auth PIN.");
+
+      btn.disabled = true;
+      btn.innerText = "Restoring Kiosk...";
+
+      try {
+        const res = await fetch(getEmployeeEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "RECOVER_MEMBER",
+            manager_code: mgrCode,
+            email: email,
+            auth_pin: pin
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          PulseVault.save('empName', data.member.name);
+          PulseVault.save('team', data.member.team);
+          PulseVault.save('empEmail', data.member.email);
+          PulseVault.save('authCode', data.member.authPin);
+          PulseVault.save('empManagerCode', data.managerCode || mgrCode);
+          PulseVault.save('empTargetSheetId', data.targetSheetId || "");
+          if (data.member.fileId) PulseVault.save('profileFileId', data.member.fileId);
+          if (data.profileDataUrl) PulseVault.save('profileDataUrl', data.profileDataUrl);
+
+          alert(`Welcome back, ${data.member.name}! Your kiosk has been restored.`);
+          openEmployeeKiosk();
+        } else {
+          alert(data.error || "Unable to recover account.");
+        }
+      } catch (e) {
+        alert("Connection error while restoring kiosk.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Restore My Kiosk";
+      }
+    }
+
     function openEmployeeKiosk() {
-      const savedName = (localStorage.getItem('empName') || "").toUpperCase();
+      const savedName = (PulseVault.get('empName') || "").toUpperCase();
       switchCard('laptop-kiosk');
       document.getElementById('kiosk-name').innerText = savedName;
 
-      const cachedDataUrl = localStorage.getItem('profileDataUrl');
-      const cachedFileId = localStorage.getItem('profileFileId');
+      const cachedDataUrl = PulseVault.get('profileDataUrl');
+      const cachedFileId = PulseVault.get('profileFileId');
       if (cachedDataUrl || cachedFileId) applyProfilePhoto(cachedDataUrl, cachedFileId);
 
       fetchLiveStatus(false);
@@ -1542,7 +1806,7 @@
 
     // --- MANAGER ENTRY, REGISTRATION & TERMINAL DECK ---
     function selectManagerRole() {
-      const savedMgrEmail = localStorage.getItem('mgrEmail');
+      const savedMgrEmail = PulseVault.get('mgrEmail');
       if (savedMgrEmail) {
         openManagerLogin();
       } else {
@@ -1551,7 +1815,7 @@
     }
 
     function openManagerLogin() {
-      const savedMgrEmail = localStorage.getItem('mgrEmail') || "";
+      const savedMgrEmail = PulseVault.get('mgrEmail') || "";
       const emailInput = document.getElementById('mgrLoginEmail');
       const subtitle = document.getElementById('mgr-login-subtitle');
       document.getElementById('mgrLoginPass').value = "";
@@ -1571,11 +1835,15 @@
       const name = document.getElementById('mgrName').value.trim().toUpperCase();
       const dept = document.getElementById('mgrDept').value.trim().toUpperCase();
       const email = document.getElementById('mgrEmail').value.trim().toLowerCase();
+      const customSheet = document.getElementById('mgrCustomSheet').value.trim();
+      const customScriptUrl = document.getElementById('mgrCustomScriptUrl').value.trim();
 
       if (!name || !dept || !email) return alert("Please fill in Name, Department, and Email.");
       if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
 
-      pendingManagerDraft = { name, dept, email };
+      if (customScriptUrl) PulseVault.save('mgrCustomScriptUrl', customScriptUrl);
+
+      pendingManagerDraft = { name, dept, email, customSheet, customScriptUrl };
       document.getElementById('devPassInput').value = "";
       switchCard('manager-dev-auth');
       setTimeout(() => document.getElementById('devPassInput').focus(), 100);
@@ -1590,7 +1858,7 @@
       btn.innerText = "Verifying...";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(getManagerEndpoint(), {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: "VERIFY_DEV_PASS", dev_pass: devPass })
@@ -1623,10 +1891,10 @@
       if (!pendingManagerDraft) return switchCard('manager-setup');
 
       btn.disabled = true;
-      btn.innerText = "Creating Account...";
+      btn.innerText = "Provisioning Workspace...";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(getManagerEndpoint(), {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
@@ -1635,14 +1903,17 @@
             department: pendingManagerDraft.dept.toUpperCase(),
             email: pendingManagerDraft.email.toLowerCase(),
             dev_pass: pendingManagerDraft.devPass,
-            custom_password: newPass
+            custom_password: newPass,
+            custom_sheet_id: pendingManagerDraft.customSheet || ""
           })
         });
         const data = await res.json();
         if (data.ok) {
-          localStorage.setItem('mgrName', data.manager.name.toUpperCase());
-          localStorage.setItem('mgrDept', data.manager.department.toUpperCase());
-          localStorage.setItem('mgrEmail', data.manager.email.toLowerCase());
+          PulseVault.save('mgrName', data.manager.name.toUpperCase());
+          PulseVault.save('mgrDept', data.manager.department.toUpperCase());
+          PulseVault.save('mgrEmail', data.manager.email.toLowerCase());
+          PulseVault.save('mgrCode', data.manager.managerCode || "");
+          PulseVault.save('mgrTargetSheetId', data.manager.spreadsheetId || "");
           sessionStorage.setItem('mgrSessionPass', newPass);
           serverTodayStr = data.today || "";
           openTerminalDashboard(data.manager, data.records || [], data.members || []);
@@ -1668,7 +1939,7 @@
       btn.innerText = "Authenticating...";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(getManagerEndpoint(), {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
@@ -1680,9 +1951,11 @@
         });
         const data = await res.json();
         if (data.ok) {
-          localStorage.setItem('mgrName', data.manager.name.toUpperCase());
-          localStorage.setItem('mgrDept', data.manager.department.toUpperCase());
-          localStorage.setItem('mgrEmail', data.manager.email.toLowerCase());
+          PulseVault.save('mgrName', data.manager.name.toUpperCase());
+          PulseVault.save('mgrDept', data.manager.department.toUpperCase());
+          PulseVault.save('mgrEmail', data.manager.email.toLowerCase());
+          PulseVault.save('mgrCode', data.manager.managerCode || "");
+          PulseVault.save('mgrTargetSheetId', data.manager.spreadsheetId || "");
           sessionStorage.setItem('mgrSessionPass', password);
           serverTodayStr = data.today || "";
           openTerminalDashboard(data.manager, data.records || [], data.members || []);
@@ -1698,12 +1971,12 @@
     }
 
     async function silentSyncManagerData() {
-      const email = localStorage.getItem('mgrEmail') || "";
+      const email = PulseVault.get('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
       if (!pass || !document.getElementById('mgr-terminal-deck').classList.contains('active')) return;
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(getManagerEndpoint(), {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
@@ -1766,9 +2039,11 @@
 
       document.getElementById('deck-mgr-name').innerText = String(manager.name || "MANAGER").toUpperCase();
       document.getElementById('deck-mgr-dept').innerText = String(manager.department || "OPERATIONS").toUpperCase();
+      const mgrCode = manager.managerCode || PulseVault.get("mgrCode") || "PD-0000";
+      document.getElementById('deck-mgr-code').innerText = `CODE: ${mgrCode}`;
 
       const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      document.getElementById('deck-sync-time').innerText = `Live synced • ${nowTime}`;
+      document.getElementById('deck-sync-time').innerText = `Isolated Sheet Synced • ${nowTime}`;
       document.getElementById('live-sync-label').innerText = `Live • ${nowTime}`;
 
       populateTeamFilters(members, records);
@@ -1802,12 +2077,9 @@
     function parseHoursValue(rawHours) {
       if (!rawHours) return 0;
       const s = String(rawHours).trim();
-      // Format 1: Decimal hours (e.g. "8.25")
       if (/^\d+(\.\d+)?$/.test(s)) return parseFloat(s);
-      // Format 2: "0:00:48" (0 hrs, 0 mins, 48 secs)
       const hms = s.match(/^(\d+):(\d{2}):(\d{2})$/);
       if (hms) return parseInt(hms[1], 10) + (parseInt(hms[2], 10) / 60) + (parseInt(hms[3], 10) / 3600);
-      // Format 3: "0:42" (0 hrs, 42 mins)
       const hm = s.match(/^(\d+):(\d{2})$/);
       if (hm) return parseInt(hm[1], 10) + (parseInt(hm[2], 10) / 60);
       return 0;
@@ -1836,7 +2108,6 @@
         ? cachedManagerRecords
         : cachedManagerRecords.filter(r => String(r.team || "").trim().toUpperCase() === teamFilter);
 
-      // 1. Aggregate KPI Highlights
       let totalHours = 0;
       let completedCount = 0;
       let onsiteCount = 0;
@@ -1884,13 +2155,11 @@
       document.getElementById('ins-onsite-share').innerText = `${onsitePct}% Onsite`;
       document.getElementById('ins-top-team').innerText = topTeam;
 
-      // Destroy old charts cleanly before re-rendering
       Object.values(chartInstances).forEach(ch => { if (ch) ch.destroy(); });
       chartInstances = {};
 
       const baseFont = { family: "'Inter', sans-serif", weight: '600' };
 
-      // 2. Daily Shift & Hours Trend (Last 7 Recorded Dates)
       const sortedDates = Object.keys(dailyMap).sort().slice(-7);
       const trendCtx = document.getElementById('chart-daily-trend');
       if (trendCtx) {
@@ -1935,7 +2204,6 @@
         });
       }
 
-      // 3. Work Arrangement Doughnut Chart
       const modeCtx = document.getElementById('chart-work-mode');
       if (modeCtx) {
         chartInstances.mode = new Chart(modeCtx, {
@@ -1961,7 +2229,6 @@
         });
       }
 
-      // 4. Total Hours by Team (Horizontal Bar Chart)
       const teamCtx = document.getElementById('chart-team-hours');
       if (teamCtx) {
         const topTeams = sortedTeams.slice(0, 6);
@@ -1990,7 +2257,6 @@
         });
       }
 
-      // 5. Peak Check-In Hours Distribution
       const hourCtx = document.getElementById('chart-checkin-hours');
       if (hourCtx) {
         const sortedHours = Object.keys(hourBucketMap).map(Number).sort((a, b) => a - b);
@@ -2030,7 +2296,7 @@
         : members.filter(m => String(m.team || "").trim().toUpperCase() === selectedTeam);
 
       if (!visibleMembers.length) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--ink-muted);">No team members found for this filter.</div>`;
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--ink-muted);">No team members registered under this Manager Code yet.</div>`;
         return;
       }
 
@@ -2173,7 +2439,8 @@
       XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance History");
 
       const dateStamp = serverTodayStr || new Date().toISOString().slice(0, 10);
-      XLSX.writeFile(workbook, `Attendance_History_${dateStamp}.xlsx`);
+      const deptTag = (PulseVault.get("mgrDept") || "PulseDeck").replace(/[^A-Z0-9]/g, "_");
+      XLSX.writeFile(workbook, `${deptTag}_Attendance_${dateStamp}.xlsx`);
     }
 
     // VIEW 4: REGISTERED DEVICES & ACCOUNT CONTROLS
@@ -2234,11 +2501,11 @@
       }
       if (!confirm(label)) return;
 
-      const email = localStorage.getItem('mgrEmail') || "";
+      const email = PulseVault.get('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(getManagerEndpoint(), {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
@@ -2254,805 +2521,8 @@
         if (data.ok) {
           alert(data.message);
           if (deviceAction === "REMOVE") {
-            const localEmp = String(localStorage.getItem('empName') || "").trim().toLowerCase();
-            if (localEmp && localEmp === String(empName).trim().toLowerCase()) {
-              ['empName', 'team', 'empEmail', 'authCode', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
-                localStorage.removeItem(k);
-              });
-            }
-          }
-          cachedManagerMembers = data.members || [];
-          updateTerminalDeckData(
-            {
-              name: localStorage.getItem('mgrName') || "MANAGER",
-              department: localStorage.getItem('mgrDept') || "",
-              email: email
-            },
-            cachedManagerRecords,
-            cachedManagerMembers
-          );
-        } else {
-          alert(data.error || "Action failed.");
-        }
-      } catch (e) {
-        alert("Connection error while updating account.");
-      }
-    }
-
-    // VIEW 5: OPEN SHIFTS
-    function renderMissingTimeOutsTable(openRows) {
-      const tbody = document.getElementById('mgr-missing-body');
-      if (!openRows.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">All shifts are closed. No open shifts right now.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = openRows.map(r => `
-        <tr>
-          <td>
-            <div class="person-cell">
-              ${renderEmployeeAvatarHtml(r.employeeName, "size-md", true)}
-              <div>
-                <div class="person-name">${escapeHtml(r.employeeName)}</div>
-                <div class="person-team">${escapeHtml(r.team)}</div>
-              </div>
-            </div>
-          </td>
-          <td>
-            <div class="person-name">${escapeHtml(r.date)}</div>
-            <div class="person-team">In: ${escapeHtml(r.timeIn)}</div>
-          </td>
-          <td><input type="text" class="inline-field" id="resolve-out-${r._row}" placeholder="e.g. 06:00 PM"></td>
-          <td><input type="text" class="inline-field" id="resolve-note-${r._row}" placeholder="Optional reason"></td>
-          <td><button type="button" class="btn-kiosk-sm dark" onclick="submitResolveShift(${r._row})">Save</button></td>
-        </tr>
-      `).join("");
-    }
-
-    async function submitResolveShift(rowNum) {
-      const timeOutVal = (document.getElementById(`resolve-out-${rowNum}`).value || "").trim();
-      const noteVal = (document.getElementById(`resolve-note-${rowNum}`).value || "").trim();
-      if (!timeOutVal) return alert("Please enter a Time Out (e.g. 06:00 PM or 18:00).");
-
-      const email = localStorage.getItem('mgrEmail') || "";
-      const pass = sessionStorage.getItem('mgrSessionPass') || "";
-
-      try {
-        const res = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "MANAGER_RESOLVE_SHIFT",
-            manager_email: email,
-            manager_password: pass,
-            row_number: rowNum,
-            manual_time_out: timeOutVal,
-            manager_note: noteVal
-          })
-        });
-        const data = await res.json();
-        if (data.ok) {
-          alert(data.message);
-          updateTerminalDeckData(
-            {
-              name: localStorage.getItem('mgrName') || "MANAGER",
-              department: localStorage.getItem('mgrDept') || "",
-              email: email
-            },
-            data.records || [],
-            cachedManagerMembers
-          );
-        } else {
-          alert(data.error || "Unable to update shift.");
-        }
-      } catch (e) {
-        alert("Connection error while saving Time Out.");
-      }
-    }
-
-    function escapeHtml(str) {
-      return String(str || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    }
-
-    function escapeAttr(str) {
-      return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-    }
-
-    // --- PERSISTENT MOBILE DEVICE TOKEN (1-TO-1 BINDING) ---
-    function getOrCreateMobileDeviceId() {
-      let devId = localStorage.getItem('boundMobileDeviceId');
-      if (!devId) {
-        const randPart = Math.floor(100000 + Math.random() * 900000);
-        const charPart = Math.random().toString(36).substring(2, 6).toUpperCase();
-        devId = `PHONE-${randPart}-${charPart}`;
-        localStorage.setItem('boundMobileDeviceId', devId);
-      }
-      return devId;
-    }
-
-    // --- EMAIL OTP FALLBACK LOGIC ---
-    async function startEmailOTP() {
-      const actionSection = document.getElementById('action-section');
-      const otpSection = document.getElementById('otp-section');
-      const infoText = document.getElementById('otp-info-text');
-      const otpInput = document.getElementById('otp-code-input');
-      const verifyBtn = document.getElementById('otp-verify-btn');
-      const statusMsg = document.getElementById('otp-status-msg');
-
-      actionSection.style.display = 'none';
-      otpSection.style.display = 'block';
-      infoText.innerText = "Sending 6-digit code to your registered email...";
-      otpInput.value = "";
-      otpInput.disabled = true;
-      verifyBtn.disabled = true;
-      statusMsg.innerText = "";
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "SEND_OTP",
-            employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
-            team: (localStorage.getItem('team') || "").toUpperCase()
-          })
-        });
-        const result = await response.json();
-
-        if (result.ok) {
-          infoText.innerText = result.message + " (valid for 3 mins)";
-          otpInput.disabled = false;
-          verifyBtn.disabled = false;
-          otpInput.focus();
-        } else {
-          infoText.innerText = "Unable to send OTP.";
-          statusMsg.style.color = "var(--crimson)";
-          statusMsg.innerText = "❌ " + result.error;
-        }
-      } catch (err) {
-        infoText.innerText = "Connection failed.";
-        statusMsg.style.color = "var(--crimson)";
-        statusMsg.innerText = "❌ Could not reach server.";
-      }
-    }
-
-    function cancelOTP() {
-      document.getElementById('otp-section').style.display = 'none';
-      document.getElementById('action-section').style.display = 'block';
-    }
-
-    async function submitEmailOTP() {
-      const otpCode = document.getElementById('otp-code-input').value.trim();
-      const statusMsg = document.getElementById('otp-status-msg');
-      const verifyBtn = document.getElementById('otp-verify-btn');
-      const targetAction = (currentShiftState === 'ACTIVE') ? 'TIME_OUT' : 'TIME_IN';
-
-      if (otpCode.length !== 6) {
-        statusMsg.style.color = "var(--crimson)";
-        statusMsg.innerText = "Please enter the 6-digit code.";
-        return;
-      }
-
-      verifyBtn.disabled = true;
-      statusMsg.style.color = "var(--ink)";
-      statusMsg.innerText = "Verifying OTP...";
-
-      if (targetAction === 'TIME_IN') {
-        localStorage.setItem('localShiftStart', Date.now().toString());
-      }
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "VERIFY_OTP",
-            target_action: targetAction,
-            otp_code: otpCode,
-            employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
-            team: (localStorage.getItem('team') || "").toUpperCase(),
-            work_arrangement: document.getElementById('arrangement').value
-          })
-        });
-        const result = await response.json();
-
-        if (result.ok) {
-          statusMsg.style.color = "var(--emerald)";
-          statusMsg.innerText = "✅ " + result.message;
-          setTimeout(() => {
-            document.getElementById('otp-section').style.display = 'none';
-            fetchLiveStatus(false);
-          }, 1200);
-        } else {
-          statusMsg.style.color = "var(--crimson)";
-          statusMsg.innerText = "❌ " + result.error;
-          verifyBtn.disabled = false;
-        }
-      } catch (err) {
-        statusMsg.style.color = "var(--crimson)";
-        statusMsg.innerText = "❌ Connection error.";
-        verifyBtn.disabled = false;
-      }
-    }
-
-    // --- PROFILE PHOTO LOGIC ---
-    function applyProfilePhoto(dataUrl, fileId) {
-      const imgEl = document.getElementById('profile-photo-img');
-      const svgEl = document.getElementById('default-avatar-svg');
-      const overlayEl = document.getElementById('avatar-overlay-text');
-      const hintEl = document.getElementById('photo-action-hint');
-
-      if (dataUrl && dataUrl.startsWith('data:image')) {
-        imgEl.src = dataUrl;
-        imgEl.style.display = 'block';
-        svgEl.style.display = 'none';
-        overlayEl.innerText = 'Change';
-        hintEl.innerText = 'Change Photo';
-        hintEl.style.color = 'var(--ink-muted)';
-        localStorage.setItem('profileDataUrl', dataUrl);
-        if (fileId) localStorage.setItem('profileFileId', fileId);
-      } else if (fileId) {
-        imgEl.src = `https://lh3.googleusercontent.com/d/${fileId}=s250`;
-        imgEl.style.display = 'block';
-        svgEl.style.display = 'none';
-        overlayEl.innerText = 'Change';
-        hintEl.innerText = 'Change Photo';
-        hintEl.style.color = 'var(--ink-muted)';
-        localStorage.setItem('profileFileId', fileId);
-      } else {
-        imgEl.style.display = 'none';
-        svgEl.style.display = 'block';
-        overlayEl.innerText = 'Add Photo';
-        hintEl.innerText = '+ Add Profile Photo';
-        hintEl.style.color = 'var(--emerald)';
-        localStorage.removeItem('profileDataUrl');
-        localStorage.removeItem('profileFileId');
-      }
-    }
-
-    function applyPhoneProfilePhoto(srcOrDataUrl) {
-      const imgEl = document.getElementById('phone-profile-img');
-      const svgEl = document.getElementById('phone-default-svg');
-
-      if (srcOrDataUrl) {
-        imgEl.src = srcOrDataUrl;
-        imgEl.style.display = 'block';
-        svgEl.style.display = 'none';
-      } else {
-        imgEl.style.display = 'none';
-        svgEl.style.display = 'block';
-      }
-    }
-
-    function handleImageError() {
-      document.getElementById('profile-photo-img').style.display = 'none';
-      document.getElementById('default-avatar-svg').style.display = 'block';
-    }
-
-    function handlePhoneImageError() {
-      document.getElementById('phone-profile-img').style.display = 'none';
-      document.getElementById('phone-default-svg').style.display = 'block';
-    }
-
-    function triggerPhotoUpload() {
-      document.getElementById('photo-upload-input').click();
-    }
-
-    function handlePhotoSelected(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const loader = document.getElementById('avatar-loading-spinner');
-      loader.style.display = 'flex';
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = async function() {
-          const canvas = document.createElement('canvas');
-          const MAX_SIZE = 320;
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-          } else {
-            if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          const base64String = dataUrl.split(',')[1];
-
-          applyProfilePhoto(dataUrl, "");
-
-          try {
-            const response = await fetch(GOOGLE_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({
-                action: "UPLOAD_PHOTO",
-                employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
-                team: (localStorage.getItem('team') || "").toUpperCase(),
-                device_id: "Kiosk-Upload",
-                image_base64: base64String,
-                mime_type: "image/jpeg"
-              })
-            });
-
-            const result = await response.json();
-            if (result.ok) {
-              const empKey = String(localStorage.getItem('empName') || "").trim().toLowerCase();
-              if (empKey) {
-                memberPhotoCache[empKey] = {
-                  fileId: result.fileId,
-                  dataUrl: result.profileDataUrl || dataUrl
-                };
-                try { localStorage.setItem('mgrMemberPhotoCache', JSON.stringify(memberPhotoCache)); } catch (err) {}
-              }
-              applyProfilePhoto(result.profileDataUrl || dataUrl, result.fileId);
-            } else {
-              alert("Photo upload failed: " + (result.error || "Unknown error"));
-            }
-          } catch (err) {
-            alert("Connection error while uploading photo.");
-          } finally {
-            loader.style.display = 'none';
-            event.target.value = "";
-          }
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    async function initPhoneProfilePhoto(empName, empTeam, photoId) {
-      const cacheKey = `phonePhoto_${empName}`;
-      const cacheIdKey = `phonePhotoId_${empName}`;
-      const cached = localStorage.getItem(cacheKey);
-      const cachedId = localStorage.getItem(cacheIdKey);
-
-      if (photoId && photoId !== cachedId) {
-        localStorage.removeItem(cacheKey);
-        localStorage.setItem(cacheIdKey, photoId);
-        applyPhoneProfilePhoto(`https://lh3.googleusercontent.com/d/${photoId}=s250`);
-      } else if (cached) {
-        applyPhoneProfilePhoto(cached);
-      } else if (photoId) {
-        applyPhoneProfilePhoto(`https://lh3.googleusercontent.com/d/${photoId}=s250`);
-      }
-
-      if (!empName || !empTeam) return;
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "GET_DATA",
-            employee_name: empName.toUpperCase(),
-            team: empTeam.toUpperCase(),
-            device_id: getOrCreateMobileDeviceId()
-          })
-        });
-        const result = await response.json();
-        if (result.ok && result.profileDataUrl) {
-          applyPhoneProfilePhoto(result.profileDataUrl);
-          try {
-            localStorage.setItem(cacheKey, result.profileDataUrl);
-            if (result.profileFileId) localStorage.setItem(cacheIdKey, result.profileFileId);
-          } catch (err) {}
-        }
-      } catch (e) {}
-    }
-
-    // --- SMART TIME PARSER ---
-    function parseShiftTime(rawTimeIn) {
-      if (rawTimeIn) {
-        let parsed = new Date(rawTimeIn);
-        if (!isNaN(parsed.getTime())) return parsed;
-
-        const timeMatch = String(rawTimeIn).trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?$/i);
-        if (timeMatch) {
-          let hrs = parseInt(timeMatch[1], 10);
-          const mins = parseInt(timeMatch[2], 10);
-          const secs = timeMatch[3] ? parseInt(timeMatch[3], 10) : 0;
-          const period = timeMatch[4] ? timeMatch[4].toUpperCase() : null;
-
-          if (period === 'PM' && hrs < 12) hrs += 12;
-          if (period === 'AM' && hrs === 12) hrs = 0;
-
-          const now = new Date();
-          const todayShift = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hrs, mins, secs);
-          if (todayShift > now) todayShift.setDate(todayShift.getDate() - 1);
-          return todayShift;
-        }
-      }
-
-      const savedLocal = localStorage.getItem('localShiftStart');
-      if (savedLocal) {
-        const localDate = new Date(parseInt(savedLocal, 10));
-        if (!isNaN(localDate.getTime())) return localDate;
-      }
-      return new Date();
-    }
-
-    // --- LIVE CLOCK AND INLINE SHIFT TIMER ---
-    function updateClock() {
-      const now = new Date();
-      let hours = now.getHours(); let minutes = now.getMinutes();
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12; hours = hours ? hours : 12;
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      
-      const timeEl = document.getElementById('time-display');
-      if (timeEl) timeEl.innerHTML = `${hours}:${minutes} <span>${ampm}</span>`;
-      
-      const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
-      const dateEl = document.getElementById('date-display');
-      if (dateEl) dateEl.innerText = now.toLocaleDateString('en-US', options);
-
-      if (window.shiftStartTime && !isNaN(window.shiftStartTime.getTime())) {
-        const diffMs = Math.max(0, now - window.shiftStartTime);
-        const hrs = Math.floor(diffMs / (1000 * 60 * 60));
-        const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-        const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
-        
-        const pad = (num) => num.toString().padStart(2, '0');
-        const statusEl = document.getElementById('kiosk-status-text');
-        if (statusEl) {
-          statusEl.innerHTML = `Active Shift • <span class="timer-highlight">${pad(hrs)}:${pad(mins)}:${pad(secs)}</span>`;
-        }
-      }
-    }
-    setInterval(updateClock, 1000); updateClock();
-
-    async function fetchLiveStatus(isSilentPolling = false) {
-      const btnIn = document.getElementById('btn-time-in');
-      const btnOut = document.getElementById('btn-time-out');
-      const actionSection = document.getElementById('action-section');
-      const loadingState = document.getElementById('kiosk-loading');
-      const statusText = document.getElementById('kiosk-status-text');
-
-      if (!isSilentPolling) {
-        actionSection.style.display = 'none';
-        loadingState.style.display = 'block';
-      }
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "GET_DATA",
-            employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
-            team: (localStorage.getItem('team') || "").toUpperCase(),
-            device_id: "Kiosk-Sync",
-            skip_photo: isSilentPolling
-          })
-        });
-        
-        const result = await response.json();
-        
-        if (result.ok) {
-          if (result.accountRemoved) {
-            resetLocalEmployeeWorkstation();
-            return;
-          }
-
-          if (result.isBlocked) {
-            clearInterval(qrPollingInterval);
-            clearInterval(qrExpiryTimer);
-            qrPollingInterval = null;
-            qrExpiryTimer = null;
-            switchCard('device-error');
-            document.getElementById('error-message').innerText = "Access Denied: Your account has been suspended by a manager.";
-            return;
-          }
-
-          if (!isSilentPolling) {
-            if (!result.email) {
-              switchCard('laptop-email-complete');
-              document.getElementById('missingEmailEmpName').value = (localStorage.getItem('empName') || "").toUpperCase();
-              return;
-            } else {
-              localStorage.setItem('empEmail', result.email);
-            }
-
-            const localPin = localStorage.getItem('authCode');
-            if (!result.hasPin && localPin) {
-              fetch(GOOGLE_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                  action: "SYNC_PIN",
-                  employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
-                  team: (localStorage.getItem('team') || "").toUpperCase(),
-                  auth_pin: localPin
-                })
-              }).catch(() => {});
-            }
-
-            applyProfilePhoto(result.profileDataUrl || "", result.profileFileId || "");
-          }
-
-          const newShiftState = result.openRecord ? 'ACTIVE' : 'CHECKED_OUT';
-
-          if (isSilentPolling && expectedTargetState && newShiftState === expectedTargetState) {
-             clearInterval(qrPollingInterval); 
-             clearInterval(qrExpiryTimer);
-             qrPollingInterval = null;
-             qrExpiryTimer = null;
-             currentShiftState = newShiftState;
-             expectedTargetState = null;
-             
-             if (newShiftState === 'ACTIVE' && !localStorage.getItem('localShiftStart')) {
-               localStorage.setItem('localShiftStart', Date.now().toString());
-             }
-
-             const waitText = document.getElementById('qr-waiting-text');
-             waitText.innerHTML = '✅ Verified Successfully!';
-             waitText.style.color = 'var(--emerald)';
-             document.getElementById('qr-countdown-text').innerText = '';
-             
-             setTimeout(() => renderUIState(result), 1000);
-             return;
-          }
-
-          if (!isSilentPolling) {
-            currentShiftState = newShiftState;
-            renderUIState(result);
-          }
-        }
-      } catch (error) {
-        if (!isSilentPolling) {
-          statusText.innerText = "Offline";
-          loadingState.style.display = 'none';
-          actionSection.style.display = 'block';
-          btnIn.style.display = 'flex';
-          btnOut.style.display = 'none';
-        }
-      }
-    }
-
-    function renderUIState(result) {
-      const btnIn = document.getElementById('btn-time-in');
-      const btnOut = document.getElementById('btn-time-out');
-      const arrSelect = document.getElementById('arrangement');
-      const statusText = document.getElementById('kiosk-status-text');
-      
-      document.getElementById('kiosk-loading').style.display = 'none';
-      document.getElementById('qr-section').style.display = 'none';
-      document.getElementById('otp-section').style.display = 'none';
-      document.getElementById('action-section').style.display = 'block';
-
-      if (result.openRecord) {
-        if (result.openRecord.workArrangement) {
-          arrSelect.value = result.openRecord.workArrangement;
-        }
-        arrSelect.disabled = true;
-        btnIn.style.display = 'none';
-        btnOut.style.display = 'flex'; 
-
-        window.shiftStartTime = parseShiftTime(result.openRecord.timeIn);
-        updateClock();
-      } else {
-        window.shiftStartTime = null;
-        localStorage.removeItem('localShiftStart');
-        statusText.innerText = "Not Yet Clocked In";
-        arrSelect.disabled = false;
-        btnIn.style.display = 'flex';        
-        btnOut.style.display = 'none';
-      }
-    }
-
-    // --- INITIAL ENTRY ROUTING ---
-    if (mode === 'scan') {
-      document.getElementById('top-nav-bar').style.display = 'none';
-      document.getElementById('standard-footer').style.display = 'none';
-      if (!isMobile) {
-        switchCard('device-error');
-        document.getElementById('error-message').innerText = "Security Block: Verification must be done on a mobile device.";
-      } else {
-        getOrCreateMobileDeviceId();
-
-        switchCard('phone-auth');
-        const actionText = (urlParams.get('action') || '').replace('_', ' ');
-        const empName = (urlParams.get('name') || "").toUpperCase();
-        const empTeam = (urlParams.get('team') || "").toUpperCase();
-        const arrText = urlParams.get('arr') || 'Onsite';
-        const photoId = urlParams.get('photo') || "";
-        const qrTs = Number(urlParams.get('ts') || 0);
-        
-        document.getElementById('phone-greeting').innerText = empName;
-        document.getElementById('phone-badge').innerText = `${actionText} • ${arrText}`;
-
-        function enforcePhoneQrExpiry() {
-          if (!qrTs || (Date.now() - qrTs) > 60000) {
-            const statusDiv = document.getElementById('scan-status');
-            const submitBtn = document.getElementById('submit-btn');
-            const codeInput = document.getElementById('enteredCode');
-            statusDiv.style.color = "var(--crimson)";
-            statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = "0.5";
-            codeInput.disabled = true;
-            return true;
-          }
-          return false;
-        }
-
-        if (!enforcePhoneQrExpiry()) {
-          const phoneExpiryInterval = setInterval(() => {
-            if (enforcePhoneQrExpiry()) clearInterval(phoneExpiryInterval);
-          }, 500);
-        }
-
-        initPhoneProfilePhoto(empName, empTeam, photoId);
-      }
-    } else {
-      if (isMobile) {
-        document.getElementById('top-nav-bar').style.display = 'none';
-        switchCard('device-error');
-        document.getElementById('error-message').innerText = "Access Denied: Portal access is restricted to desktop devices.";
-      } else {
-        showRoleSelector();
-      }
-    }
-
-    async function registerLaptop() {
-      const name = document.getElementById('empName').value.trim().toUpperCase();
-      const team = document.getElementById('team').value.trim().toUpperCase();
-      const email = document.getElementById('empEmail').value.trim().toLowerCase();
-      const btn = document.getElementById('btn-register-laptop');
-
-      if (!name || !team || !email) return alert("Please complete all fields including your email.");
-      if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
-
-      btn.disabled = true;
-      btn.innerText = "Saving Profile...";
-
-      const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "REGISTER_MEMBER",
-            employee_name: name,
-            team: team,
-            email: email,
-            auth_pin: newAuthCode
-          })
-        });
-        const result = await response.json();
-
-        if (!result.ok) {
-          alert("Registration error: " + result.error);
-          btn.disabled = false;
-          btn.innerText = "Secure Device & Continue";
-          return;
-        }
-
-        localStorage.setItem('empName', name);
-        localStorage.setItem('team', team);
-        localStorage.setItem('empEmail', email);
-        localStorage.setItem('authCode', newAuthCode);
-
-        switchCard('laptop-reveal');
-        document.getElementById('auth-code-display').innerText = newAuthCode;
-      } catch (err) {
-        alert("Connection failed while saving registration. Please try again.");
-        btn.disabled = false;
-        btn.innerText = "Secure Device & Continue";
-      }
-    }
-
-    async function saveMissingEmail() {
-      const email = document.getElementById('missingEmailInput').value.trim().toLowerCase();
-      const btn = document.getElementById('btn-save-missing-email');
-
-      if (!email || email.indexOf("@") < 1) return alert("Please enter a valid email address.");
-
-      btn.disabled = true;
-      btn.innerText = "Saving Email...";
-
-      try {
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "REGISTER_MEMBER",
-            employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
-            team: (localStorage.getItem('team') || "").toUpperCase(),
-            email: email,
-            auth_pin: localStorage.getItem('authCode') || ""
-          })
-        });
-        const result = await response.json();
-
-        if (result.ok) {
-          localStorage.setItem('empEmail', email);
-          openEmployeeKiosk();
-        } else {
-          alert("Error: " + result.error);
-          btn.disabled = false;
-          btn.innerText = "Save Email & Continue";
-        }
-      } catch (err) {
-        alert("Connection error. Please try again.");
-        btn.disabled = false;
-        btn.innerText = "Save Email & Continue";
-      }
-    }
-
-    function cancelQR() {
-      clearInterval(qrPollingInterval);
-      clearInterval(qrExpiryTimer);
-      qrPollingInterval = null;
-      qrExpiryTimer = null;
-      expectedTargetState = null;
-      document.getElementById('qr-section').style.display = 'none';
-      document.getElementById('action-section').style.display = 'block';
-    }
-
-    function generateQR(actionType) {
-      const name = (localStorage.getItem('empName') || "").toUpperCase();
-      const team = (localStorage.getItem('team') || "").toUpperCase();
-      const photoId = localStorage.getItem('profileFileId') || "";
-      const arrangement = document.getElementById('arrangement').value;
-      const qrTimestamp = Date.now();
-
-      expectedTargetState = (actionType === 'TIME_IN') ? 'ACTIVE' : 'CHECKED_OUT';
-
-      if (actionType === 'TIME_IN') {
-        localStorage.setItem('localShiftStart', qrTimestamp.toString());
-      }
-
-      const currentWebsite = window.location.origin + window.location.pathname;
-      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&photo=${encodeURIComponent(photoId)}&ts=${qrTimestamp}`;
-      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
-      
-      document.getElementById('qr-image').src = qrImageUrl;
-      
-      const waitText = document.getElementById('qr-waiting-text');
-      waitText.innerHTML = '<div class="spinner"></div> Awaiting mobile verification...';
-      waitText.style.color = 'var(--emerald)';
-
-      const countdownEl = document.getElementById('qr-countdown-text');
-      let secondsLeft = 60;
-      countdownEl.innerText = `QR expires in ${secondsLeft}s`;
-      countdownEl.style.color = 'var(--ink-muted)';
-
-      document.getElementById('action-section').style.display = 'none';
-      document.getElementById('qr-section').style.display = 'block';
-
-      clearInterval(qrPollingInterval);
-      clearInterval(qrExpiryTimer);
-
-      qrPollingInterval = setInterval(() => fetchLiveStatus(true), 2000);
-      qrExpiryTimer = setInterval(() => {
-        secondsLeft--;
-        if (secondsLeft <= 15 && secondsLeft > 0) {
-          countdownEl.style.color = 'var(--crimson)';
-        }
-        if (secondsLeft <= 0) {
-          cancelQR();
-        } else {
-          countdownEl.innerText = `QR expires in ${secondsLeft}s`;
-        }
-      }, 1000);
-    }
-
-    async function verifyAndSubmit() {
+            const localEmp = String(PulseVault.get('empName') || "").trim().toLowerCase();
+            if async function verifyAndSubmit() {
       const enteredCode = document.getElementById('enteredCode').value.trim();
       const qrTimestamp = Number(urlParams.get('ts') || 0);
       const statusDiv = document.getElementById('scan-status');
@@ -3086,11 +2556,13 @@
         device_id: mobileDeviceId,
         work_arrangement: urlParams.get('arr'),
         entered_pin: enteredCode,
-        qr_ts: qrTimestamp
+        qr_ts: qrTimestamp,
+        target_sheet_id: urlParams.get('sheet') || "",
+        manager_code: urlParams.get('mcode') || ""
       };
 
       try {
-        const response = await fetch(GOOGLE_URL, {
+        const response = await fetch(getActiveEmployeeScriptUrl(), {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
