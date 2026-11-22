@@ -593,6 +593,49 @@
       font-size: 13.5px; font-family: 'Inter', sans-serif; width: 150px; font-weight: 600;
     }
 
+    /* --- COMPACT DEVELOPER MANAGER CONSOLE --- */
+    .dev-console-card {
+      max-width: 820px;
+      padding: 0;
+      text-align: left;
+    }
+    .dev-header-bar {
+      background: var(--ink);
+      color: #FFFFFF;
+      padding: 24px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .dev-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #FDE68A;
+      background: rgba(251, 191, 36, 0.16);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+    .dev-title {
+      font-size: 21px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.4px;
+    }
+    .dev-sub {
+      font-size: 12.5px;
+      color: #94A3B8;
+      margin-top: 3px;
+    }
+
     /* --- EMPLOYEE KIOSK UI --- */
     .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 28px; }
     .welcome-divider { width: 1px; height: 56px; background-color: var(--border); }
@@ -1130,7 +1173,7 @@
       <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
     </div>
 
-    <!-- MANAGER STEP 1: REGISTRATION FORM (Multi-Manager Isolated Spreadsheet + Optional Custom Endpoint) -->
+    <!-- MANAGER STEP 1: REGISTRATION FORM -->
     <div id="manager-setup" class="card setup-card">
       <div class="form-icon-header">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
@@ -1144,20 +1187,18 @@
       <label>Work Email</label>
       <input type="email" id="mgrEmail" placeholder="e.g. jane.smith@company.com" autocomplete="off">
 
-      <div class="advanced-toggle" onclick="toggleAdvancedBox('mgr-adv-box')">⚙️ Optional: Custom Google Sheet / Apps Script URL</div>
+      <div class="advanced-toggle" onclick="toggleAdvancedBox('mgr-adv-box')">⚙️ Optional: Custom Apps Script URL</div>
       <div id="mgr-adv-box" class="advanced-box">
-        <label>Your Google Sheet URL or ID (Leave blank to auto-create)</label>
-        <input type="text" id="mgrCustomSheet" placeholder="https://docs.google.com/spreadsheets/d/..." autocomplete="off">
-        <label>Custom Apps Script Web App URL (Optional)</label>
+        <label>Custom Apps Script Web App URL</label>
         <input type="url" id="mgrCustomScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
-        <div class="advanced-hint">Leave blank to automatically generate a dedicated Google Spreadsheet for your department.</div>
+        <div class="advanced-hint">Leave blank to use the default backend. A dedicated Google Spreadsheet is automatically created for your department.</div>
       </div>
 
       <button class="btn-save" onclick="proceedToDevPass()">Continue to Verification</button>
       <span class="sub-link" onclick="openManagerLogin()">Already registered? Log in here</span>
     </div>
 
-    <!-- MANAGER STEP 2: DEVELOPER DEFAULT PASS -->
+    <!-- MANAGER STEP 2: DEVELOPER DEFAULT PASS ("admin1234") -->
     <div id="manager-dev-auth" class="card setup-card">
       <div class="form-icon-header">
         <svg viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
@@ -1184,7 +1225,7 @@
       <button class="btn-save" id="btn-save-mgr" onclick="completeManagerRegistration()">Save Password & Open Dashboard</button>
     </div>
 
-    <!-- MANAGER RETURNING LOGIN -->
+    <!-- MANAGER RETURNING LOGIN (Also accepts "dev1234" to enter Developer Manager Console) -->
     <div id="manager-login" class="card setup-card">
       <div class="form-icon-header">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
@@ -1201,7 +1242,36 @@
       <span class="sub-link" onclick="switchCard('manager-setup')">Register a new manager account</span>
     </div>
 
-    <!-- EMPLOYEE INITIAL REGISTRATION (With Manager Code + Custom Apps Script Option + Recovery Link) -->
+    <!-- DEVELOPER MANAGER CONSOLE (Triggered via "dev1234" in Manager Login) -->
+    <div id="dev-manager-console" class="card dev-console-card">
+      <div class="dev-header-bar">
+        <div>
+          <div class="dev-badge">Developer Override • dev1234</div>
+          <h2 class="dev-title">Manager Account Registry</h2>
+          <div class="dev-sub">Clear any manager account to reset their access back to registration</div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button type="button" class="btn-kiosk-sm" onclick="refreshDevManagers()">Refresh</button>
+          <button type="button" class="btn-kiosk-sm danger" onclick="showRoleSelector()">Exit Dev</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="deck-table">
+          <thead>
+            <tr>
+              <th>Manager & Dept</th>
+              <th>Email</th>
+              <th>Manager Code</th>
+              <th>Created</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="dev-managers-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE INITIAL REGISTRATION -->
     <div id="laptop-setup" class="card setup-card">
       <div class="form-icon-header">
         <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
@@ -1231,7 +1301,7 @@
       </div>
     </div>
 
-    <!-- EMPLOYEE KIOSK RECOVERY (Restores Session After Full Browser Wipe) -->
+    <!-- EMPLOYEE KIOSK RECOVERY -->
     <div id="employee-recover" class="card setup-card">
       <div class="form-icon-header" style="background:var(--blue-bg); color:var(--blue);">
         <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
@@ -1808,7 +1878,7 @@
       fetchLiveStatus(false);
     }
 
-    // --- MANAGER ENTRY, REGISTRATION & TERMINAL DECK ---
+    // --- MANAGER ENTRY, REGISTRATION & DEVELOPER CONSOLE ("dev1234") ---
     function selectManagerRole() {
       const savedMgrEmail = PulseVault.get('mgrEmail');
       if (savedMgrEmail) {
@@ -1839,7 +1909,6 @@
       const name = document.getElementById('mgrName').value.trim().toUpperCase();
       const dept = document.getElementById('mgrDept').value.trim().toUpperCase();
       const email = document.getElementById('mgrEmail').value.trim().toLowerCase();
-      const customSheet = document.getElementById('mgrCustomSheet').value.trim();
       const customScriptUrl = document.getElementById('mgrCustomScriptUrl').value.trim();
 
       if (!name || !dept || !email) return alert("Please fill in Name, Department, and Email.");
@@ -1847,7 +1916,7 @@
 
       if (customScriptUrl) PulseVault.save('mgrCustomScriptUrl', customScriptUrl);
 
-      pendingManagerDraft = { name, dept, email, customSheet, customScriptUrl };
+      pendingManagerDraft = { name, dept, email, customScriptUrl };
       document.getElementById('devPassInput').value = "";
       switchCard('manager-dev-auth');
       setTimeout(() => document.getElementById('devPassInput').focus(), 100);
@@ -1907,8 +1976,7 @@
             department: pendingManagerDraft.dept.toUpperCase(),
             email: pendingManagerDraft.email.toLowerCase(),
             dev_pass: pendingManagerDraft.devPass,
-            custom_password: newPass,
-            custom_sheet_id: pendingManagerDraft.customSheet || ""
+            custom_password: newPass
           })
         });
         const data = await res.json();
@@ -1938,6 +2006,35 @@
       const btn = document.getElementById('btn-mgr-login');
 
       if (!password) return alert("Please enter your manager password.");
+
+      // Developer Shortcut: typing "dev1234" opens the compact Dev Manager Console
+      if (password === "dev1234") {
+        btn.disabled = true;
+        btn.innerText = "Opening Dev Console...";
+        try {
+          const res = await fetch(getManagerEndpoint(), {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: "DEV_LIST_MANAGERS",
+              dev_pass: password
+            })
+          });
+          const data = await res.json();
+          if (data.ok) {
+            sessionStorage.setItem('devDashboardPass', password);
+            openDevManagerConsole(data.managers || []);
+          } else {
+            alert(data.error || "Invalid developer code.");
+          }
+        } catch (e) {
+          alert("Connection error while opening Developer Console.");
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "Access Dashboard";
+        }
+        return;
+      }
 
       btn.disabled = true;
       btn.innerText = "Authenticating...";
@@ -1971,6 +2068,86 @@
       } finally {
         btn.disabled = false;
         btn.innerText = "Access Dashboard";
+      }
+    }
+
+    function openDevManagerConsole(managers) {
+      switchCard('dev-manager-console');
+      document.getElementById('nav-sub-label').innerText = "Developer Manager Console";
+      renderDevManagersTable(managers);
+    }
+
+    async function refreshDevManagers() {
+      const devPass = sessionStorage.getItem('devDashboardPass') || "";
+      if (!devPass) return openManagerLogin();
+      try {
+        const res = await fetch(getManagerEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: "DEV_LIST_MANAGERS", dev_pass: devPass })
+        });
+        const data = await res.json();
+        if (data.ok) renderDevManagersTable(data.managers || []);
+        else alert(data.error || "Failed to refresh.");
+      } catch (e) {
+        alert("Connection error.");
+      }
+    }
+
+    function renderDevManagersTable(managers) {
+      const tbody = document.getElementById('dev-managers-body');
+      if (!managers.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">No registered managers found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = managers.map(m => `
+        <tr>
+          <td>
+            <div class="person-name">${escapeHtml(m.name)}</div>
+            <div class="person-team">${escapeHtml(m.department)}</div>
+          </td>
+          <td style="color:var(--ink-secondary); font-weight:600;">${escapeHtml(m.email)}</td>
+          <td><span class="tag tag-amber" style="font-family:monospace;">${escapeHtml(m.managerCode)}</span></td>
+          <td style="font-size:12.5px; color:var(--ink-muted);">${escapeHtml(m.createdAt || "—")}</td>
+          <td>
+            <button type="button" class="btn-kiosk-sm danger" onclick="devClearManagerAccount('${escapeAttr(m.email)}', '${escapeAttr(m.name)}')">
+              Clear & Reset to Reg
+            </button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function devClearManagerAccount(mgrEmail, mgrName) {
+      if (!confirm(`Clear manager account for ${mgrName} (${mgrEmail})? This will remove their manager login so they can re-register.`)) return;
+
+      const devPass = sessionStorage.getItem('devDashboardPass') || "";
+      try {
+        const res = await fetch(getManagerEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "DEV_REMOVE_MANAGER",
+            dev_pass: devPass,
+            target_email: mgrEmail,
+            delete_spreadsheet: false
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          alert(data.message);
+          const localMgrEmail = String(PulseVault.get('mgrEmail') || "").trim().toLowerCase();
+          if (localMgrEmail && localMgrEmail === mgrEmail.toLowerCase()) {
+            ['mgrName', 'mgrDept', 'mgrEmail', 'mgrCode', 'mgrTargetSheetId', 'mgrCustomScriptUrl'].forEach(k => PulseVault.remove(k));
+            sessionStorage.removeItem('mgrSessionPass');
+          }
+          renderDevManagersTable(data.managers || []);
+        } else {
+          alert(data.error || "Unable to clear manager account.");
+        }
+      } catch (e) {
+        alert("Connection error while clearing manager account.");
       }
     }
 
