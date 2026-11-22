@@ -284,11 +284,44 @@
 
     .terminal-tab-bar {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       background: var(--surface-recessed);
       border-bottom: 1.5px solid var(--border);
       padding: 8px;
       gap: 8px;
+    }
+    .announce-compose-box {
+      padding: 24px 28px;
+      background: var(--surface-recessed);
+      border-bottom: 1.5px solid var(--border);
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .announce-card {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 20px 22px;
+    }
+    .announce-textarea {
+      width: 100%;
+      min-height: 108px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      background: var(--surface-recessed);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+    .announce-textarea:focus { outline: none; background: #FFF; border-color: var(--ink); }
+    @media (max-width: 900px) {
+      .announce-compose-box { grid-template-columns: 1fr; }
     }
     .terminal-tab {
       min-height: 50px;
@@ -909,6 +942,10 @@
           <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
           Open Shifts <span class="tab-counter" id="dock-count-missing">0</span>
         </button>
+        <button type="button" class="terminal-tab" id="dock-btn-announce" onclick="switchDeckView('announce')">
+          <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"/></svg>
+          SMS Blast <span class="tab-counter" id="dock-count-announce">0</span>
+        </button>
       </div>
 
       <!-- VIEW 1: LIVE TEAM PULSE -->
@@ -1096,7 +1133,7 @@
           <thead>
             <tr>
               <th>Employee</th>
-              <th>Email</th>
+              <th>Contact (SMS & Email)</th>
               <th>Mobile Token</th>
               <th>Status</th>
               <th>Controls</th>
@@ -1125,6 +1162,58 @@
             </tr>
           </thead>
           <tbody id="mgr-missing-body"></tbody>
+        </table>
+      </div>
+
+      <!-- VIEW 6: SMS ANNOUNCEMENTS BROADCAST -->
+      <div id="deck-view-announce" class="deck-view">
+        <div class="view-bar">
+          <div>
+            <h2 class="view-heading">SMS Announcements & Team News</h2>
+            <div class="view-sub">Send direct SMS text messages to all registered mobile numbers in your workspace</div>
+          </div>
+          <div class="filter-row">
+            <span class="tag tag-green" id="sms-ready-count">0 Mobile Numbers Ready</span>
+          </div>
+        </div>
+
+        <div class="announce-compose-box">
+          <div class="announce-card">
+            <div style="font-size:15px; font-weight:800; margin-bottom:12px;">Compose SMS Broadcast</div>
+            <div style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+              <input type="text" id="annTitleInput" class="kiosk-input" style="flex:1; min-width:180px; text-transform:uppercase;" placeholder="HEADLINE (E.G. SHIFT UPDATE)">
+              <select id="annTeamSelect" class="kiosk-select" onchange="updateSmsRecipientPreview()">
+                <option value="ALL">All Teams</option>
+              </select>
+            </div>
+            <textarea id="annMessageInput" class="announce-textarea" maxlength="300" placeholder="Type your announcement or news to text directly to your employees' phones..." oninput="updateSmsCharCount()"></textarea>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+              <span style="font-size:12px; color:var(--ink-muted); font-weight:600;" id="annCharCount">0 / 300 chars • 1 SMS segment</span>
+              <button type="button" class="btn-export-xlsx" id="btn-send-sms-ann" onclick="submitSmsAnnouncement()">
+                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                Send SMS to Team
+              </button>
+            </div>
+          </div>
+
+          <div class="announce-card">
+            <div style="font-size:15px; font-weight:800; margin-bottom:8px;">Target Recipients Preview</div>
+            <div style="font-size:12.5px; color:var(--ink-muted); margin-bottom:12px;" id="sms-preview-sub">Employees with registered mobile numbers who will receive this text:</div>
+            <div id="sms-recipients-preview" style="max-height:175px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+        </div>
+
+        <table class="deck-table">
+          <thead>
+            <tr>
+              <th>Sent At</th>
+              <th>Headline</th>
+              <th>Message</th>
+              <th>Recipients</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="mgr-announce-body"></tbody>
         </table>
       </div>
 
@@ -1285,6 +1374,8 @@
       <input type="text" id="empName" class="uppercase-field" placeholder="E.G. JOHN DOE" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Team / Department</label>
       <input type="text" id="team" class="uppercase-field" placeholder="E.G. SALES" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+      <label>Mobile Number (For Manager SMS Announcements)</label>
+      <input type="tel" id="empPhone" placeholder="e.g. 09171234567" autocomplete="tel">
       <label>Work Email (For Backup OTP)</label>
       <input type="email" id="empEmail" placeholder="e.g. john.doe@company.com" autocomplete="off">
       <button class="btn-save" id="btn-register-laptop" onclick="registerLaptop()">Secure Device & Continue</button>
@@ -1495,6 +1586,7 @@
     let cachedManagerRecords = [];
     let cachedFilteredRecords = [];
     let cachedManagerMembers = [];
+    let cachedAnnouncements = [];
     let memberPhotoCache = {};
     let chartInstances = {};
     let serverTodayStr = "";
@@ -1952,7 +2044,7 @@
           localStorage.setItem('mgrTargetSheetId', data.manager.spreadsheetId || "");
           sessionStorage.setItem('mgrSessionPass', newPass);
           serverTodayStr = data.today || "";
-          openTerminalDashboard(data.manager, data.records || [], data.members || []);
+          openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || []);
         } else {
           alert(data.error || "Registration failed.");
         }
@@ -2026,7 +2118,7 @@
           if (data.migrated) {
             alert(`Workspace upgraded! Your existing team records were automatically migrated into your new dedicated spreadsheet (Code: ${data.manager.managerCode}).`);
           }
-          openTerminalDashboard(data.manager, data.records || [], data.members || []);
+          openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || []);
         } else {
           alert(data.error || "Invalid credentials.");
         }
@@ -2136,18 +2228,20 @@
         const data = await res.json();
         if (data.ok) {
           serverTodayStr = data.today || serverTodayStr;
-          updateTerminalDeckData(data.manager, data.records || [], data.members || []);
+          updateTerminalDeckData(data.manager, data.records || [], data.members || [], data.announcements || []);
         }
       } catch (e) {}
     }
 
     function switchDeckView(viewKey) {
-      ['live', 'insights', 'history', 'devices', 'missing'].forEach(k => {
+      ['live', 'insights', 'history', 'devices', 'missing', 'announce'].forEach(k => {
         document.getElementById(`dock-btn-${k}`).classList.toggle('active', k === viewKey);
         document.getElementById(`deck-view-${k}`).classList.toggle('active', k === viewKey);
       });
       if (viewKey === 'insights') {
         renderManagerInsights();
+      } else if (viewKey === 'announce') {
+        updateSmsRecipientPreview();
       }
     }
 
@@ -2157,7 +2251,7 @@
       records.forEach(r => { if (r.team) teamSet.add(String(r.team).trim().toUpperCase()); });
       const teams = Array.from(teamSet).sort();
 
-      ['liveTeamFilter', 'insightsTeamFilter', 'mgrFilterTeam'].forEach(selectId => {
+      ['liveTeamFilter', 'insightsTeamFilter', 'mgrFilterTeam', 'annTeamSelect'].forEach(selectId => {
         const sel = document.getElementById(selectId);
         if (!sel) return;
         const prev = sel.value || "ALL";
@@ -2167,21 +2261,22 @@
       });
     }
 
-    function openTerminalDashboard(manager, records, members) {
+    function openTerminalDashboard(manager, records, members, announcements) {
       document.getElementById('centered-stage').style.display = 'none';
       document.getElementById('standard-footer').style.display = 'none';
       document.getElementById('nav-sub-label').innerText = "Manager Command Terminal";
       document.getElementById('mgr-terminal-deck').classList.add('active');
 
-      updateTerminalDeckData(manager, records, members);
+      updateTerminalDeckData(manager, records, members, announcements);
 
       clearInterval(mgrAutoSyncInterval);
       mgrAutoSyncInterval = setInterval(silentSyncManagerData, 15000);
     }
 
-    function updateTerminalDeckData(manager, records, members) {
+    function updateTerminalDeckData(manager, records, members, announcements) {
       cachedManagerRecords = records;
       cachedManagerMembers = members;
+      if (Array.isArray(announcements)) cachedAnnouncements = announcements;
       persistMemberPhotos(members);
 
       document.getElementById('deck-mgr-name').innerText = String(manager.name || "MANAGER").toUpperCase();
@@ -2207,11 +2302,14 @@
       document.getElementById('dock-count-history').innerText = records.length;
       document.getElementById('dock-count-devices').innerText = members.length;
       document.getElementById('dock-count-missing').innerText = missingOutRecords.length;
+      document.getElementById('dock-count-announce').innerText = cachedAnnouncements.length;
 
       renderLiveTeamBoard(members, records);
       filterManagerTable();
       renderDevicesTable(members);
       renderMissingTimeOutsTable(missingOutRecords);
+      renderAnnouncementsTable(cachedAnnouncements);
+      updateSmsRecipientPreview();
 
       if (document.getElementById('deck-view-insights').classList.contains('active')) {
         renderManagerInsights();
@@ -2619,7 +2717,10 @@
                 </div>
               </div>
             </td>
-            <td style="color:var(--ink-secondary);">${escapeHtml(m.email || "—")}</td>
+            <td>
+              <div style="font-weight:700; color:var(--ink); font-family:monospace;">${m.phone ? "📱 +" + escapeHtml(m.phone) : "⚠️ No Mobile #"}</div>
+              <div style="font-size:12px; color:var(--ink-muted);">${escapeHtml(m.email || "—")}</div>
+            </td>
             <td style="font-family:monospace; font-size:13px; font-weight:600;">${escapeHtml(m.deviceId || "Unbound")}</td>
             <td>${statusTag}</td>
             <td>
@@ -2762,6 +2863,112 @@
         }
       } catch (e) {
         alert("Connection error while saving Time Out.");
+      }
+    }
+
+    // VIEW 6: SMS ANNOUNCEMENTS & BROADCASTS
+    function updateSmsCharCount() {
+      const msg = document.getElementById('annMessageInput').value || "";
+      const segments = Math.max(1, Math.ceil(msg.length / 160));
+      document.getElementById('annCharCount').innerText = `${msg.length} / 300 chars • ${segments} SMS segment${segments > 1 ? 's' : ''}`;
+    }
+
+    function updateSmsRecipientPreview() {
+      const teamSel = document.getElementById('annTeamSelect');
+      const targetTeam = teamSel ? teamSel.value : "ALL";
+      const withPhones = cachedManagerMembers.filter(m => {
+        const hasPhone = Boolean(m.phone && String(m.phone).trim().length >= 10);
+        const teamOk = (targetTeam === "ALL") || (String(m.team || "").trim().toUpperCase() === targetTeam);
+        return hasPhone && teamOk;
+      });
+
+      const badge = document.getElementById('sms-ready-count');
+      if (badge) badge.innerText = `${withPhones.length} Mobile Number${withPhones.length === 1 ? '' : 's'} Ready`;
+
+      const box = document.getElementById('sms-recipients-preview');
+      if (!box) return;
+      if (!withPhones.length) {
+        box.innerHTML = `<div style="padding:16px; border-radius:12px; background:var(--surface-recessed); color:var(--ink-muted); font-size:13px;">No registered employee mobile numbers in this team yet. Employees enter their mobile number during Kiosk Setup.</div>`;
+        return;
+      }
+
+      box.innerHTML = withPhones.map(m => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-radius:10px; background:var(--surface-recessed); border:1px solid var(--border-subtle); font-size:13px;">
+          <div><strong>${escapeHtml(m.name)}</strong> <span style="color:var(--ink-muted);">(${escapeHtml(m.team)})</span></div>
+          <span style="font-family:monospace; font-weight:700; color:var(--emerald);">+${escapeHtml(m.phone)}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderAnnouncementsTable(list) {
+      const tbody = document.getElementById('mgr-announce-body');
+      if (!tbody) return;
+      if (!list || !list.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">No SMS announcements sent yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(a => {
+        const stLower = String(a.status || "").toLowerCase();
+        const tagCls = stLower.includes("delivered") ? "tag-green" : "tag-amber";
+        return `
+          <tr>
+            <td style="font-size:13px; font-weight:600; white-space:nowrap;">${escapeHtml(a.sentAt)}</td>
+            <td><span class="tag tag-blue">${escapeHtml(a.title || "ANNOUNCEMENT")}</span></td>
+            <td style="max-width:360px; line-height:1.45;">${escapeHtml(a.message)}</td>
+            <td><strong>${a.recipientsCount}</strong> <span style="font-size:12px; color:var(--ink-muted);">employee(s)</span></td>
+            <td><span class="tag ${tagCls}">${escapeHtml(a.status)}</span></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function submitSmsAnnouncement() {
+      const title = (document.getElementById('annTitleInput').value || "").trim().toUpperCase();
+      const message = (document.getElementById('annMessageInput').value || "").trim();
+      const targetTeam = document.getElementById('annTeamSelect').value || "ALL";
+      const btn = document.getElementById('btn-send-sms-ann');
+
+      if (!message) return alert("Please enter an announcement message.");
+
+      const email = localStorage.getItem('mgrEmail') || "";
+      const pass = sessionStorage.getItem('mgrSessionPass') || "";
+
+      btn.disabled = true;
+      btn.innerText = "Sending SMS...";
+
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "SEND_ANNOUNCEMENT",
+            manager_email: email,
+            manager_password: pass,
+            title: title,
+            message: message,
+            target_team: targetTeam
+          })
+        });
+        const data = await res.json();
+        if (Array.isArray(data.announcements)) {
+          cachedAnnouncements = data.announcements;
+          document.getElementById('dock-count-announce').innerText = cachedAnnouncements.length;
+          renderAnnouncementsTable(cachedAnnouncements);
+        }
+        if (data.ok) {
+          alert("✅ " + data.message);
+          document.getElementById('annTitleInput').value = "";
+          document.getElementById('annMessageInput').value = "";
+          updateSmsCharCount();
+        } else {
+          alert(data.error || "Unable to send SMS announcement.");
+        }
+      } catch (e) {
+        alert("Connection error while sending SMS announcement.");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> Send SMS to Team`;
       }
     }
 
@@ -3348,11 +3555,13 @@
       const mgrCode = document.getElementById('empMgrCode').value.trim().toUpperCase();
       const name = document.getElementById('empName').value.trim().toUpperCase();
       const team = document.getElementById('team').value.trim().toUpperCase();
+      const phone = document.getElementById('empPhone').value.trim();
       const email = document.getElementById('empEmail').value.trim().toLowerCase();
       const btn = document.getElementById('btn-register-laptop');
 
       if (!mgrCode) return alert("Please enter your Manager Code (e.g. PD-1234).");
-      if (!name || !team || !email) return alert("Please complete all fields including your email.");
+      if (!name || !team || !phone || !email) return alert("Please complete all fields including your mobile number and email.");
+      if (phone.replace(/[^0-9]/g, "").length < 10) return alert("Please enter a valid 11-digit mobile number (e.g. 09171234567).");
       if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
 
       btn.disabled = true;
@@ -3368,6 +3577,7 @@
             action: "REGISTER_MEMBER",
             employee_name: name,
             team: team,
+            phone_number: phone,
             email: email,
             auth_pin: newAuthCode,
             manager_code: mgrCode
@@ -3384,6 +3594,7 @@
 
         localStorage.setItem('empName', name);
         localStorage.setItem('team', team);
+        localStorage.setItem('empPhone', result.phone || phone);
         localStorage.setItem('empEmail', email);
         localStorage.setItem('authCode', newAuthCode);
         localStorage.setItem('empManagerCode', result.managerCode || mgrCode);
