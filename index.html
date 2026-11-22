@@ -1399,7 +1399,7 @@
 
   <script>
     // =========================================================================
-    // PASTE YOUR DEFAULT GOOGLE APPS SCRIPT URL HERE
+    // DEFAULT GOOGLE APPS SCRIPT WEB APP URL
     // =========================================================================
     const DEFAULT_GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxZxXqtW1_Olqvux2zHJN_cTeG0bpBHypvcv2LH4bjvXoBsJv4KJdtTTQuFIGYDdHcl2w/exec";
 
@@ -1578,7 +1578,11 @@
       const code = PulseVault.get("mgrCode");
       if (!code) return;
       if (navigator.clipboard) navigator.clipboard.writeText(code);
-      alert(`Manager Code (${code}) copied! Share this code with your employees during their Kiosk Device Setup.`);
+      const pill = document.getElementById("deck-mgr-code");
+      if (pill) {
+        pill.innerText = `COPIED: ${code}`;
+        setTimeout(() => { pill.innerText = `CODE: ${code}`; }, 1800);
+      }
     }
 
     function persistMemberPhotos(members) {
@@ -1769,10 +1773,10 @@
           })
         });
         const data = await res.json();
-        if (data.ok) {
-          PulseVault.save('empName', data.member.name);
-          PulseVault.save('team', data.member.team);
-          PulseVault.save('empEmail', data.member.email);
+        if (data.ok && data.member) {
+          PulseVault.save('empName', data.member.name.toUpperCase());
+          PulseVault.save('team', data.member.team.toUpperCase());
+          PulseVault.save('empEmail', data.member.email.toLowerCase());
           PulseVault.save('authCode', data.member.authPin);
           PulseVault.save('empManagerCode', data.managerCode || mgrCode);
           PulseVault.save('empTargetSheetId', data.targetSheetId || "");
@@ -2522,7 +2526,847 @@
           alert(data.message);
           if (deviceAction === "REMOVE") {
             const localEmp = String(PulseVault.get('empName') || "").trim().toLowerCase();
-            if async function verifyAndSubmit() {
+            if (localEmp && localEmp === String(empName).trim().toLowerCase()) {
+              [
+                'empName', 'team', 'empEmail', 'authCode',
+                'empManagerCode', 'empTargetSheetId', 'empCustomScriptUrl',
+                'profileDataUrl', 'profileFileId', 'localShiftStart'
+              ].forEach(k => PulseVault.remove(k));
+            }
+          }
+          cachedManagerMembers = data.members || [];
+          updateTerminalDeckData(
+            {
+              name: PulseVault.get('mgrName') || "MANAGER",
+              department: PulseVault.get('mgrDept') || "",
+              email: email,
+              managerCode: PulseVault.get('mgrCode') || ""
+            },
+            cachedManagerRecords,
+            cachedManagerMembers
+          );
+        } else {
+          alert(data.error || "Action failed.");
+        }
+      } catch (e) {
+        alert("Connection error while updating account.");
+      }
+    }
+
+    // VIEW 5: OPEN SHIFTS
+    function renderMissingTimeOutsTable(openRows) {
+      const tbody = document.getElementById('mgr-missing-body');
+      if (!openRows.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">All shifts are closed. No open shifts right now.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = openRows.map(r => `
+        <tr>
+          <td>
+            <div class="person-cell">
+              ${renderEmployeeAvatarHtml(r.employeeName, "size-md", true)}
+              <div>
+                <div class="person-name">${escapeHtml(r.employeeName)}</div>
+                <div class="person-team">${escapeHtml(r.team)}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="person-name">${escapeHtml(r.date)}</div>
+            <div class="person-team">In: ${escapeHtml(r.timeIn)}</div>
+          </td>
+          <td><input type="text" class="inline-field" id="resolve-out-${r._row}" placeholder="e.g. 06:00 PM"></td>
+          <td><input type="text" class="inline-field" id="resolve-note-${r._row}" placeholder="Optional reason"></td>
+          <td><button type="button" class="btn-kiosk-sm dark" onclick="submitResolveShift(${r._row})">Save</button></td>
+        </tr>
+      `).join("");
+    }
+
+    async function submitResolveShift(rowNum) {
+      const timeOutVal = (document.getElementById(`resolve-out-${rowNum}`).value || "").trim();
+      const noteVal = (document.getElementById(`resolve-note-${rowNum}`).value || "").trim();
+      if (!timeOutVal) return alert("Please enter a Time Out (e.g. 06:00 PM or 18:00).");
+
+      const email = PulseVault.get('mgrEmail') || "";
+      const pass = sessionStorage.getItem('mgrSessionPass') || "";
+
+      try {
+        const res = await fetch(getManagerEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "MANAGER_RESOLVE_SHIFT",
+            manager_email: email,
+            manager_password: pass,
+            row_number: rowNum,
+            manual_time_out: timeOutVal,
+            manager_note: noteVal
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          alert(data.message);
+          updateTerminalDeckData(
+            {
+              name: PulseVault.get('mgrName') || "MANAGER",
+              department: PulseVault.get('mgrDept') || "",
+              email: email,
+              managerCode: PulseVault.get('mgrCode') || ""
+            },
+            data.records || [],
+            cachedManagerMembers
+          );
+        } else {
+          alert(data.error || "Unable to update shift.");
+        }
+      } catch (e) {
+        alert("Connection error while saving Time Out.");
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function escapeAttr(str) {
+      return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    }
+
+    // --- PERSISTENT MOBILE DEVICE TOKEN (3-LAYER VAULT BACKED) ---
+    function getOrCreateMobileDeviceId() {
+      let devId = PulseVault.get('boundMobileDeviceId');
+      if (!devId) {
+        const randPart = Math.floor(100000 + Math.random() * 900000);
+        const charPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+        devId = `PHONE-${randPart}-${charPart}`;
+      }
+      PulseVault.save('boundMobileDeviceId', devId);
+      return devId;
+    }
+
+    // --- EMAIL OTP FALLBACK LOGIC ---
+    async function startEmailOTP() {
+      const actionSection = document.getElementById('action-section');
+      const otpSection = document.getElementById('otp-section');
+      const infoText = document.getElementById('otp-info-text');
+      const otpInput = document.getElementById('otp-code-input');
+      const verifyBtn = document.getElementById('otp-verify-btn');
+      const statusMsg = document.getElementById('otp-status-msg');
+
+      actionSection.style.display = 'none';
+      otpSection.style.display = 'block';
+      infoText.innerText = "Sending 6-digit code to your registered email...";
+      otpInput.value = "";
+      otpInput.disabled = true;
+      verifyBtn.disabled = true;
+      statusMsg.innerText = "";
+
+      try {
+        const routing = getEmployeeRoutingPayload();
+        const response = await fetch(getEmployeeEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "SEND_OTP",
+            employee_name: (PulseVault.get('empName') || "").toUpperCase(),
+            team: (PulseVault.get('team') || "").toUpperCase(),
+            ...routing
+          })
+        });
+        const result = await response.json();
+
+        if (result.ok) {
+          infoText.innerText = result.message + " (valid for 3 mins)";
+          otpInput.disabled = false;
+          verifyBtn.disabled = false;
+          otpInput.focus();
+        } else {
+          infoText.innerText = "Unable to send OTP.";
+          statusMsg.style.color = "var(--crimson)";
+          statusMsg.innerText = "❌ " + result.error;
+        }
+      } catch (err) {
+        infoText.innerText = "Connection failed.";
+        statusMsg.style.color = "var(--crimson)";
+        statusMsg.innerText = "❌ Could not reach server.";
+      }
+    }
+
+    function cancelOTP() {
+      document.getElementById('otp-section').style.display = 'none';
+      document.getElementById('action-section').style.display = 'block';
+    }
+
+    async function submitEmailOTP() {
+      const otpCode = document.getElementById('otp-code-input').value.trim();
+      const statusMsg = document.getElementById('otp-status-msg');
+      const verifyBtn = document.getElementById('otp-verify-btn');
+      const targetAction = (currentShiftState === 'ACTIVE') ? 'TIME_OUT' : 'TIME_IN';
+
+      if (otpCode.length !== 6) {
+        statusMsg.style.color = "var(--crimson)";
+        statusMsg.innerText = "Please enter the 6-digit code.";
+        return;
+      }
+
+      verifyBtn.disabled = true;
+      statusMsg.style.color = "var(--ink)";
+      statusMsg.innerText = "Verifying OTP...";
+
+      if (targetAction === 'TIME_IN') {
+        PulseVault.save('localShiftStart', Date.now().toString());
+      }
+
+      try {
+        const routing = getEmployeeRoutingPayload();
+        const response = await fetch(getEmployeeEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "VERIFY_OTP",
+            target_action: targetAction,
+            otp_code: otpCode,
+            employee_name: (PulseVault.get('empName') || "").toUpperCase(),
+            team: (PulseVault.get('team') || "").toUpperCase(),
+            work_arrangement: document.getElementById('arrangement').value,
+            ...routing
+          })
+        });
+        const result = await response.json();
+
+        if (result.ok) {
+          statusMsg.style.color = "var(--emerald)";
+          statusMsg.innerText = "✅ " + result.message;
+          setTimeout(() => {
+            document.getElementById('otp-section').style.display = 'none';
+            fetchLiveStatus(false);
+          }, 1200);
+        } else {
+          statusMsg.style.color = "var(--crimson)";
+          statusMsg.innerText = "❌ " + result.error;
+          verifyBtn.disabled = false;
+        }
+      } catch (err) {
+        statusMsg.style.color = "var(--crimson)";
+        statusMsg.innerText = "❌ Connection error.";
+        verifyBtn.disabled = false;
+      }
+    }
+
+    // --- PROFILE PHOTO LOGIC ---
+    function applyProfilePhoto(dataUrl, fileId) {
+      const imgEl = document.getElementById('profile-photo-img');
+      const svgEl = document.getElementById('default-avatar-svg');
+      const overlayEl = document.getElementById('avatar-overlay-text');
+      const hintEl = document.getElementById('photo-action-hint');
+
+      if (dataUrl && dataUrl.startsWith('data:image')) {
+        imgEl.src = dataUrl;
+        imgEl.style.display = 'block';
+        svgEl.style.display = 'none';
+        overlayEl.innerText = 'Change';
+        hintEl.innerText = 'Change Photo';
+        hintEl.style.color = 'var(--ink-muted)';
+        PulseVault.save('profileDataUrl', dataUrl);
+        if (fileId) PulseVault.save('profileFileId', fileId);
+      } else if (fileId) {
+        imgEl.src = `https://lh3.googleusercontent.com/d/${fileId}=s250`;
+        imgEl.style.display = 'block';
+        svgEl.style.display = 'none';
+        overlayEl.innerText = 'Change';
+        hintEl.innerText = 'Change Photo';
+        hintEl.style.color = 'var(--ink-muted)';
+        PulseVault.save('profileFileId', fileId);
+      } else {
+        imgEl.style.display = 'none';
+        svgEl.style.display = 'block';
+        overlayEl.innerText = 'Add Photo';
+        hintEl.innerText = '+ Add Profile Photo';
+        hintEl.style.color = 'var(--emerald)';
+        PulseVault.remove('profileDataUrl');
+        PulseVault.remove('profileFileId');
+      }
+    }
+
+    function applyPhoneProfilePhoto(srcOrDataUrl) {
+      const imgEl = document.getElementById('phone-profile-img');
+      const svgEl = document.getElementById('phone-default-svg');
+
+      if (srcOrDataUrl) {
+        imgEl.src = srcOrDataUrl;
+        imgEl.style.display = 'block';
+        svgEl.style.display = 'none';
+      } else {
+        imgEl.style.display = 'none';
+        svgEl.style.display = 'block';
+      }
+    }
+
+    function handleImageError() {
+      document.getElementById('profile-photo-img').style.display = 'none';
+      document.getElementById('default-avatar-svg').style.display = 'block';
+    }
+
+    function handlePhoneImageError() {
+      document.getElementById('phone-profile-img').style.display = 'none';
+      document.getElementById('phone-default-svg').style.display = 'block';
+    }
+
+    function triggerPhotoUpload() {
+      document.getElementById('photo-upload-input').click();
+    }
+
+    function handlePhotoSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const loader = document.getElementById('avatar-loading-spinner');
+      loader.style.display = 'flex';
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = async function() {
+          const canvas = document.createElement('canvas');
+          const MAX_SIZE = 320;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+          } else {
+            if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          const base64String = dataUrl.split(',')[1];
+
+          applyProfilePhoto(dataUrl, "");
+
+          try {
+            const routing = getEmployeeRoutingPayload();
+            const response = await fetch(getEmployeeEndpoint(), {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({
+                action: "UPLOAD_PHOTO",
+                employee_name: (PulseVault.get('empName') || "").toUpperCase(),
+                team: (PulseVault.get('team') || "").toUpperCase(),
+                device_id: "Kiosk-Upload",
+                image_base64: base64String,
+                mime_type: "image/jpeg",
+                ...routing
+              })
+            });
+
+            const result = await response.json();
+            if (result.ok) {
+              const empKey = String(PulseVault.get('empName') || "").trim().toLowerCase();
+              if (empKey) {
+                memberPhotoCache[empKey] = {
+                  fileId: result.fileId,
+                  dataUrl: result.profileDataUrl || dataUrl
+                };
+                PulseVault.save('mgrMemberPhotoCache', JSON.stringify(memberPhotoCache));
+              }
+              applyProfilePhoto(result.profileDataUrl || dataUrl, result.fileId);
+            } else {
+              alert("Photo upload failed: " + (result.error || "Unknown error"));
+            }
+          } catch (err) {
+            alert("Connection error while uploading photo.");
+          } finally {
+            loader.style.display = 'none';
+            event.target.value = "";
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function initPhoneProfilePhoto(empName, empTeam, photoId, targetSheetId, mgrCode) {
+      const cacheKey = `phonePhoto_${empName}`;
+      const cacheIdKey = `phonePhotoId_${empName}`;
+      const cached = localStorage.getItem(cacheKey);
+      const cachedId = localStorage.getItem(cacheIdKey);
+
+      if (photoId && photoId !== cachedId) {
+        localStorage.removeItem(cacheKey);
+        localStorage.setItem(cacheIdKey, photoId);
+        applyPhoneProfilePhoto(`https://lh3.googleusercontent.com/d/${photoId}=s250`);
+      } else if (cached) {
+        applyPhoneProfilePhoto(cached);
+      } else if (photoId) {
+        applyPhoneProfilePhoto(`https://lh3.googleusercontent.com/d/${photoId}=s250`);
+      }
+
+      if (!empName || !empTeam) return;
+      try {
+        const response = await fetch(getPhoneEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "GET_DATA",
+            employee_name: empName.toUpperCase(),
+            team: empTeam.toUpperCase(),
+            device_id: getOrCreateMobileDeviceId(),
+            target_sheet_id: targetSheetId || "",
+            manager_code: mgrCode || ""
+          })
+        });
+        const result = await response.json();
+        if (result.ok && result.profileDataUrl) {
+          applyPhoneProfilePhoto(result.profileDataUrl);
+          try {
+            localStorage.setItem(cacheKey, result.profileDataUrl);
+            if (result.profileFileId) localStorage.setItem(cacheIdKey, result.profileFileId);
+          } catch (err) {}
+        }
+      } catch (e) {}
+    }
+
+    // --- SMART TIME PARSER ---
+    function parseShiftTime(rawTimeIn) {
+      if (rawTimeIn) {
+        let parsed = new Date(rawTimeIn);
+        if (!isNaN(parsed.getTime())) return parsed;
+
+        const timeMatch = String(rawTimeIn).trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+        if (timeMatch) {
+          let hrs = parseInt(timeMatch[1], 10);
+          const mins = parseInt(timeMatch[2], 10);
+          const secs = timeMatch[3] ? parseInt(timeMatch[3], 10) : 0;
+          const period = timeMatch[4] ? timeMatch[4].toUpperCase() : null;
+
+          if (period === 'PM' && hrs < 12) hrs += 12;
+          if (period === 'AM' && hrs === 12) hrs = 0;
+
+          const now = new Date();
+          const todayShift = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hrs, mins, secs);
+          if (todayShift > now) todayShift.setDate(todayShift.getDate() - 1);
+          return todayShift;
+        }
+      }
+
+      const savedLocal = PulseVault.get('localShiftStart');
+      if (savedLocal) {
+        const localDate = new Date(parseInt(savedLocal, 10));
+        if (!isNaN(localDate.getTime())) return localDate;
+      }
+      return new Date();
+    }
+
+    // --- LIVE CLOCK AND INLINE SHIFT TIMER ---
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours(); let minutes = now.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12; hours = hours ? hours : 12;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      
+      const timeEl = document.getElementById('time-display');
+      if (timeEl) timeEl.innerHTML = `${hours}:${minutes} <span>${ampm}</span>`;
+      
+      const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+      const dateEl = document.getElementById('date-display');
+      if (dateEl) dateEl.innerText = now.toLocaleDateString('en-US', options);
+
+      if (window.shiftStartTime && !isNaN(window.shiftStartTime.getTime())) {
+        const diffMs = Math.max(0, now - window.shiftStartTime);
+        const hrs = Math.floor(diffMs / (1000 * 60 * 60));
+        const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+        
+        const pad = (num) => num.toString().padStart(2, '0');
+        const statusEl = document.getElementById('kiosk-status-text');
+        if (statusEl) {
+          statusEl.innerHTML = `Active Shift • <span class="timer-highlight">${pad(hrs)}:${pad(mins)}:${pad(secs)}</span>`;
+        }
+      }
+    }
+    setInterval(updateClock, 1000); updateClock();
+
+    async function fetchLiveStatus(isSilentPolling = false) {
+      const btnIn = document.getElementById('btn-time-in');
+      const btnOut = document.getElementById('btn-time-out');
+      const actionSection = document.getElementById('action-section');
+      const loadingState = document.getElementById('kiosk-loading');
+      const statusText = document.getElementById('kiosk-status-text');
+
+      if (!isSilentPolling) {
+        actionSection.style.display = 'none';
+        loadingState.style.display = 'block';
+      }
+
+      try {
+        const routing = getEmployeeRoutingPayload();
+        const response = await fetch(getEmployeeEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "GET_DATA",
+            employee_name: (PulseVault.get('empName') || "").toUpperCase(),
+            team: (PulseVault.get('team') || "").toUpperCase(),
+            device_id: "Kiosk-Sync",
+            skip_photo: isSilentPolling,
+            ...routing
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.ok) {
+          if (result.accountRemoved) {
+            resetLocalEmployeeWorkstation();
+            return;
+          }
+
+          if (result.isBlocked) {
+            clearInterval(qrPollingInterval);
+            clearInterval(qrExpiryTimer);
+            qrPollingInterval = null;
+            qrExpiryTimer = null;
+            switchCard('device-error');
+            document.getElementById('error-message').innerText = "Access Denied: Your account has been suspended by a manager.";
+            return;
+          }
+
+          if (!isSilentPolling) {
+            if (!result.email) {
+              switchCard('laptop-email-complete');
+              document.getElementById('missingEmailEmpName').value = (PulseVault.get('empName') || "").toUpperCase();
+              return;
+            } else {
+              PulseVault.save('empEmail', result.email);
+            }
+
+            const localPin = PulseVault.get('authCode');
+            if (!result.hasPin && localPin) {
+              fetch(getEmployeeEndpoint(), {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                  action: "SYNC_PIN",
+                  employee_name: (PulseVault.get('empName') || "").toUpperCase(),
+                  team: (PulseVault.get('team') || "").toUpperCase(),
+                  auth_pin: localPin,
+                  ...routing
+                })
+              }).catch(() => {});
+            }
+
+            applyProfilePhoto(result.profileDataUrl || "", result.profileFileId || "");
+          }
+
+          const newShiftState = result.openRecord ? 'ACTIVE' : 'CHECKED_OUT';
+
+          if (isSilentPolling && expectedTargetState && newShiftState === expectedTargetState) {
+             clearInterval(qrPollingInterval); 
+             clearInterval(qrExpiryTimer);
+             qrPollingInterval = null;
+             qrExpiryTimer = null;
+             currentShiftState = newShiftState;
+             expectedTargetState = null;
+             
+             if (newShiftState === 'ACTIVE' && !PulseVault.get('localShiftStart')) {
+               PulseVault.save('localShiftStart', Date.now().toString());
+             }
+
+             const waitText = document.getElementById('qr-waiting-text');
+             waitText.innerHTML = '✅ Verified Successfully!';
+             waitText.style.color = 'var(--emerald)';
+             document.getElementById('qr-countdown-text').innerText = '';
+             
+             setTimeout(() => renderUIState(result), 1000);
+             return;
+          }
+
+          if (!isSilentPolling) {
+            currentShiftState = newShiftState;
+            renderUIState(result);
+          }
+        }
+      } catch (error) {
+        if (!isSilentPolling) {
+          statusText.innerText = "Offline";
+          loadingState.style.display = 'none';
+          actionSection.style.display = 'block';
+          btnIn.style.display = 'flex';
+          btnOut.style.display = 'none';
+        }
+      }
+    }
+
+    function renderUIState(result) {
+      const btnIn = document.getElementById('btn-time-in');
+      const btnOut = document.getElementById('btn-time-out');
+      const arrSelect = document.getElementById('arrangement');
+      const statusText = document.getElementById('kiosk-status-text');
+      
+      document.getElementById('kiosk-loading').style.display = 'none';
+      document.getElementById('qr-section').style.display = 'none';
+      document.getElementById('otp-section').style.display = 'none';
+      document.getElementById('action-section').style.display = 'block';
+
+      if (result.openRecord) {
+        if (result.openRecord.workArrangement) {
+          arrSelect.value = result.openRecord.workArrangement;
+        }
+        arrSelect.disabled = true;
+        btnIn.style.display = 'none';
+        btnOut.style.display = 'flex'; 
+
+        window.shiftStartTime = parseShiftTime(result.openRecord.timeIn);
+        updateClock();
+      } else {
+        window.shiftStartTime = null;
+        PulseVault.remove('localShiftStart');
+        statusText.innerText = "Not Yet Clocked In";
+        arrSelect.disabled = false;
+        btnIn.style.display = 'flex';        
+        btnOut.style.display = 'none';
+      }
+    }
+
+    // --- INITIAL ENTRY ROUTING (Heals 3-Layer PulseVault First) ---
+    (async function bootPulseDeck() {
+      const healed = await PulseVault.healFromVault();
+      if (healed.mgrMemberPhotoCache) {
+        try {
+          memberPhotoCache = typeof healed.mgrMemberPhotoCache === "string"
+            ? JSON.parse(healed.mgrMemberPhotoCache)
+            : healed.mgrMemberPhotoCache;
+        } catch (e) {}
+      }
+
+      if (mode === 'scan') {
+        document.getElementById('top-nav-bar').style.display = 'none';
+        document.getElementById('standard-footer').style.display = 'none';
+        if (!isMobile) {
+          switchCard('device-error');
+          document.getElementById('error-message').innerText = "Security Block: Verification must be done on a mobile device.";
+        } else {
+          getOrCreateMobileDeviceId();
+
+          switchCard('phone-auth');
+          const actionText = (urlParams.get('action') || '').replace('_', ' ');
+          const empName = (urlParams.get('name') || "").toUpperCase();
+          const empTeam = (urlParams.get('team') || "").toUpperCase();
+          const arrText = urlParams.get('arr') || 'Onsite';
+          const photoId = urlParams.get('photo') || "";
+          const targetSheetId = urlParams.get('sheet') || "";
+          const mgrCode = urlParams.get('mcode') || "";
+          const qrTs = Number(urlParams.get('ts') || 0);
+          
+          document.getElementById('phone-greeting').innerText = empName;
+          document.getElementById('phone-badge').innerText = `${actionText} • ${arrText}`;
+
+          function enforcePhoneQrExpiry() {
+            if (!qrTs || (Date.now() - qrTs) > 60000) {
+              const statusDiv = document.getElementById('scan-status');
+              const submitBtn = document.getElementById('submit-btn');
+              const codeInput = document.getElementById('enteredCode');
+              statusDiv.style.color = "var(--crimson)";
+              statusDiv.innerText = "⏳ QR Code Expired (60s limit). Please generate a new QR on your laptop.";
+              submitBtn.disabled = true;
+              submitBtn.style.opacity = "0.5";
+              codeInput.disabled = true;
+              return true;
+            }
+            return false;
+          }
+
+          if (!enforcePhoneQrExpiry()) {
+            const phoneExpiryInterval = setInterval(() => {
+              if (enforcePhoneQrExpiry()) clearInterval(phoneExpiryInterval);
+            }, 500);
+          }
+
+          initPhoneProfilePhoto(empName, empTeam, photoId, targetSheetId, mgrCode);
+        }
+      } else {
+        if (isMobile) {
+          document.getElementById('top-nav-bar').style.display = 'none';
+          switchCard('device-error');
+          document.getElementById('error-message').innerText = "Access Denied: Portal access is restricted to desktop devices.";
+        } else {
+          showRoleSelector();
+        }
+      }
+    })();
+
+    async function registerLaptop() {
+      const mgrCode = document.getElementById('empMgrCode').value.trim().toUpperCase();
+      const name = document.getElementById('empName').value.trim().toUpperCase();
+      const team = document.getElementById('team').value.trim().toUpperCase();
+      const email = document.getElementById('empEmail').value.trim().toLowerCase();
+      const customScriptUrl = document.getElementById('empCustomScriptUrl').value.trim();
+      const btn = document.getElementById('btn-register-laptop');
+
+      if (!name || !team || !email) return alert("Please complete Employee Name, Team, and Email.");
+      if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
+
+      btn.disabled = true;
+      btn.innerText = "Binding to Workspace...";
+
+      const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
+      const endpointUrl = customScriptUrl || DEFAULT_GOOGLE_URL;
+
+      try {
+        const response = await fetch(endpointUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "REGISTER_MEMBER",
+            employee_name: name,
+            team: team,
+            email: email,
+            auth_pin: newAuthCode,
+            manager_code: mgrCode
+          })
+        });
+        const result = await response.json();
+
+        if (!result.ok) {
+          alert("Registration error: " + result.error);
+          btn.disabled = false;
+          btn.innerText = "Secure Device & Continue";
+          return;
+        }
+
+        PulseVault.save('empName', name);
+        PulseVault.save('team', team);
+        PulseVault.save('empEmail', email);
+        PulseVault.save('authCode', newAuthCode);
+        PulseVault.save('empManagerCode', result.managerCode || mgrCode);
+        PulseVault.save('empTargetSheetId', result.targetSheetId || "");
+        if (customScriptUrl) PulseVault.save('empCustomScriptUrl', customScriptUrl);
+
+        switchCard('laptop-reveal');
+        document.getElementById('auth-code-display').innerText = newAuthCode;
+      } catch (err) {
+        alert("Connection failed while saving registration. Please try again.");
+        btn.disabled = false;
+        btn.innerText = "Secure Device & Continue";
+      }
+    }
+
+    async function saveMissingEmail() {
+      const email = document.getElementById('missingEmailInput').value.trim().toLowerCase();
+      const btn = document.getElementById('btn-save-missing-email');
+
+      if (!email || email.indexOf("@") < 1) return alert("Please enter a valid email address.");
+
+      btn.disabled = true;
+      btn.innerText = "Saving Email...";
+
+      try {
+        const routing = getEmployeeRoutingPayload();
+        const response = await fetch(getEmployeeEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "REGISTER_MEMBER",
+            employee_name: (PulseVault.get('empName') || "").toUpperCase(),
+            team: (PulseVault.get('team') || "").toUpperCase(),
+            email: email,
+            auth_pin: PulseVault.get('authCode') || "",
+            ...routing
+          })
+        });
+        const result = await response.json();
+
+        if (result.ok) {
+          PulseVault.save('empEmail', email);
+          openEmployeeKiosk();
+        } else {
+          alert("Error: " + result.error);
+          btn.disabled = false;
+          btn.innerText = "Save Email & Continue";
+        }
+      } catch (err) {
+        alert("Connection error. Please try again.");
+        btn.disabled = false;
+        btn.innerText = "Save Email & Continue";
+      }
+    }
+
+    function cancelQR() {
+      clearInterval(qrPollingInterval);
+      clearInterval(qrExpiryTimer);
+      qrPollingInterval = null;
+      qrExpiryTimer = null;
+      expectedTargetState = null;
+      document.getElementById('qr-section').style.display = 'none';
+      document.getElementById('action-section').style.display = 'block';
+    }
+
+    function generateQR(actionType) {
+      const name = (PulseVault.get('empName') || "").toUpperCase();
+      const team = (PulseVault.get('team') || "").toUpperCase();
+      const photoId = PulseVault.get('profileFileId') || "";
+      const targetSheetId = PulseVault.get('empTargetSheetId') || "";
+      const mgrCode = PulseVault.get('empManagerCode') || "";
+      const customApi = PulseVault.get('empCustomScriptUrl') || "";
+      const arrangement = document.getElementById('arrangement').value;
+      const qrTimestamp = Date.now();
+
+      expectedTargetState = (actionType === 'TIME_IN') ? 'ACTIVE' : 'CHECKED_OUT';
+
+      if (actionType === 'TIME_IN') {
+        PulseVault.save('localShiftStart', qrTimestamp.toString());
+      }
+
+      const currentWebsite = window.location.origin + window.location.pathname;
+      let payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&photo=${encodeURIComponent(photoId)}&sheet=${encodeURIComponent(targetSheetId)}&mcode=${encodeURIComponent(mgrCode)}&ts=${qrTimestamp}`;
+      if (customApi) {
+        payloadUrl += `&api=${encodeURIComponent(customApi)}`;
+      }
+      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
+      
+      document.getElementById('qr-image').src = qrImageUrl;
+      
+      const waitText = document.getElementById('qr-waiting-text');
+      waitText.innerHTML = '<div class="spinner"></div> Awaiting mobile verification...';
+      waitText.style.color = 'var(--emerald)';
+
+      const countdownEl = document.getElementById('qr-countdown-text');
+      let secondsLeft = 60;
+      countdownEl.innerText = `QR expires in ${secondsLeft}s`;
+      countdownEl.style.color = 'var(--ink-muted)';
+
+      document.getElementById('action-section').style.display = 'none';
+      document.getElementById('qr-section').style.display = 'block';
+
+      clearInterval(qrPollingInterval);
+      clearInterval(qrExpiryTimer);
+
+      qrPollingInterval = setInterval(() => fetchLiveStatus(true), 2000);
+      qrExpiryTimer = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 15 && secondsLeft > 0) {
+          countdownEl.style.color = 'var(--crimson)';
+        }
+        if (secondsLeft <= 0) {
+          cancelQR();
+        } else {
+          countdownEl.innerText = `QR expires in ${secondsLeft}s`;
+        }
+      }, 1000);
+    }
+
+    async function verifyAndSubmit() {
       const enteredCode = document.getElementById('enteredCode').value.trim();
       const qrTimestamp = Number(urlParams.get('ts') || 0);
       const statusDiv = document.getElementById('scan-status');
@@ -2562,7 +3406,7 @@
       };
 
       try {
-        const response = await fetch(getActiveEmployeeScriptUrl(), {
+        const response = await fetch(getPhoneEndpoint(), {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
