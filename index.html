@@ -638,7 +638,7 @@
 
     /* --- EMPLOYEE KIOSK UI --- */
     .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 28px; }
-    .welcome-divider { width: 1px; height: 56px; background-color: var(--border); }
+    .welcome-divider { width: 1px; height: 64px; background-color: var(--border); }
 
     .avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; flex-shrink: 0; }
     .avatar {
@@ -676,8 +676,20 @@
     .welcome-text { text-align: left; }
     .welcome-text .small { font-size: 14px; color: var(--ink-muted); font-weight: 600; }
     .welcome-text .name { font-size: 24px; font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
-    .photo-action-hint { font-size: 11.5px; font-weight: 700; color: var(--emerald); cursor: pointer; display: inline-block; margin-top: 3px; }
+    .kiosk-meta-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 5px;
+    }
+    .photo-action-hint { font-size: 11.5px; font-weight: 700; color: var(--emerald); cursor: pointer; display: inline-block; }
     .photo-action-hint:hover { text-decoration: underline; }
+    .mgr-pill-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 800; font-family: monospace;
+      padding: 3px 9px; border-radius: 8px;
+      background: var(--blue-bg); color: var(--blue);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+      cursor: pointer; transition: all 0.14s ease;
+    }
+    .mgr-pill-btn:hover { background: #DBEAFE; border-color: var(--blue); }
 
     .clock-section { margin-bottom: 32px; }
     .time-display { font-size: 74px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -2.5px; font-variant-numeric: tabular-nums; }
@@ -702,20 +714,26 @@
     .otp-fallback-link { font-size: 13px; color: var(--ink-muted); font-weight: 600; cursor: pointer; display: inline-block; margin-top: 6px; }
     .otp-fallback-link:hover { color: var(--ink); text-decoration: underline; }
 
-    #otp-section {
-      max-width: 360px; margin: 0 auto; padding: 24px;
+    #otp-section, #switch-mgr-section {
+      max-width: 380px; margin: 0 auto; padding: 24px;
       background: var(--surface-recessed); border-radius: 18px; border: 1.5px solid var(--border);
       display: none;
     }
-    #otp-section h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 800; }
-    #otp-info-text { font-size: 13px; color: var(--ink-muted); margin: 0 0 16px 0; }
+    #otp-section h3, #switch-mgr-section h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 800; }
+    #otp-info-text, #switch-mgr-info { font-size: 13px; color: var(--ink-muted); margin: 0 0 16px 0; line-height: 1.45; }
     #otp-code-input {
       width: 100%; padding: 12px; font-size: 24px; font-weight: 700;
       text-align: center; letter-spacing: 6px; border-radius: 12px;
       border: 1.5px solid var(--border); background: #FFF; margin-bottom: 12px;
       font-family: 'Inter', sans-serif;
     }
-    #otp-status-msg { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
+    #newMgrCodeInput {
+      width: 100%; padding: 12px 14px; font-size: 18px; font-weight: 800;
+      text-align: center; letter-spacing: 2px; border-radius: 12px;
+      border: 1.5px solid var(--border); background: #FFF; margin-bottom: 12px;
+      font-family: 'Inter', sans-serif; text-transform: uppercase;
+    }
+    #otp-status-msg, #switch-mgr-status { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
 
     .status-bar { border-top: 1.5px solid var(--border); display: flex; background: var(--surface-recessed); }
     .status-col { flex: 1; padding: 20px 28px; display: flex; align-items: center; gap: 14px; text-align: left; }
@@ -1271,15 +1289,15 @@
       </div>
     </div>
 
-    <!-- EMPLOYEE INITIAL REGISTRATION -->
+    <!-- EMPLOYEE INITIAL REGISTRATION (Manager PD-XXXX Code Required) -->
     <div id="laptop-setup" class="card setup-card">
       <div class="form-icon-header">
         <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
       </div>
       <h2>Kiosk Device Setup</h2>
-      <p>Bind this workstation to your Manager's workspace so your attendance routes automatically.</p>
-      <label>Manager Code (Ask your manager, e.g. PD-1234)</label>
-      <input type="text" id="empMgrCode" class="uppercase-field" placeholder="PD-XXXX (OPTIONAL FOR DEFAULT)" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+      <p>Bind this workstation to your Manager's workspace so your attendance routes directly to their sheet.</p>
+      <label>Manager Code (Required • e.g. PD-1234)</label>
+      <input type="text" id="empMgrCode" class="uppercase-field" placeholder="PD-XXXX" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Employee Name</label>
       <input type="text" id="empName" class="uppercase-field" placeholder="E.G. JOHN DOE" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Team / Department</label>
@@ -1308,8 +1326,8 @@
       </div>
       <h2>Restore Existing Kiosk</h2>
       <p>Enter your registered Work Email and 4-digit PIN to restore your profile and photo from the database.</p>
-      <label>Manager Code (If assigned, e.g. PD-1234)</label>
-      <input type="text" id="recMgrCode" class="uppercase-field" placeholder="PD-XXXX (OPTIONAL)" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+      <label>Manager Code (e.g. PD-1234)</label>
+      <input type="text" id="recMgrCode" class="uppercase-field" placeholder="PD-XXXX" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Registered Work Email</label>
       <input type="email" id="recEmail" placeholder="e.g. john.doe@company.com" autocomplete="email">
       <label>Your 4-Digit Auth PIN</label>
@@ -1369,8 +1387,13 @@
 
           <div class="welcome-text">
             <span class="small">Welcome back,</span><br>
-            <span class="name" id="kiosk-name">EMPLOYEE NAME</span><br>
-            <span class="photo-action-hint" id="photo-action-hint" onclick="triggerPhotoUpload()">+ Add Profile Photo</span>
+            <span class="name" id="kiosk-name">EMPLOYEE NAME</span>
+            <div class="kiosk-meta-row">
+              <span class="photo-action-hint" id="photo-action-hint" onclick="triggerPhotoUpload()">+ Add Profile Photo</span>
+              <button type="button" class="mgr-pill-btn" id="kiosk-mgr-badge" onclick="openSwitchManager()" title="Click to view or change your saved Manager PD Code">
+                MGR: SET PD-XXXX
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1397,6 +1420,16 @@
             </button>
           </div>
           <span class="otp-fallback-link" onclick="startEmailOTP()">Can't scan QR? Use Email OTP</span>
+        </div>
+
+        <!-- Switch Manager PD-XXXX Inline Panel -->
+        <div id="switch-mgr-section">
+          <h3>Manager Workspace (PD-XXXX)</h3>
+          <p id="switch-mgr-info">Enter your manager's PD-XXXX code to route all attendance logs to their spreadsheet.</p>
+          <input type="text" id="newMgrCodeInput" placeholder="PD-XXXX" maxlength="12" oninput="this.value = this.value.toUpperCase()" onkeydown="if(event.key==='Enter') submitSwitchManager()">
+          <button class="btn-save" id="btn-switch-mgr" onclick="submitSwitchManager()">Save Manager Code</button>
+          <div id="switch-mgr-status"></div>
+          <span class="cancel-link" onclick="cancelSwitchManager()">Cancel</span>
         </div>
 
         <!-- Email OTP Section -->
@@ -1783,7 +1816,7 @@
       switchCard('role-selector');
     }
 
-    // --- EMPLOYEE ENTRY, AUTH CODE LOGIN & DATABASE RECOVERY ---
+    // --- EMPLOYEE ENTRY, AUTH CODE LOGIN, DATABASE RECOVERY & MANAGER SWITCH ---
     function selectEmployeeRole() {
       const savedName = (PulseVault.get('empName') || "").toUpperCase();
       const authCode = PulseVault.get('authCode');
@@ -1866,16 +1899,119 @@
       }
     }
 
+    function updateKioskManagerBadge() {
+      const badge = document.getElementById('kiosk-mgr-badge');
+      if (!badge) return;
+      const savedCode = (PulseVault.get('empManagerCode') || "").toUpperCase();
+      if (savedCode) {
+        badge.innerText = `MGR: ${savedCode} • Switch`;
+        badge.style.background = "var(--blue-bg)";
+        badge.style.color = "var(--blue)";
+      } else {
+        badge.innerText = `⚠️ SET PD-XXXX CODE`;
+        badge.style.background = "var(--amber-bg)";
+        badge.style.color = "var(--amber)";
+      }
+    }
+
     function openEmployeeKiosk() {
       const savedName = (PulseVault.get('empName') || "").toUpperCase();
       switchCard('laptop-kiosk');
       document.getElementById('kiosk-name').innerText = savedName;
+      updateKioskManagerBadge();
 
       const cachedDataUrl = PulseVault.get('profileDataUrl');
       const cachedFileId = PulseVault.get('profileFileId');
       if (cachedDataUrl || cachedFileId) applyProfilePhoto(cachedDataUrl, cachedFileId);
 
+      // If legacy account has no Manager Code / Sheet ID yet, prompt to enter PD-XXXX immediately
+      const hasRouting = Boolean(PulseVault.get('empTargetSheetId') || PulseVault.get('empManagerCode'));
+      if (!hasRouting) {
+        document.getElementById('kiosk-loading').style.display = 'none';
+        openSwitchManager();
+        return;
+      }
+
       fetchLiveStatus(false);
+    }
+
+    function openSwitchManager() {
+      const currentCode = (PulseVault.get('empManagerCode') || "").toUpperCase();
+      document.getElementById('action-section').style.display = 'none';
+      document.getElementById('otp-section').style.display = 'none';
+      document.getElementById('qr-section').style.display = 'none';
+      document.getElementById('switch-mgr-section').style.display = 'block';
+
+      document.getElementById('switch-mgr-info').innerText = currentCode
+        ? `Current Manager Code: ${currentCode}. Enter a new PD-XXXX code below to switch workspaces.`
+        : `Enter your manager's PD-XXXX code so your attendance saves directly into their spreadsheet.`;
+      document.getElementById('newMgrCodeInput').value = currentCode;
+      document.getElementById('switch-mgr-status').innerText = "";
+      setTimeout(() => {
+        const inp = document.getElementById('newMgrCodeInput');
+        inp.focus();
+        inp.select();
+      }, 80);
+    }
+
+    function cancelSwitchManager() {
+      document.getElementById('switch-mgr-section').style.display = 'none';
+      document.getElementById('action-section').style.display = 'block';
+    }
+
+    async function submitSwitchManager() {
+      const newCode = document.getElementById('newMgrCodeInput').value.trim().toUpperCase();
+      const statusEl = document.getElementById('switch-mgr-status');
+      const btn = document.getElementById('btn-switch-mgr');
+
+      if (!newCode) {
+        statusEl.style.color = "var(--crimson)";
+        statusEl.innerText = "Please enter a valid PD-XXXX Manager Code.";
+        return;
+      }
+
+      btn.disabled = true;
+      statusEl.style.color = "var(--ink)";
+      statusEl.innerText = "Connecting to manager workspace...";
+
+      try {
+        const routing = getEmployeeRoutingPayload();
+        const res = await fetch(getEmployeeEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "SWITCH_MANAGER",
+            employee_name: (PulseVault.get('empName') || "").toUpperCase(),
+            team: (PulseVault.get('team') || "").toUpperCase(),
+            email: (PulseVault.get('empEmail') || "").toLowerCase(),
+            auth_pin: PulseVault.get('authCode') || "",
+            profile_file_id: PulseVault.get('profileFileId') || "",
+            new_manager_code: newCode,
+            ...routing
+          })
+        });
+        const result = await res.json();
+        if (result.ok) {
+          PulseVault.save('empManagerCode', result.managerCode || newCode);
+          PulseVault.save('empTargetSheetId', result.targetSheetId || "");
+          updateKioskManagerBadge();
+
+          statusEl.style.color = "var(--emerald)";
+          statusEl.innerText = "✅ " + result.message;
+          setTimeout(() => {
+            document.getElementById('switch-mgr-section').style.display = 'none';
+            fetchLiveStatus(false);
+          }, 1000);
+        } else {
+          statusEl.style.color = "var(--crimson)";
+          statusEl.innerText = "❌ " + (result.error || "Unable to switch manager.");
+        }
+      } catch (e) {
+        statusEl.style.color = "var(--crimson)";
+        statusEl.innerText = "❌ Connection error while switching manager.";
+      } finally {
+        btn.disabled = false;
+      }
     }
 
     // --- MANAGER ENTRY, REGISTRATION & DEVELOPER CONSOLE ("dev1234") ---
@@ -2836,6 +2972,7 @@
       const statusMsg = document.getElementById('otp-status-msg');
 
       actionSection.style.display = 'none';
+      document.getElementById('switch-mgr-section').style.display = 'none';
       otpSection.style.display = 'block';
       infoText.innerText = "Sending 6-digit code to your registered email...";
       otpInput.value = "";
@@ -3273,6 +3410,13 @@
             currentShiftState = newShiftState;
             renderUIState(result);
           }
+        } else {
+          if (!isSilentPolling) {
+            loadingState.style.display = 'none';
+            openSwitchManager();
+            document.getElementById('switch-mgr-status').style.color = "var(--crimson)";
+            document.getElementById('switch-mgr-status').innerText = result.error || "Please enter your PD-XXXX Manager Code.";
+          }
         }
       } catch (error) {
         if (!isSilentPolling) {
@@ -3294,6 +3438,7 @@
       document.getElementById('kiosk-loading').style.display = 'none';
       document.getElementById('qr-section').style.display = 'none';
       document.getElementById('otp-section').style.display = 'none';
+      document.getElementById('switch-mgr-section').style.display = 'none';
       document.getElementById('action-section').style.display = 'block';
 
       if (result.openRecord) {
@@ -3391,6 +3536,7 @@
       const customScriptUrl = document.getElementById('empCustomScriptUrl').value.trim();
       const btn = document.getElementById('btn-register-laptop');
 
+      if (!mgrCode) return alert("Please enter your Manager Code (e.g. PD-1234).");
       if (!name || !team || !email) return alert("Please complete Employee Name, Team, and Email.");
       if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
 
@@ -3498,6 +3644,11 @@
       const customApi = PulseVault.get('empCustomScriptUrl') || "";
       const arrangement = document.getElementById('arrangement').value;
       const qrTimestamp = Date.now();
+
+      if (!targetSheetId && !mgrCode) {
+        openSwitchManager();
+        return;
+      }
 
       expectedTargetState = (actionType === 'TIME_IN') ? 'ACTIVE' : 'CHECKED_OUT';
 
