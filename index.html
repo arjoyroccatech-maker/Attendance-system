@@ -1203,14 +1203,29 @@
           </div>
         </div>
 
+        <div style="padding:14px 24px; background:#FFFFFF; border-bottom:1.5px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <label style="display:inline-flex; align-items:center; gap:9px; font-size:13px; font-weight:700; color:var(--ink); cursor:pointer; margin:0;">
+            <input type="checkbox" id="annSelectAllCheckbox" onchange="toggleSelectAllAnnouncements(this.checked)" style="width:17px; height:17px; cursor:pointer; accent-color:var(--ink);">
+            Select All Messages
+          </label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span id="annSelectedCountLabel" style="font-size:12.5px; font-weight:600; color:var(--ink-muted);">0 selected</span>
+            <button type="button" class="btn-kiosk-sm danger" id="btn-delete-selected-ann" onclick="deleteSelectedAnnouncements()" disabled style="opacity:0.5;">
+              Delete Selected
+            </button>
+          </div>
+        </div>
+
         <table class="deck-table">
           <thead>
             <tr>
+              <th style="width:44px;"></th>
               <th>Sent At</th>
               <th>Headline</th>
               <th>Message</th>
               <th>Recipients</th>
               <th>Status</th>
+              <th style="width:90px;">Action</th>
             </tr>
           </thead>
           <tbody id="mgr-announce-body"></tbody>
@@ -2902,25 +2917,103 @@
 
     function renderAnnouncementsTable(list) {
       const tbody = document.getElementById('mgr-announce-body');
+      const selectAllCb = document.getElementById('annSelectAllCheckbox');
+      if (selectAllCb) selectAllCb.checked = false;
       if (!tbody) return;
+
       if (!list || !list.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">No SMS announcements sent yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:42px; color:var(--ink-muted);">No SMS announcements sent yet.</td></tr>`;
+        updateAnnSelectionUI();
         return;
       }
 
       tbody.innerHTML = list.map(a => {
         const stLower = String(a.status || "").toLowerCase();
-        const tagCls = stLower.includes("delivered") ? "tag-green" : "tag-amber";
+        const tagCls = (stLower.includes("delivered") || stLower.includes("sent via textbee")) ? "tag-green" : "tag-amber";
         return `
           <tr>
+            <td>
+              <input type="checkbox" class="ann-row-checkbox" value="${a._row}" onchange="updateAnnSelectionUI()" style="width:17px; height:17px; cursor:pointer; accent-color:var(--ink);">
+            </td>
             <td style="font-size:13px; font-weight:600; white-space:nowrap;">${escapeHtml(a.sentAt)}</td>
             <td><span class="tag tag-blue">${escapeHtml(a.title || "ANNOUNCEMENT")}</span></td>
-            <td style="max-width:360px; line-height:1.45;">${escapeHtml(a.message)}</td>
+            <td style="max-width:340px; line-height:1.45;">${escapeHtml(a.message)}</td>
             <td><strong>${a.recipientsCount}</strong> <span style="font-size:12px; color:var(--ink-muted);">employee(s)</span></td>
             <td><span class="tag ${tagCls}">${escapeHtml(a.status)}</span></td>
+            <td>
+              <button type="button" class="btn-kiosk-sm danger" onclick="deleteAnnouncementsByRows([${a._row}])">Delete</button>
+            </td>
           </tr>
         `;
       }).join("");
+      updateAnnSelectionUI();
+    }
+
+    function toggleSelectAllAnnouncements(checked) {
+      document.querySelectorAll('.ann-row-checkbox').forEach(cb => {
+        cb.checked = checked;
+      });
+      updateAnnSelectionUI();
+    }
+
+    function updateAnnSelectionUI() {
+      const allBoxes = Array.from(document.querySelectorAll('.ann-row-checkbox'));
+      const checkedBoxes = allBoxes.filter(cb => cb.checked);
+      const countLabel = document.getElementById('annSelectedCountLabel');
+      const delBtn = document.getElementById('btn-delete-selected-ann');
+      const selectAllCb = document.getElementById('annSelectAllCheckbox');
+
+      if (countLabel) countLabel.innerText = `${checkedBoxes.length} selected`;
+      if (delBtn) {
+        delBtn.disabled = checkedBoxes.length === 0;
+        delBtn.style.opacity = checkedBoxes.length === 0 ? "0.5" : "1";
+      }
+      if (selectAllCb) {
+        selectAllCb.checked = allBoxes.length > 0 && checkedBoxes.length === allBoxes.length;
+      }
+    }
+
+    function deleteSelectedAnnouncements() {
+      const rows = Array.from(document.querySelectorAll('.ann-row-checkbox:checked'))
+        .map(cb => Number(cb.value))
+        .filter(n => n >= 2);
+      if (!rows.length) return;
+      deleteAnnouncementsByRows(rows);
+    }
+
+    async function deleteAnnouncementsByRows(rowNumbers) {
+      const count = rowNumbers.length;
+      if (!confirm(`Delete ${count} selected announcement message${count > 1 ? 's' : ''}?`)) return;
+
+      const email = localStorage.getItem('mgrEmail') || "";
+      const pass = sessionStorage.getItem('mgrSessionPass') || "";
+      const delBtn = document.getElementById('btn-delete-selected-ann');
+      if (delBtn) delBtn.disabled = true;
+
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "DELETE_ANNOUNCEMENTS",
+            manager_email: email,
+            manager_password: pass,
+            row_numbers: rowNumbers
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          cachedAnnouncements = data.announcements || [];
+          document.getElementById('dock-count-announce').innerText = cachedAnnouncements.length;
+          renderAnnouncementsTable(cachedAnnouncements);
+        } else {
+          alert(data.error || "Unable to delete selected announcements.");
+          updateAnnSelectionUI();
+        }
+      } catch (e) {
+        alert("Connection error while deleting announcements.");
+        updateAnnSelectionUI();
+      }
     }
 
     async function submitSmsAnnouncement() {
