@@ -215,7 +215,7 @@
 
     .terminal-kpi-grid {
       display: grid;
-      grid-template-columns: 1.35fr 1fr 1fr 1fr 1fr;
+      grid-template-columns: 1.45fr 1fr 1fr 1fr 1fr;
       gap: 16px;
     }
     .terminal-kpi-card {
@@ -241,12 +241,20 @@
       color: #FFFFFF;
       border-color: var(--ink);
     }
+    .id-top-badges { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
     .id-dept-badge {
       display: inline-flex; align-items: center; gap: 6px;
       font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px;
       color: #34D399; background: rgba(52, 211, 153, 0.14);
       padding: 5px 11px; border-radius: 8px; width: fit-content;
     }
+    .id-code-pill {
+      font-family: monospace; font-size: 12px; font-weight: 800;
+      color: #FDE68A; background: rgba(251, 191, 36, 0.16);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      padding: 4px 10px; border-radius: 8px; cursor: pointer;
+    }
+    .id-code-pill:hover { background: rgba(251, 191, 36, 0.28); }
     .id-mgr-title { font-size: 20px; font-weight: 800; margin: 12px 0 3px 0; letter-spacing: -0.4px; }
     .id-sync-sub { font-size: 12px; color: #94A3B8; font-weight: 500; }
 
@@ -573,9 +581,52 @@
       font-size: 13.5px; font-family: 'Inter', sans-serif; width: 150px; font-weight: 600;
     }
 
+    /* --- COMPACT DEVELOPER MANAGER CONSOLE ("dev1234") --- */
+    .dev-console-card {
+      max-width: 820px;
+      padding: 0;
+      text-align: left;
+    }
+    .dev-header-bar {
+      background: var(--ink);
+      color: #FFFFFF;
+      padding: 24px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .dev-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #FDE68A;
+      background: rgba(251, 191, 36, 0.16);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+    .dev-title {
+      font-size: 21px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.4px;
+    }
+    .dev-sub {
+      font-size: 12.5px;
+      color: #94A3B8;
+      margin-top: 3px;
+    }
+
     /* --- EMPLOYEE KIOSK UI --- */
     .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 28px; }
-    .welcome-divider { width: 1px; height: 56px; background-color: var(--border); }
+    .welcome-divider { width: 1px; height: 64px; background-color: var(--border); }
 
     .avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; flex-shrink: 0; }
     .avatar {
@@ -613,8 +664,20 @@
     .welcome-text { text-align: left; }
     .welcome-text .small { font-size: 14px; color: var(--ink-muted); font-weight: 600; }
     .welcome-text .name { font-size: 24px; font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
-    .photo-action-hint { font-size: 11.5px; font-weight: 700; color: var(--emerald); cursor: pointer; display: inline-block; margin-top: 3px; }
+    .kiosk-meta-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 5px;
+    }
+    .photo-action-hint { font-size: 11.5px; font-weight: 700; color: var(--emerald); cursor: pointer; display: inline-block; }
     .photo-action-hint:hover { text-decoration: underline; }
+    .mgr-pill-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 800; font-family: monospace;
+      padding: 3px 9px; border-radius: 8px;
+      background: var(--blue-bg); color: var(--blue);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+      cursor: pointer; transition: all 0.14s ease;
+    }
+    .mgr-pill-btn:hover { background: #DBEAFE; border-color: var(--blue); }
 
     .clock-section { margin-bottom: 32px; }
     .time-display { font-size: 74px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -2.5px; font-variant-numeric: tabular-nums; }
@@ -639,20 +702,26 @@
     .otp-fallback-link { font-size: 13px; color: var(--ink-muted); font-weight: 600; cursor: pointer; display: inline-block; margin-top: 6px; }
     .otp-fallback-link:hover { color: var(--ink); text-decoration: underline; }
 
-    #otp-section {
-      max-width: 360px; margin: 0 auto; padding: 24px;
+    #otp-section, #switch-mgr-section {
+      max-width: 380px; margin: 0 auto; padding: 24px;
       background: var(--surface-recessed); border-radius: 18px; border: 1.5px solid var(--border);
       display: none;
     }
-    #otp-section h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 800; }
-    #otp-info-text { font-size: 13px; color: var(--ink-muted); margin: 0 0 16px 0; }
+    #otp-section h3, #switch-mgr-section h3 { margin: 0 0 6px 0; font-size: 17px; font-weight: 800; }
+    #otp-info-text, #switch-mgr-info { font-size: 13px; color: var(--ink-muted); margin: 0 0 16px 0; line-height: 1.45; }
     #otp-code-input {
       width: 100%; padding: 12px; font-size: 24px; font-weight: 700;
       text-align: center; letter-spacing: 6px; border-radius: 12px;
       border: 1.5px solid var(--border); background: #FFF; margin-bottom: 12px;
       font-family: 'Inter', sans-serif;
     }
-    #otp-status-msg { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
+    #newMgrCodeInput {
+      width: 100%; padding: 12px 14px; font-size: 18px; font-weight: 800;
+      text-align: center; letter-spacing: 2px; border-radius: 12px;
+      border: 1.5px solid var(--border); background: #FFF; margin-bottom: 12px;
+      font-family: 'Inter', sans-serif; text-transform: uppercase;
+    }
+    #otp-status-msg, #switch-mgr-status { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
 
     .status-bar { border-top: 1.5px solid var(--border); display: flex; background: var(--surface-recessed); }
     .status-col { flex: 1; padding: 20px 28px; display: flex; align-items: center; gap: 14px; text-align: left; }
@@ -756,7 +825,10 @@
     <!-- Top KPI Strip -->
     <div class="terminal-kpi-grid">
       <div class="terminal-kpi-card terminal-id-card">
-        <div class="id-dept-badge" id="deck-mgr-dept">OPERATIONS</div>
+        <div class="id-top-badges">
+          <div class="id-dept-badge" id="deck-mgr-dept">OPERATIONS</div>
+          <div class="id-code-pill" id="deck-mgr-code" onclick="copyManagerCode()" title="Click to copy your Manager Code for employees">CODE: PD-0000</div>
+        </div>
         <div>
           <div class="id-mgr-title" id="deck-mgr-name">MANAGER NAME</div>
           <div class="id-sync-sub" id="deck-sync-time">Auto-syncing terminal</div>
@@ -1110,18 +1182,18 @@
       <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
     </div>
 
-    <!-- MANAGER STEP 1: REGISTRATION FORM (ALL UPPERCASE ON NAME & DEPT) -->
+    <!-- MANAGER STEP 1: REGISTRATION FORM (Auto-Creates Dedicated Spreadsheet) -->
     <div id="manager-setup" class="card setup-card">
       <div class="form-icon-header">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
       </div>
       <h2>Manager Registration</h2>
-      <p>Create your manager account to access team attendance records.</p>
+      <p>Create your manager account and automatically generate a dedicated Google Spreadsheet for your team.</p>
       <label>Full Name</label>
       <input type="text" id="mgrName" class="uppercase-field" placeholder="E.G. JANE SMITH" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Department</label>
       <input type="text" id="mgrDept" class="uppercase-field" placeholder="E.G. OPERATIONS" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
-      <label>Work Email</label>
+      <label>Work Email (Used to share your spreadsheet)</label>
       <input type="email" id="mgrEmail" placeholder="e.g. jane.smith@company.com" autocomplete="off">
       <button class="btn-save" onclick="proceedToDevPass()">Continue to Verification</button>
       <span class="sub-link" onclick="openManagerLogin()">Already registered? Log in here</span>
@@ -1154,7 +1226,7 @@
       <button class="btn-save" id="btn-save-mgr" onclick="completeManagerRegistration()">Save Password & Open Dashboard</button>
     </div>
 
-    <!-- MANAGER RETURNING LOGIN -->
+    <!-- MANAGER RETURNING LOGIN (Also accepts "dev1234" to open Developer Manager Console) -->
     <div id="manager-login" class="card setup-card">
       <div class="form-icon-header">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
@@ -1171,13 +1243,44 @@
       <span class="sub-link" onclick="switchCard('manager-setup')">Register a new manager account</span>
     </div>
 
-    <!-- EMPLOYEE INITIAL REGISTRATION (ALL UPPERCASE ON NAME & TEAM) -->
+    <!-- DEVELOPER MANAGER CONSOLE (Triggered via "dev1234" in Manager Login) -->
+    <div id="dev-manager-console" class="card dev-console-card">
+      <div class="dev-header-bar">
+        <div>
+          <div class="dev-badge">Developer Override • dev1234</div>
+          <h2 class="dev-title">Manager Account Registry</h2>
+          <div class="dev-sub">Clear any manager account to reset their access back to registration</div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button type="button" class="btn-kiosk-sm" onclick="refreshDevManagers()">Refresh</button>
+          <button type="button" class="btn-kiosk-sm danger" onclick="showRoleSelector()">Exit Dev</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="deck-table">
+          <thead>
+            <tr>
+              <th>Manager & Dept</th>
+              <th>Email</th>
+              <th>Manager Code</th>
+              <th>Created</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="dev-managers-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE INITIAL REGISTRATION (Requires Manager PD-XXXX Code) -->
     <div id="laptop-setup" class="card setup-card">
       <div class="form-icon-header">
         <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
       </div>
       <h2>Kiosk Device Setup</h2>
-      <p>Register your profile to bind this workstation as your personal attendance kiosk.</p>
+      <p>Register your profile and enter your Manager's PD-XXXX code to link your attendance sheet.</p>
+      <label>Manager Code (Required • e.g. PD-1234)</label>
+      <input type="text" id="empMgrCode" class="uppercase-field" placeholder="PD-XXXX" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Employee Name</label>
       <input type="text" id="empName" class="uppercase-field" placeholder="E.G. JOHN DOE" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Team / Department</label>
@@ -1185,7 +1288,27 @@
       <label>Work Email (For Backup OTP)</label>
       <input type="email" id="empEmail" placeholder="e.g. john.doe@company.com" autocomplete="off">
       <button class="btn-save" id="btn-register-laptop" onclick="registerLaptop()">Secure Device & Continue</button>
-      <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
+      <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <span class="sub-link" style="margin-top:0; color:var(--emerald);" onclick="switchCard('employee-recover')">Cleared browser cache? Restore Existing Kiosk →</span>
+        <span class="sub-link" style="margin-top:0;" onclick="showRoleSelector()">← Back to Portal Selection</span>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE KIOSK RECOVERY -->
+    <div id="employee-recover" class="card setup-card">
+      <div class="form-icon-header" style="background:var(--blue-bg); color:var(--blue);">
+        <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+      </div>
+      <h2>Restore Existing Kiosk</h2>
+      <p>Enter your registered Work Email and 4-digit PIN to restore your profile and photo.</p>
+      <label>Manager Code (e.g. PD-1234)</label>
+      <input type="text" id="recMgrCode" class="uppercase-field" placeholder="PD-XXXX" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+      <label>Registered Work Email</label>
+      <input type="email" id="recEmail" placeholder="e.g. john.doe@company.com" autocomplete="email">
+      <label>Your 4-Digit Auth PIN</label>
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="recPin" class="masked-input" placeholder="••••" style="text-align: center; font-size: 24px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') submitKioskRecovery()">
+      <button class="btn-save" id="btn-recover-kiosk" onclick="submitKioskRecovery()">Restore My Kiosk</button>
+      <span class="sub-link" onclick="switchCard('laptop-setup')">← Back to New Device Setup</span>
     </div>
 
     <!-- UPDATE MISSING EMAIL PROMPT -->
@@ -1239,8 +1362,13 @@
 
           <div class="welcome-text">
             <span class="small">Welcome back,</span><br>
-            <span class="name" id="kiosk-name">EMPLOYEE NAME</span><br>
-            <span class="photo-action-hint" id="photo-action-hint" onclick="triggerPhotoUpload()">+ Add Profile Photo</span>
+            <span class="name" id="kiosk-name">EMPLOYEE NAME</span>
+            <div class="kiosk-meta-row">
+              <span class="photo-action-hint" id="photo-action-hint" onclick="triggerPhotoUpload()">+ Add Profile Photo</span>
+              <button type="button" class="mgr-pill-btn" id="kiosk-mgr-badge" onclick="openSwitchManager()" title="Click to view or change your saved Manager PD Code">
+                MGR: SET PD-XXXX
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1267,6 +1395,16 @@
             </button>
           </div>
           <span class="otp-fallback-link" onclick="startEmailOTP()">Can't scan QR? Use Email OTP</span>
+        </div>
+
+        <!-- Switch Manager PD-XXXX Inline Panel -->
+        <div id="switch-mgr-section">
+          <h3>Manager Workspace (PD-XXXX)</h3>
+          <p id="switch-mgr-info">Enter your manager's PD-XXXX code to route all attendance logs to their spreadsheet.</p>
+          <input type="text" id="newMgrCodeInput" placeholder="PD-XXXX" maxlength="12" oninput="this.value = this.value.toUpperCase()" onkeydown="if(event.key==='Enter') submitSwitchManager()">
+          <button class="btn-save" id="btn-switch-mgr" onclick="submitSwitchManager()">Save Manager Code</button>
+          <div id="switch-mgr-status"></div>
+          <span class="cancel-link" onclick="cancelSwitchManager()">Cancel</span>
         </div>
 
         <!-- Email OTP Section -->
@@ -1339,7 +1477,7 @@
 
   <script>
     // =========================================================================
-    // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
+    // MAIN SPREADSHEET WEB APP URL (Single Backend Code Endpoint)
     // =========================================================================
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxZxXqtW1_Olqvux2zHJN_cTeG0bpBHypvcv2LH4bjvXoBsJv4KJdtTTQuFIGYDdHcl2w/exec";
 
@@ -1361,6 +1499,24 @@
     let chartInstances = {};
     let serverTodayStr = "";
     window.shiftStartTime = null;
+
+    function getEmployeeRoutingPayload() {
+      return {
+        manager_code: localStorage.getItem('empManagerCode') || "",
+        target_sheet_id: localStorage.getItem('empTargetSheetId') || ""
+      };
+    }
+
+    function copyManagerCode() {
+      const code = localStorage.getItem('mgrCode');
+      if (!code) return;
+      if (navigator.clipboard) navigator.clipboard.writeText(code);
+      const pill = document.getElementById("deck-mgr-code");
+      if (pill) {
+        pill.innerText = `COPIED: ${code}`;
+        setTimeout(() => { pill.innerText = `CODE: ${code}`; }, 1800);
+      }
+    }
 
     try {
       const savedPhotoCache = localStorage.getItem('mgrMemberPhotoCache');
@@ -1427,7 +1583,7 @@
       qrExpiryTimer = null;
       window.shiftStartTime = null;
 
-      ['empName', 'team', 'empEmail', 'authCode', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
+      ['empName', 'team', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
         localStorage.removeItem(k);
       });
       switchCard('laptop-setup');
@@ -1492,7 +1648,7 @@
       switchCard('role-selector');
     }
 
-    // --- EMPLOYEE ENTRY & AUTH CODE LOGIN ROUTING ---
+    // --- EMPLOYEE ENTRY, AUTH CODE LOGIN, RECOVERY & MANAGER SWITCH ---
     function selectEmployeeRole() {
       const savedName = (localStorage.getItem('empName') || "").toUpperCase();
       const authCode = localStorage.getItem('authCode');
@@ -1528,19 +1684,168 @@
       openEmployeeKiosk();
     }
 
+    async function submitKioskRecovery() {
+      const mgrCode = document.getElementById('recMgrCode').value.trim().toUpperCase();
+      const email = document.getElementById('recEmail').value.trim().toLowerCase();
+      const pin = document.getElementById('recPin').value.trim();
+      const btn = document.getElementById('btn-recover-kiosk');
+
+      if (!email || email.indexOf("@") < 1) return alert("Please enter your registered Work Email.");
+      if (!pin || pin.length !== 4) return alert("Please enter your 4-digit Auth PIN.");
+
+      btn.disabled = true;
+      btn.innerText = "Restoring Kiosk...";
+
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "RECOVER_MEMBER",
+            manager_code: mgrCode,
+            email: email,
+            auth_pin: pin
+          })
+        });
+        const data = await res.json();
+        if (data.ok && data.member) {
+          localStorage.setItem('empName', data.member.name.toUpperCase());
+          localStorage.setItem('team', data.member.team.toUpperCase());
+          localStorage.setItem('empEmail', data.member.email.toLowerCase());
+          localStorage.setItem('authCode', data.member.authPin);
+          localStorage.setItem('empManagerCode', data.managerCode || mgrCode);
+          localStorage.setItem('empTargetSheetId', data.targetSheetId || "");
+          if (data.member.fileId) localStorage.setItem('profileFileId', data.member.fileId);
+          if (data.profileDataUrl) localStorage.setItem('profileDataUrl', data.profileDataUrl);
+
+          alert(`Welcome back, ${data.member.name}! Your kiosk has been restored.`);
+          openEmployeeKiosk();
+        } else {
+          alert(data.error || "Unable to recover account.");
+        }
+      } catch (e) {
+        alert("Connection error while restoring kiosk.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Restore My Kiosk";
+      }
+    }
+
+    function updateKioskManagerBadge() {
+      const badge = document.getElementById('kiosk-mgr-badge');
+      if (!badge) return;
+      const savedCode = (localStorage.getItem('empManagerCode') || "").toUpperCase();
+      if (savedCode) {
+        badge.innerText = `MGR: ${savedCode} • Switch`;
+        badge.style.background = "var(--blue-bg)";
+        badge.style.color = "var(--blue)";
+      } else {
+        badge.innerText = `⚠️ SET PD-XXXX CODE`;
+        badge.style.background = "var(--amber-bg)";
+        badge.style.color = "var(--amber)";
+      }
+    }
+
     function openEmployeeKiosk() {
       const savedName = (localStorage.getItem('empName') || "").toUpperCase();
       switchCard('laptop-kiosk');
       document.getElementById('kiosk-name').innerText = savedName;
+      updateKioskManagerBadge();
 
       const cachedDataUrl = localStorage.getItem('profileDataUrl');
       const cachedFileId = localStorage.getItem('profileFileId');
       if (cachedDataUrl || cachedFileId) applyProfilePhoto(cachedDataUrl, cachedFileId);
 
+      const hasRouting = Boolean(localStorage.getItem('empTargetSheetId') || localStorage.getItem('empManagerCode'));
+      if (!hasRouting) {
+        document.getElementById('kiosk-loading').style.display = 'none';
+        openSwitchManager();
+        return;
+      }
+
       fetchLiveStatus(false);
     }
 
-    // --- MANAGER ENTRY, REGISTRATION & TERMINAL DECK ---
+    function openSwitchManager() {
+      const currentCode = (localStorage.getItem('empManagerCode') || "").toUpperCase();
+      document.getElementById('action-section').style.display = 'none';
+      document.getElementById('otp-section').style.display = 'none';
+      document.getElementById('qr-section').style.display = 'none';
+      document.getElementById('switch-mgr-section').style.display = 'block';
+
+      document.getElementById('switch-mgr-info').innerText = currentCode
+        ? `Current Manager Code: ${currentCode}. Enter a new PD-XXXX code below to switch workspaces.`
+        : `Enter your manager's PD-XXXX code so your attendance saves directly into their spreadsheet.`;
+      document.getElementById('newMgrCodeInput').value = currentCode;
+      document.getElementById('switch-mgr-status').innerText = "";
+      setTimeout(() => {
+        const inp = document.getElementById('newMgrCodeInput');
+        inp.focus();
+        inp.select();
+      }, 80);
+    }
+
+    function cancelSwitchManager() {
+      document.getElementById('switch-mgr-section').style.display = 'none';
+      document.getElementById('action-section').style.display = 'block';
+    }
+
+    async function submitSwitchManager() {
+      const newCode = document.getElementById('newMgrCodeInput').value.trim().toUpperCase();
+      const statusEl = document.getElementById('switch-mgr-status');
+      const btn = document.getElementById('btn-switch-mgr');
+
+      if (!newCode) {
+        statusEl.style.color = "var(--crimson)";
+        statusEl.innerText = "Please enter a valid PD-XXXX Manager Code.";
+        return;
+      }
+
+      btn.disabled = true;
+      statusEl.style.color = "var(--ink)";
+      statusEl.innerText = "Connecting to manager workspace...";
+
+      try {
+        const routing = getEmployeeRoutingPayload();
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "SWITCH_MANAGER",
+            employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
+            team: (localStorage.getItem('team') || "").toUpperCase(),
+            email: (localStorage.getItem('empEmail') || "").toLowerCase(),
+            auth_pin: localStorage.getItem('authCode') || "",
+            profile_file_id: localStorage.getItem('profileFileId') || "",
+            new_manager_code: newCode,
+            ...routing
+          })
+        });
+        const result = await res.json();
+        if (result.ok) {
+          localStorage.setItem('empManagerCode', result.managerCode || newCode);
+          localStorage.setItem('empTargetSheetId', result.targetSheetId || "");
+          updateKioskManagerBadge();
+
+          statusEl.style.color = "var(--emerald)";
+          statusEl.innerText = "✅ " + result.message;
+          setTimeout(() => {
+            document.getElementById('switch-mgr-section').style.display = 'none';
+            fetchLiveStatus(false);
+          }, 1000);
+        } else {
+          statusEl.style.color = "var(--crimson)";
+          statusEl.innerText = "❌ " + (result.error || "Unable to switch manager.");
+        }
+      } catch (e) {
+        statusEl.style.color = "var(--crimson)";
+        statusEl.innerText = "❌ Connection error while switching manager.";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // --- MANAGER ENTRY, REGISTRATION & DEVELOPER CONSOLE ("dev1234") ---
     function selectManagerRole() {
       const savedMgrEmail = localStorage.getItem('mgrEmail');
       if (savedMgrEmail) {
@@ -1623,7 +1928,7 @@
       if (!pendingManagerDraft) return switchCard('manager-setup');
 
       btn.disabled = true;
-      btn.innerText = "Creating Account...";
+      btn.innerText = "Creating Spreadsheet & Account...";
 
       try {
         const res = await fetch(GOOGLE_URL, {
@@ -1643,6 +1948,8 @@
           localStorage.setItem('mgrName', data.manager.name.toUpperCase());
           localStorage.setItem('mgrDept', data.manager.department.toUpperCase());
           localStorage.setItem('mgrEmail', data.manager.email.toLowerCase());
+          localStorage.setItem('mgrCode', data.manager.managerCode || "");
+          localStorage.setItem('mgrTargetSheetId', data.manager.spreadsheetId || "");
           sessionStorage.setItem('mgrSessionPass', newPass);
           serverTodayStr = data.today || "";
           openTerminalDashboard(data.manager, data.records || [], data.members || []);
@@ -1664,6 +1971,35 @@
 
       if (!password) return alert("Please enter your manager password.");
 
+      // Developer Shortcut: typing "dev1234" opens the compact Dev Manager Console
+      if (password === "dev1234") {
+        btn.disabled = true;
+        btn.innerText = "Opening Dev Console...";
+        try {
+          const res = await fetch(GOOGLE_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: "DEV_LIST_MANAGERS",
+              dev_pass: password
+            })
+          });
+          const data = await res.json();
+          if (data.ok) {
+            sessionStorage.setItem('devDashboardPass', password);
+            openDevManagerConsole(data.managers || []);
+          } else {
+            alert(data.error || "Invalid developer code.");
+          }
+        } catch (e) {
+          alert("Connection error while opening Developer Console.");
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "Access Dashboard";
+        }
+        return;
+      }
+
       btn.disabled = true;
       btn.innerText = "Authenticating...";
 
@@ -1683,8 +2019,13 @@
           localStorage.setItem('mgrName', data.manager.name.toUpperCase());
           localStorage.setItem('mgrDept', data.manager.department.toUpperCase());
           localStorage.setItem('mgrEmail', data.manager.email.toLowerCase());
+          localStorage.setItem('mgrCode', data.manager.managerCode || "");
+          localStorage.setItem('mgrTargetSheetId', data.manager.spreadsheetId || "");
           sessionStorage.setItem('mgrSessionPass', password);
           serverTodayStr = data.today || "";
+          if (data.migrated) {
+            alert(`Workspace upgraded! Your existing team records were automatically migrated into your new dedicated spreadsheet (Code: ${data.manager.managerCode}).`);
+          }
           openTerminalDashboard(data.manager, data.records || [], data.members || []);
         } else {
           alert(data.error || "Invalid credentials.");
@@ -1694,6 +2035,85 @@
       } finally {
         btn.disabled = false;
         btn.innerText = "Access Dashboard";
+      }
+    }
+
+    function openDevManagerConsole(managers) {
+      switchCard('dev-manager-console');
+      document.getElementById('nav-sub-label').innerText = "Developer Manager Console";
+      renderDevManagersTable(managers);
+    }
+
+    async function refreshDevManagers() {
+      const devPass = sessionStorage.getItem('devDashboardPass') || "";
+      if (!devPass) return openManagerLogin();
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: "DEV_LIST_MANAGERS", dev_pass: devPass })
+        });
+        const data = await res.json();
+        if (data.ok) renderDevManagersTable(data.managers || []);
+        else alert(data.error || "Failed to refresh.");
+      } catch (e) {
+        alert("Connection error.");
+      }
+    }
+
+    function renderDevManagersTable(managers) {
+      const tbody = document.getElementById('dev-managers-body');
+      if (!managers.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">No registered managers found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = managers.map(m => `
+        <tr>
+          <td>
+            <div class="person-name">${escapeHtml(m.name)}</div>
+            <div class="person-team">${escapeHtml(m.department)}</div>
+          </td>
+          <td style="color:var(--ink-secondary); font-weight:600;">${escapeHtml(m.email)}</td>
+          <td><span class="tag tag-amber" style="font-family:monospace;">${escapeHtml(m.managerCode)}</span></td>
+          <td style="font-size:12.5px; color:var(--ink-muted);">${escapeHtml(m.createdAt || "—")}</td>
+          <td>
+            <button type="button" class="btn-kiosk-sm danger" onclick="devClearManagerAccount('${escapeAttr(m.email)}', '${escapeAttr(m.name)}')">
+              Clear & Reset to Reg
+            </button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function devClearManagerAccount(mgrEmail, mgrName) {
+      if (!confirm(`Clear manager account for ${mgrName} (${mgrEmail})? This will remove their manager login so they can re-register.`)) return;
+
+      const devPass = sessionStorage.getItem('devDashboardPass') || "";
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "DEV_REMOVE_MANAGER",
+            dev_pass: devPass,
+            target_email: mgrEmail
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          alert(data.message);
+          const localMgrEmail = String(localStorage.getItem('mgrEmail') || "").trim().toLowerCase();
+          if (localMgrEmail && localMgrEmail === mgrEmail.toLowerCase()) {
+            ['mgrName', 'mgrDept', 'mgrEmail', 'mgrCode', 'mgrTargetSheetId'].forEach(k => localStorage.removeItem(k));
+            sessionStorage.removeItem('mgrSessionPass');
+          }
+          renderDevManagersTable(data.managers || []);
+        } else {
+          alert(data.error || "Unable to clear manager account.");
+        }
+      } catch (e) {
+        alert("Connection error while clearing manager account.");
       }
     }
 
@@ -1766,6 +2186,8 @@
 
       document.getElementById('deck-mgr-name').innerText = String(manager.name || "MANAGER").toUpperCase();
       document.getElementById('deck-mgr-dept').innerText = String(manager.department || "OPERATIONS").toUpperCase();
+      const mgrCode = manager.managerCode || localStorage.getItem('mgrCode') || "PD-0000";
+      document.getElementById('deck-mgr-code').innerText = `CODE: ${mgrCode}`;
 
       const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       document.getElementById('deck-sync-time').innerText = `Live synced • ${nowTime}`;
@@ -1802,12 +2224,9 @@
     function parseHoursValue(rawHours) {
       if (!rawHours) return 0;
       const s = String(rawHours).trim();
-      // Format 1: Decimal hours (e.g. "8.25")
       if (/^\d+(\.\d+)?$/.test(s)) return parseFloat(s);
-      // Format 2: "0:00:48" (0 hrs, 0 mins, 48 secs)
       const hms = s.match(/^(\d+):(\d{2}):(\d{2})$/);
       if (hms) return parseInt(hms[1], 10) + (parseInt(hms[2], 10) / 60) + (parseInt(hms[3], 10) / 3600);
-      // Format 3: "0:42" (0 hrs, 42 mins)
       const hm = s.match(/^(\d+):(\d{2})$/);
       if (hm) return parseInt(hm[1], 10) + (parseInt(hm[2], 10) / 60);
       return 0;
@@ -1836,7 +2255,6 @@
         ? cachedManagerRecords
         : cachedManagerRecords.filter(r => String(r.team || "").trim().toUpperCase() === teamFilter);
 
-      // 1. Aggregate KPI Highlights
       let totalHours = 0;
       let completedCount = 0;
       let onsiteCount = 0;
@@ -1884,13 +2302,11 @@
       document.getElementById('ins-onsite-share').innerText = `${onsitePct}% Onsite`;
       document.getElementById('ins-top-team').innerText = topTeam;
 
-      // Destroy old charts cleanly before re-rendering
       Object.values(chartInstances).forEach(ch => { if (ch) ch.destroy(); });
       chartInstances = {};
 
       const baseFont = { family: "'Inter', sans-serif", weight: '600' };
 
-      // 2. Daily Shift & Hours Trend (Last 7 Recorded Dates)
       const sortedDates = Object.keys(dailyMap).sort().slice(-7);
       const trendCtx = document.getElementById('chart-daily-trend');
       if (trendCtx) {
@@ -1935,7 +2351,6 @@
         });
       }
 
-      // 3. Work Arrangement Doughnut Chart
       const modeCtx = document.getElementById('chart-work-mode');
       if (modeCtx) {
         chartInstances.mode = new Chart(modeCtx, {
@@ -1961,7 +2376,6 @@
         });
       }
 
-      // 4. Total Hours by Team (Horizontal Bar Chart)
       const teamCtx = document.getElementById('chart-team-hours');
       if (teamCtx) {
         const topTeams = sortedTeams.slice(0, 6);
@@ -1990,7 +2404,6 @@
         });
       }
 
-      // 5. Peak Check-In Hours Distribution
       const hourCtx = document.getElementById('chart-checkin-hours');
       if (hourCtx) {
         const sortedHours = Object.keys(hourBucketMap).map(Number).sort((a, b) => a - b);
@@ -2030,7 +2443,7 @@
         : members.filter(m => String(m.team || "").trim().toUpperCase() === selectedTeam);
 
       if (!visibleMembers.length) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--ink-muted);">No team members found for this filter.</div>`;
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--ink-muted);">No team members registered under this Manager Code yet.</div>`;
         return;
       }
 
@@ -2256,7 +2669,7 @@
           if (deviceAction === "REMOVE") {
             const localEmp = String(localStorage.getItem('empName') || "").trim().toLowerCase();
             if (localEmp && localEmp === String(empName).trim().toLowerCase()) {
-              ['empName', 'team', 'empEmail', 'authCode', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
+              ['empName', 'team', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
                 localStorage.removeItem(k);
               });
             }
@@ -2266,7 +2679,8 @@
             {
               name: localStorage.getItem('mgrName') || "MANAGER",
               department: localStorage.getItem('mgrDept') || "",
-              email: email
+              email: email,
+              managerCode: localStorage.getItem('mgrCode') || ""
             },
             cachedManagerRecords,
             cachedManagerMembers
@@ -2337,7 +2751,8 @@
             {
               name: localStorage.getItem('mgrName') || "MANAGER",
               department: localStorage.getItem('mgrDept') || "",
-              email: email
+              email: email,
+              managerCode: localStorage.getItem('mgrCode') || ""
             },
             data.records || [],
             cachedManagerMembers
@@ -2384,6 +2799,7 @@
       const statusMsg = document.getElementById('otp-status-msg');
 
       actionSection.style.display = 'none';
+      document.getElementById('switch-mgr-section').style.display = 'none';
       otpSection.style.display = 'block';
       infoText.innerText = "Sending 6-digit code to your registered email...";
       otpInput.value = "";
@@ -2392,13 +2808,15 @@
       statusMsg.innerText = "";
 
       try {
+        const routing = getEmployeeRoutingPayload();
         const response = await fetch(GOOGLE_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "SEND_OTP",
             employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
-            team: (localStorage.getItem('team') || "").toUpperCase()
+            team: (localStorage.getItem('team') || "").toUpperCase(),
+            ...routing
           })
         });
         const result = await response.json();
@@ -2446,6 +2864,7 @@
       }
 
       try {
+        const routing = getEmployeeRoutingPayload();
         const response = await fetch(GOOGLE_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2455,7 +2874,8 @@
             otp_code: otpCode,
             employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
             team: (localStorage.getItem('team') || "").toUpperCase(),
-            work_arrangement: document.getElementById('arrangement').value
+            work_arrangement: document.getElementById('arrangement').value,
+            ...routing
           })
         });
         const result = await response.json();
@@ -2575,6 +2995,7 @@
           applyProfilePhoto(dataUrl, "");
 
           try {
+            const routing = getEmployeeRoutingPayload();
             const response = await fetch(GOOGLE_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2584,7 +3005,8 @@
                 team: (localStorage.getItem('team') || "").toUpperCase(),
                 device_id: "Kiosk-Upload",
                 image_base64: base64String,
-                mime_type: "image/jpeg"
+                mime_type: "image/jpeg",
+                ...routing
               })
             });
 
@@ -2614,7 +3036,7 @@
       reader.readAsDataURL(file);
     }
 
-    async function initPhoneProfilePhoto(empName, empTeam, photoId) {
+    async function initPhoneProfilePhoto(empName, empTeam, photoId, targetSheetId, mgrCode) {
       const cacheKey = `phonePhoto_${empName}`;
       const cacheIdKey = `phonePhotoId_${empName}`;
       const cached = localStorage.getItem(cacheKey);
@@ -2639,7 +3061,9 @@
             action: "GET_DATA",
             employee_name: empName.toUpperCase(),
             team: empTeam.toUpperCase(),
-            device_id: getOrCreateMobileDeviceId()
+            device_id: getOrCreateMobileDeviceId(),
+            target_sheet_id: targetSheetId || "",
+            manager_code: mgrCode || ""
           })
         });
         const result = await response.json();
@@ -2727,6 +3151,7 @@
       }
 
       try {
+        const routing = getEmployeeRoutingPayload();
         const response = await fetch(GOOGLE_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2735,7 +3160,8 @@
             employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
             team: (localStorage.getItem('team') || "").toUpperCase(),
             device_id: "Kiosk-Sync",
-            skip_photo: isSilentPolling
+            skip_photo: isSilentPolling,
+            ...routing
           })
         });
         
@@ -2775,7 +3201,8 @@
                   action: "SYNC_PIN",
                   employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
                   team: (localStorage.getItem('team') || "").toUpperCase(),
-                  auth_pin: localPin
+                  auth_pin: localPin,
+                  ...routing
                 })
               }).catch(() => {});
             }
@@ -2810,6 +3237,13 @@
             currentShiftState = newShiftState;
             renderUIState(result);
           }
+        } else {
+          if (!isSilentPolling) {
+            loadingState.style.display = 'none';
+            openSwitchManager();
+            document.getElementById('switch-mgr-status').style.color = "var(--crimson)";
+            document.getElementById('switch-mgr-status').innerText = result.error || "Please enter your PD-XXXX Manager Code.";
+          }
         }
       } catch (error) {
         if (!isSilentPolling) {
@@ -2831,6 +3265,7 @@
       document.getElementById('kiosk-loading').style.display = 'none';
       document.getElementById('qr-section').style.display = 'none';
       document.getElementById('otp-section').style.display = 'none';
+      document.getElementById('switch-mgr-section').style.display = 'none';
       document.getElementById('action-section').style.display = 'block';
 
       if (result.openRecord) {
@@ -2869,6 +3304,8 @@
         const empTeam = (urlParams.get('team') || "").toUpperCase();
         const arrText = urlParams.get('arr') || 'Onsite';
         const photoId = urlParams.get('photo') || "";
+        const targetSheetId = urlParams.get('sheet') || "";
+        const mgrCode = urlParams.get('mcode') || "";
         const qrTs = Number(urlParams.get('ts') || 0);
         
         document.getElementById('phone-greeting').innerText = empName;
@@ -2895,7 +3332,7 @@
           }, 500);
         }
 
-        initPhoneProfilePhoto(empName, empTeam, photoId);
+        initPhoneProfilePhoto(empName, empTeam, photoId, targetSheetId, mgrCode);
       }
     } else {
       if (isMobile) {
@@ -2908,11 +3345,13 @@
     }
 
     async function registerLaptop() {
+      const mgrCode = document.getElementById('empMgrCode').value.trim().toUpperCase();
       const name = document.getElementById('empName').value.trim().toUpperCase();
       const team = document.getElementById('team').value.trim().toUpperCase();
       const email = document.getElementById('empEmail').value.trim().toLowerCase();
       const btn = document.getElementById('btn-register-laptop');
 
+      if (!mgrCode) return alert("Please enter your Manager Code (e.g. PD-1234).");
       if (!name || !team || !email) return alert("Please complete all fields including your email.");
       if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
 
@@ -2930,7 +3369,8 @@
             employee_name: name,
             team: team,
             email: email,
-            auth_pin: newAuthCode
+            auth_pin: newAuthCode,
+            manager_code: mgrCode
           })
         });
         const result = await response.json();
@@ -2946,6 +3386,8 @@
         localStorage.setItem('team', team);
         localStorage.setItem('empEmail', email);
         localStorage.setItem('authCode', newAuthCode);
+        localStorage.setItem('empManagerCode', result.managerCode || mgrCode);
+        localStorage.setItem('empTargetSheetId', result.targetSheetId || "");
 
         switchCard('laptop-reveal');
         document.getElementById('auth-code-display').innerText = newAuthCode;
@@ -2966,6 +3408,7 @@
       btn.innerText = "Saving Email...";
 
       try {
+        const routing = getEmployeeRoutingPayload();
         const response = await fetch(GOOGLE_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2974,7 +3417,8 @@
             employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
             team: (localStorage.getItem('team') || "").toUpperCase(),
             email: email,
-            auth_pin: localStorage.getItem('authCode') || ""
+            auth_pin: localStorage.getItem('authCode') || "",
+            ...routing
           })
         });
         const result = await response.json();
@@ -3008,8 +3452,15 @@
       const name = (localStorage.getItem('empName') || "").toUpperCase();
       const team = (localStorage.getItem('team') || "").toUpperCase();
       const photoId = localStorage.getItem('profileFileId') || "";
+      const targetSheetId = localStorage.getItem('empTargetSheetId') || "";
+      const mgrCode = localStorage.getItem('empManagerCode') || "";
       const arrangement = document.getElementById('arrangement').value;
       const qrTimestamp = Date.now();
+
+      if (!targetSheetId && !mgrCode) {
+        openSwitchManager();
+        return;
+      }
 
       expectedTargetState = (actionType === 'TIME_IN') ? 'ACTIVE' : 'CHECKED_OUT';
 
@@ -3018,7 +3469,7 @@
       }
 
       const currentWebsite = window.location.origin + window.location.pathname;
-      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&photo=${encodeURIComponent(photoId)}&ts=${qrTimestamp}`;
+      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&photo=${encodeURIComponent(photoId)}&sheet=${encodeURIComponent(targetSheetId)}&mcode=${encodeURIComponent(mgrCode)}&ts=${qrTimestamp}`;
       const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
       
       document.getElementById('qr-image').src = qrImageUrl;
@@ -3086,7 +3537,9 @@
         device_id: mobileDeviceId,
         work_arrangement: urlParams.get('arr'),
         entered_pin: enteredCode,
-        qr_ts: qrTimestamp
+        qr_ts: qrTimestamp,
+        target_sheet_id: urlParams.get('sheet') || "",
+        manager_code: urlParams.get('mcode') || ""
       };
 
       try {
