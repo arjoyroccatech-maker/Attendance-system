@@ -1134,6 +1134,35 @@
       .emp-cal-summary { grid-template-columns: 1fr; }
     }
 
+    .setup-card select {
+      width: 100%; padding: 14px 16px; margin-bottom: 18px;
+      border-radius: 12px; border: 1.5px solid var(--border);
+      background: var(--surface-recessed); color: var(--ink);
+      font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .setup-card select:focus { outline: none; background: #FFFFFF; border-color: var(--ink); box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.08); }
+    .setup-card select:disabled { opacity: 0.65; cursor: not-allowed; }
+    .mgr-lookup-hint {
+      font-size: 12px; font-weight: 700; text-align: left;
+      margin: -12px 0 14px 2px; min-height: 16px;
+    }
+    .team-chip-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 10px;
+      background: #FFFFFF; border: 1.5px solid var(--border);
+      font-size: 12.5px; font-weight: 800; color: var(--ink);
+    }
+    .team-chip-del {
+      background: var(--crimson-bg); color: var(--crimson);
+      border: none; border-radius: 6px; width: 20px; height: 20px;
+      font-size: 12px; font-weight: 800; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .team-chip-del:hover { background: #FEE2E2; }
+
   </style>
 </head>
 <body>
@@ -1433,14 +1462,30 @@
         </table>
       </div>
 
-      <!-- VIEW 4: REGISTERED DEVICES & ACCOUNT CONTROLS -->
+      <!-- VIEW 4: REGISTERED DEVICES, TEAMS & ACCOUNT CONTROLS -->
       <div id="deck-view-devices" class="deck-view">
         <div class="view-bar">
           <div>
-            <h2 class="view-heading">Registered Devices & Accounts</h2>
-            <div class="view-sub">Reset bound phones, suspend access, or remove an account to reset its workstation</div>
+            <h2 class="view-heading">Teams, Devices &amp; Accounts</h2>
+            <div class="view-sub">Manage teams shown in Employee Registration, reset bound phones, or control access</div>
           </div>
         </div>
+
+        <!-- Manager Team Dropdown Builder -->
+        <div style="padding:18px 28px; background:var(--surface-recessed); border-bottom:1.5px solid var(--border); display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div style="font-size:14px; font-weight:800; color:var(--ink);">Employee Registration Teams Dropdown</div>
+              <div style="font-size:12px; color:var(--ink-muted);">Teams listed here appear automatically when employees enter your Manager Code during setup</div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="text" id="mgrNewTeamInput" class="kiosk-input" style="min-width:200px; text-transform:uppercase;" placeholder="NEW TEAM (E.G. DESIGN)" oninput="this.value = this.value.toUpperCase()" onkeydown="if(event.key==='Enter') submitManagerAddTeam()">
+              <button type="button" class="btn-export-xlsx" id="btn-mgr-add-team" onclick="submitManagerAddTeam()">+ Add Team</button>
+            </div>
+          </div>
+          <div id="mgr-teams-chips" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;"></div>
+        </div>
+
         <table class="deck-table">
           <thead>
             <tr>
@@ -1735,20 +1780,24 @@
         <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
       </div>
       <h2>Kiosk Device Setup</h2>
-      <p>Register your profile and enter your Manager's PD-XXXX code to link your attendance sheet.</p>
+      <p>Enter your Manager's PD-XXXX code to load your department's teams, then complete your profile.</p>
       <label>Manager Code (Required • e.g. PD-1234)</label>
-      <input type="text" id="empMgrCode" class="uppercase-field" placeholder="PD-XXXX" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+      <input type="text" id="empMgrCode" class="uppercase-field" placeholder="PD-XXXX" maxlength="10" autocomplete="off" oninput="handleEmpMgrCodeInput(this.value)">
+      <div id="empMgrLookupStatus" class="mgr-lookup-hint" style="color:var(--ink-muted);">Enter your Manager Code to load teams</div>
+
+      <label>Select Your Team / Department</label>
+      <select id="team" disabled>
+        <option value="">Enter Manager Code first...</option>
+      </select>
+
       <label>Employee Name</label>
       <input type="text" id="empName" class="uppercase-field" placeholder="E.G. JOHN DOE" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
-      <label>Team / Department</label>
-      <input type="text" id="team" class="uppercase-field" placeholder="E.G. SALES" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Mobile Number (For Manager SMS Announcements)</label>
       <input type="tel" id="empPhone" placeholder="e.g. 09171234567" autocomplete="tel">
       <label>Work Email (For Backup OTP)</label>
       <input type="email" id="empEmail" placeholder="e.g. john.doe@company.com" autocomplete="off">
       <button class="btn-save" id="btn-register-laptop" onclick="registerLaptop()">Secure Device & Continue</button>
       <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
-        <span class="sub-link" style="margin-top:0; color:var(--emerald);" onclick="switchCard('employee-recover')">Cleared browser cache? Restore Existing Kiosk →</span>
         <span class="sub-link" style="margin-top:0;" onclick="showRoleSelector()">← Back to Portal Selection</span>
       </div>
     </div>
@@ -1955,7 +2004,7 @@
             </div>
           </div>
 
-          <div class="emp-cal-summary">
+          <div class="emp-cal-summary" style="grid-template-columns: repeat(4, 1fr);">
             <div class="cal-stat-box">
               <span class="cal-stat-lbl">Onsite Days</span>
               <span class="cal-stat-val" id="cal-onsite-count" style="color:var(--blue);">0</span>
@@ -1967,6 +2016,10 @@
             <div class="cal-stat-box">
               <span class="cal-stat-lbl">Days Logged</span>
               <span class="cal-stat-val" id="cal-total-days" style="color:var(--emerald);">0</span>
+            </div>
+            <div class="cal-stat-box">
+              <span class="cal-stat-lbl">Month Hours</span>
+              <span class="cal-stat-val" id="cal-month-hours" style="color:var(--violet);">0.0h</span>
             </div>
           </div>
 
@@ -2075,6 +2128,8 @@
     let cachedManagerMembers = [];
     let cachedAnnouncements = [];
     let cachedTeamLinks = [];
+    let cachedManagedTeams = [];
+    let mgrCodeLookupTimer = null;
     let cachedEmployeeRecords = [];
     let cachedEmployeeLinks = [];
     let empCalendarCursor = new Date();
@@ -2568,7 +2623,7 @@
           localStorage.setItem('mgrTargetSheetId', data.manager.spreadsheetId || "");
           sessionStorage.setItem('mgrSessionPass', newPass);
           serverTodayStr = data.today || "";
-          openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || []);
+          openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || [], data.teams || []);
         } else {
           alert(data.error || "Registration failed.");
         }
@@ -2642,7 +2697,7 @@
           if (data.migrated) {
             alert(`Workspace upgraded! Your existing team records were automatically migrated into your new dedicated spreadsheet (Code: ${data.manager.managerCode}).`);
           }
-          openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || []);
+          openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || [], data.teams || []);
         } else {
           alert(data.error || "Invalid credentials.");
         }
@@ -2752,7 +2807,7 @@
         const data = await res.json();
         if (data.ok) {
           serverTodayStr = data.today || serverTodayStr;
-          updateTerminalDeckData(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || []);
+          updateTerminalDeckData(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || [], data.teams || []);
         }
       } catch (e) {}
     }
@@ -2771,6 +2826,7 @@
 
     function populateTeamFilters(members, records) {
       const teamSet = new Set();
+      cachedManagedTeams.forEach(t => { if (t) teamSet.add(String(t).trim().toUpperCase()); });
       members.forEach(m => { if (m.team) teamSet.add(String(m.team).trim().toUpperCase()); });
       records.forEach(r => { if (r.team) teamSet.add(String(r.team).trim().toUpperCase()); });
       const teams = Array.from(teamSet).sort();
@@ -2785,23 +2841,24 @@
       });
     }
 
-    function openTerminalDashboard(manager, records, members, announcements, teamLinks) {
+    function openTerminalDashboard(manager, records, members, announcements, teamLinks, teams) {
       document.getElementById('centered-stage').style.display = 'none';
       document.getElementById('standard-footer').style.display = 'none';
       document.getElementById('nav-sub-label').innerText = "Manager Command Terminal";
       document.getElementById('mgr-terminal-deck').classList.add('active');
 
-      updateTerminalDeckData(manager, records, members, announcements, teamLinks);
+      updateTerminalDeckData(manager, records, members, announcements, teamLinks, teams);
 
       clearInterval(mgrAutoSyncInterval);
       mgrAutoSyncInterval = setInterval(silentSyncManagerData, 15000);
     }
 
-    function updateTerminalDeckData(manager, records, members, announcements, teamLinks) {
+    function updateTerminalDeckData(manager, records, members, announcements, teamLinks, teams) {
       cachedManagerRecords = records;
       cachedManagerMembers = members;
       if (Array.isArray(announcements)) cachedAnnouncements = announcements;
       if (Array.isArray(teamLinks)) cachedTeamLinks = teamLinks;
+      if (Array.isArray(teams)) cachedManagedTeams = teams;
       persistMemberPhotos(members);
 
       document.getElementById('deck-mgr-name').innerText = String(manager.name || "MANAGER").toUpperCase();
@@ -2832,6 +2889,7 @@
 
       renderLiveTeamBoard(members, records);
       filterManagerTable();
+      renderManagedTeamChips();
       renderDevicesTable(members);
       renderMissingTimeOutsTable(missingOutRecords);
       renderAnnouncementsTable(cachedAnnouncements);
@@ -3082,7 +3140,12 @@
         let metaRight = "";
 
         if (activeShift) {
-          statusTag = `<span class="tag tag-green">● ACTIVE</span>`;
+          const started = parseShiftTime(activeShift.timeIn);
+          const diffMins = Math.max(0, Math.floor((Date.now() - started.getTime()) / 60000));
+          const elH = Math.floor(diffMins / 60);
+          const elM = diffMins % 60;
+          const elapsedStr = elH > 0 ? `${elH}h ${elM}m` : `${elM}m`;
+          statusTag = `<span class="tag tag-green">● ACTIVE • ${elapsedStr}</span>`;
           metaLeft = `In: <strong>${escapeHtml(activeShift.timeIn)}</strong>`;
           metaRight = activeShift.workArrangement === "Work From Home"
             ? `<span class="tag tag-amber">WFH</span>`
@@ -3734,16 +3797,22 @@
         dayRecordsMap[dStr].push(r);
       });
 
+      let monthHoursTotal = 0;
       Object.keys(dayRecordsMap).forEach(dStr => {
         totalMonthDays++;
         const firstArr = String(dayRecordsMap[dStr][0].workArrangement || "Onsite");
         if (firstArr === "Work From Home") wfhDays++;
         else onsiteDays++;
+        dayRecordsMap[dStr].forEach(rec => {
+          monthHoursTotal += parseHoursValue(rec.totalHours);
+        });
       });
 
       document.getElementById('cal-onsite-count').innerText = onsiteDays;
       document.getElementById('cal-wfh-count').innerText = wfhDays;
       document.getElementById('cal-total-days').innerText = totalMonthDays;
+      const mHrsEl = document.getElementById('cal-month-hours');
+      if (mHrsEl) mHrsEl.innerText = `${monthHoursTotal.toFixed(1)}h`;
 
       const firstDayOfWeek = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -3902,6 +3971,153 @@
           </a>
         `;
       }).join("");
+    }
+
+
+    // =========================================================================
+    // MANAGER TEAM DROPDOWN OPTIONS & EMPLOYEE LIVE PD-XXXX TEAM LOOKUP
+    // =========================================================================
+    function renderManagedTeamChips() {
+      const box = document.getElementById('mgr-teams-chips');
+      if (!box) return;
+      const list = Array.from(new Set(cachedManagedTeams.map(t => String(t).trim().toUpperCase()).filter(Boolean))).sort();
+      if (!list.length) {
+        box.innerHTML = `<span style="font-size:12.5px; color:var(--ink-muted);">No teams added yet. Add your first team above so employees can select it during registration.</span>`;
+        return;
+      }
+      box.innerHTML = list.map(t => `
+        <span class="team-chip-pill">
+          ${escapeHtml(t)}
+          <button type="button" class="team-chip-del" title="Remove team option" onclick="deleteManagerTeam('${escapeAttr(t)}')">×</button>
+        </span>
+      `).join("");
+    }
+
+    async function submitManagerAddTeam() {
+      const inp = document.getElementById('mgrNewTeamInput');
+      const teamName = (inp.value || "").trim().toUpperCase();
+      const btn = document.getElementById('btn-mgr-add-team');
+      if (!teamName) return alert("Please enter a team name.");
+
+      const email = localStorage.getItem('mgrEmail') || "";
+      const pass = sessionStorage.getItem('mgrSessionPass') || "";
+      btn.disabled = true;
+      btn.innerText = "Adding...";
+
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "MANAGER_ADD_TEAM",
+            manager_email: email,
+            manager_password: pass,
+            team_name: teamName
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          cachedManagedTeams = data.teams || [];
+          inp.value = "";
+          renderManagedTeamChips();
+          populateTeamFilters(cachedManagerMembers, cachedManagerRecords);
+        } else {
+          alert(data.error || "Unable to add team.");
+        }
+      } catch (e) {
+        alert("Connection error while adding team.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "+ Add Team";
+      }
+    }
+
+    async function deleteManagerTeam(teamName) {
+      if (!confirm(`Remove "${teamName}" from the Employee Registration dropdown?`)) return;
+      const email = localStorage.getItem('mgrEmail') || "";
+      const pass = sessionStorage.getItem('mgrSessionPass') || "";
+
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "MANAGER_DELETE_TEAM",
+            manager_email: email,
+            manager_password: pass,
+            team_name: teamName
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          cachedManagedTeams = data.teams || [];
+          renderManagedTeamChips();
+          populateTeamFilters(cachedManagerMembers, cachedManagerRecords);
+        } else {
+          alert(data.error || "Unable to remove team.");
+        }
+      } catch (e) {
+        alert("Connection error while removing team.");
+      }
+    }
+
+    function handleEmpMgrCodeInput(rawVal) {
+      const inp = document.getElementById('empMgrCode');
+      const code = String(rawVal || "").toUpperCase().trim();
+      inp.value = code;
+
+      const teamSel = document.getElementById('team');
+      const statusEl = document.getElementById('empMgrLookupStatus');
+
+      clearTimeout(mgrCodeLookupTimer);
+
+      if (!/^PD-\d{4}$/.test(code)) {
+        teamSel.disabled = true;
+        teamSel.innerHTML = `<option value="">Enter valid PD-XXXX code first...</option>`;
+        statusEl.style.color = "var(--ink-muted)";
+        statusEl.innerText = code.length ? "Format: PD-XXXX (e.g. PD-1234)" : "Enter your Manager Code to load teams";
+        return;
+      }
+
+      statusEl.style.color = "var(--blue)";
+      statusEl.innerText = "Loading workspace teams...";
+      teamSel.disabled = true;
+      teamSel.innerHTML = `<option value="">Loading teams...</option>`;
+
+      mgrCodeLookupTimer = setTimeout(async () => {
+        try {
+          const res = await fetch(GOOGLE_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: "GET_TEAMS_BY_CODE",
+              manager_code: code
+            })
+          });
+          const data = await res.json();
+          if (data.ok) {
+            const teams = Array.isArray(data.teams) ? data.teams : [];
+            statusEl.style.color = "var(--emerald)";
+            statusEl.innerText = `✓ Connected to ${data.managerName} (${data.department})`;
+            if (teams.length) {
+              teamSel.innerHTML = `<option value="">-- Select Your Team --</option>` +
+                teams.map(t => `<option value="${escapeAttr(t)}">${escapeHtml(t)}</option>`).join("");
+              teamSel.disabled = false;
+            } else {
+              teamSel.innerHTML = `<option value="">No teams added by manager yet</option>`;
+              teamSel.disabled = true;
+            }
+          } else {
+            statusEl.style.color = "var(--crimson)";
+            statusEl.innerText = data.error || "Manager Code not found.";
+            teamSel.innerHTML = `<option value="">Invalid Manager Code</option>`;
+            teamSel.disabled = true;
+          }
+        } catch (e) {
+          statusEl.style.color = "var(--crimson)";
+          statusEl.innerText = "Connection error checking Manager Code.";
+        }
+      }, 300);
     }
 
     function escapeHtml(str) {
@@ -4493,7 +4709,8 @@
       const btn = document.getElementById('btn-register-laptop');
 
       if (!mgrCode) return alert("Please enter your Manager Code (e.g. PD-1234).");
-      if (!name || !team || !phone || !email) return alert("Please complete all fields including your mobile number and email.");
+      if (!team) return alert("Please select your Team / Department from the dropdown.");
+      if (!name || !phone || !email) return alert("Please complete all fields including your mobile number and email.");
       if (phone.replace(/[^0-9]/g, "").length < 10) return alert("Please enter a valid 11-digit mobile number (e.g. 09171234567).");
       if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
 
