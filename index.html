@@ -94,7 +94,7 @@
 
     /* --- CENTERED KIOSK STAGE --- */
     .main-wrapper {
-      flex: 1; display: flex; justify-content: center; align-items: center; padding: 32px 24px;
+      flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px 24px;
     }
 
     .card {
@@ -776,7 +776,7 @@
     }
     .status-select:disabled { cursor: not-allowed; color: var(--ink-muted); -webkit-appearance: none; appearance: none; padding-right: 0; }
 
-    .footer { color: var(--ink-muted); text-align: center; padding: 16px; font-size: 12px; font-weight: 600; }
+    .footer { width: 100%; color: var(--ink-muted); text-align: center; padding: 18px 16px; font-size: 12px; font-weight: 600; margin-top: auto; }
     .footer span { color: var(--ink); font-weight: 800; }
 
     #qrcode-container {
@@ -840,7 +840,8 @@
     }
     .emp-workspace-shell.active {
       display: grid;
-      grid-template-columns: 220px 1fr;
+      grid-template-columns: 230px minmax(0, 860px);
+      justify-content: center;
     }
 
     .emp-side-dock {
@@ -1918,6 +1919,7 @@
           </div>
         </div>
       </div>
+    </div> <!-- /#laptop-kiosk -->
 
         <!-- TAB 1: EMPLOYEE ATTENDANCE CALENDAR (Tagged Onsite vs WFH) -->
         <div id="emp-panel-calendar" class="emp-sub-panel">
