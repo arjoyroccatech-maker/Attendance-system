@@ -284,11 +284,11 @@
 
     .terminal-tab-bar {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(7, 1fr);
       background: var(--surface-recessed);
       border-bottom: 1.5px solid var(--border);
       padding: 8px;
-      gap: 8px;
+      gap: 6px;
     }
     .announce-compose-box {
       padding: 24px 28px;
@@ -826,6 +826,293 @@
       .card-padding { padding: 32px 24px; }
       .time-display { font-size: 56px; }
     }
+
+    /* =========================================================================
+       EMPLOYEE WORKSPACE SHELL (Left Sidebar Dock + Clock Terminal & 3 Views)
+       ========================================================================= */
+    .emp-workspace-shell {
+      display: none;
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      gap: 22px;
+      align-items: flex-start;
+    }
+    .emp-workspace-shell.active {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+    }
+
+    .emp-side-dock {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      padding: 14px 12px;
+      box-shadow: var(--shadow-terminal);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: sticky;
+      top: 88px;
+    }
+    .emp-dock-label {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--ink-muted);
+      padding: 4px 10px 2px 10px;
+    }
+    .emp-dock-btn {
+      width: 100%;
+      min-height: 52px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1.5px solid transparent;
+      background: var(--surface-recessed);
+      color: var(--ink-secondary);
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-align: left;
+      transition: all 0.14s ease;
+    }
+    .emp-dock-btn svg {
+      width: 19px;
+      height: 19px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+    .emp-dock-btn:hover {
+      background: #FFFFFF;
+      border-color: var(--border);
+      color: var(--ink);
+      transform: translateY(-1px);
+    }
+    .emp-dock-btn.active {
+      background: var(--ink);
+      color: #FFFFFF;
+      border-color: var(--ink);
+      box-shadow: 0 8px 18px -4px rgba(15, 23, 42, 0.25);
+    }
+    .emp-dock-btn .dock-pill {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 7px;
+      background: rgba(15, 23, 42, 0.08);
+      color: inherit;
+    }
+    .emp-dock-btn.active .dock-pill {
+      background: rgba(255, 255, 255, 0.18);
+      color: #FFFFFF;
+    }
+
+    .emp-main-stage {
+      width: 100%;
+      min-width: 0;
+    }
+    .emp-sub-panel {
+      display: none;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow-terminal);
+      overflow: hidden;
+      text-align: left;
+      animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .emp-sub-panel.active {
+      display: block;
+    }
+
+    /* Employee Attendance Calendar Grid */
+    .emp-cal-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 18px 24px;
+      background: var(--surface-recessed);
+      border-bottom: 1.5px solid var(--border-subtle);
+    }
+    .cal-stat-box {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cal-stat-lbl { font-size: 12px; font-weight: 700; color: var(--ink-muted); }
+    .cal-stat-val { font-size: 20px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+    .emp-cal-wrap {
+      padding: 20px 24px 24px 24px;
+    }
+    .emp-cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+      text-align: center;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .emp-cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+    .cal-day-cell {
+      min-height: 78px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border-subtle);
+      background: var(--surface-recessed);
+      padding: 8px 9px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.12s ease, border-color 0.12s ease;
+    }
+    .cal-day-cell.empty {
+      background: transparent;
+      border-color: transparent;
+    }
+    .cal-day-cell.has-log {
+      background: #FFFFFF;
+      border-color: var(--border);
+      cursor: pointer;
+    }
+    .cal-day-cell.has-log:hover {
+      transform: translateY(-2px);
+      border-color: var(--ink);
+    }
+    .cal-day-cell.onsite-day {
+      background: #F8FAFF;
+      border-color: rgba(37, 99, 235, 0.35);
+    }
+    .cal-day-cell.wfh-day {
+      background: #FFFDF7;
+      border-color: rgba(217, 119, 6, 0.38);
+    }
+    .cal-day-cell.today-day {
+      box-shadow: 0 0 0 2.5px var(--emerald);
+    }
+    .cal-day-num {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cal-mode-pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 6px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      width: fit-content;
+    }
+    .cal-mode-pill.onsite {
+      background: var(--blue-bg);
+      color: var(--blue);
+    }
+    .cal-mode-pill.wfh {
+      background: var(--amber-bg);
+      color: var(--amber);
+    }
+    .cal-hours-mini {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    /* Employee Team Tools & Links Grid */
+    .tools-cards-grid {
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .tool-link-card {
+      background: var(--surface-recessed);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      text-decoration: none;
+      color: var(--ink);
+      transition: all 0.15s ease;
+    }
+    .tool-link-card:hover {
+      background: #FFFFFF;
+      border-color: var(--ink);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.12);
+    }
+    .tool-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .tool-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: var(--blue-bg);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+    }
+    .tool-card-title {
+      font-size: 15.5px;
+      font-weight: 800;
+      color: var(--ink);
+      margin: 4px 0 2px 0;
+    }
+    .tool-card-url {
+      font-size: 12px;
+      color: var(--ink-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 900px) {
+      .emp-workspace-shell.active {
+        grid-template-columns: 1fr;
+      }
+      .emp-side-dock {
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .emp-dock-label { display: none; }
+      .emp-dock-btn { width: auto; flex: 1; min-width: 140px; }
+      .emp-cal-summary { grid-template-columns: 1fr; }
+    }
+
   </style>
 </head>
 <body>
@@ -945,6 +1232,10 @@
         <button type="button" class="terminal-tab" id="dock-btn-announce" onclick="switchDeckView('announce')">
           <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"/></svg>
           SMS Blast <span class="tab-counter" id="dock-count-announce">0</span>
+        </button>
+        <button type="button" class="terminal-tab" id="dock-btn-links" onclick="switchDeckView('links')">
+          <svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+          Team Links <span class="tab-counter" id="dock-count-links">0</span>
         </button>
       </div>
 
@@ -1232,6 +1523,47 @@
         </table>
       </div>
 
+
+      <!-- VIEW 7: TEAM TOOLS & LINKS MANAGER -->
+      <div id="deck-view-links" class="deck-view">
+        <div class="view-bar">
+          <div>
+            <h2 class="view-heading">Team Tools & Quick Links</h2>
+            <div class="view-sub">Publish helpful tools, forms, and portals directly to your employees' Kiosk sidebar</div>
+          </div>
+        </div>
+
+        <div style="padding:22px 28px; background:var(--surface-recessed); border-bottom:1.5px solid var(--border); display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+          <input type="text" id="mgrLinkTitleInput" class="kiosk-input" style="flex:1; min-width:190px;" placeholder="Tool / Link Name (e.g. Payroll Portal)">
+          <input type="url" id="mgrLinkUrlInput" class="kiosk-input" style="flex:1.5; min-width:240px;" placeholder="Paste URL (e.g. https://...)">
+          <select id="mgrLinkCatSelect" class="kiosk-select">
+            <option value="Work Tool">Work Tool</option>
+            <option value="HR & Payroll">HR & Payroll</option>
+            <option value="Guidelines">Guidelines</option>
+            <option value="Form / Request">Form / Request</option>
+          </select>
+          <select id="mgrLinkTeamSelect" class="kiosk-select">
+            <option value="ALL">All Teams</option>
+          </select>
+          <button type="button" class="btn-export-xlsx" id="btn-add-team-link" onclick="submitManagerAddLink()">
+            + Add Link
+          </button>
+        </div>
+
+        <table class="deck-table">
+          <thead>
+            <tr>
+              <th>Tool / Link Name</th>
+              <th>Category</th>
+              <th>Target Team</th>
+              <th>URL</th>
+              <th style="width:95px;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="mgr-links-body"></tbody>
+        </table>
+      </div>
+
     </div>
   </div>
 
@@ -1443,8 +1775,38 @@
       <button class="btn-save" onclick="openEmployeeKiosk()">I Have Saved It, Continue</button>
     </div>
 
-    <!-- MAIN EMPLOYEE KIOSK -->
-    <div id="laptop-kiosk" class="card">
+    <!-- EMPLOYEE WORKSPACE SHELL (Left Sidebar Dock + Kiosk / Calendar / History / Tools) -->
+    <div id="emp-workspace-shell" class="emp-workspace-shell">
+      
+      <!-- Left Sidebar Navigation (Clock Terminal + 3 Employee Tabs) -->
+      <aside class="emp-side-dock" aria-label="Employee Workspace Navigation">
+        <div class="emp-dock-label">Employee Menu</div>
+        <button type="button" class="emp-dock-btn active" id="emp-nav-kiosk" onclick="switchEmpTab('kiosk')">
+          <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          <span>Clock Terminal</span>
+        </button>
+
+        <button type="button" class="emp-dock-btn" id="emp-nav-calendar" onclick="switchEmpTab('calendar')">
+          <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+          <span>Attendance Calendar</span>
+        </button>
+
+        <button type="button" class="emp-dock-btn" id="emp-nav-history" onclick="switchEmpTab('history')">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          <span>Shift History</span>
+          <span class="dock-pill" id="emp-history-pill">0</span>
+        </button>
+
+        <button type="button" class="emp-dock-btn" id="emp-nav-tools" onclick="switchEmpTab('tools')">
+          <svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+          <span>Tools &amp; Links</span>
+          <span class="dock-pill" id="emp-tools-pill">0</span>
+        </button>
+      </aside>
+
+      <!-- Right Main Stage -->
+      <div class="emp-main-stage">
+        <div id="laptop-kiosk" class="card" style="max-width: 100%; margin: 0;">
       <div class="card-padding">
         
         <input type="file" id="photo-upload-input" accept="image/*" style="display: none;" onchange="handlePhotoSelected(event)">
@@ -1556,7 +1918,95 @@
           </div>
         </div>
       </div>
-    </div>
+
+        <!-- TAB 1: EMPLOYEE ATTENDANCE CALENDAR (Tagged Onsite vs WFH) -->
+        <div id="emp-panel-calendar" class="emp-sub-panel">
+          <div class="view-bar">
+            <div>
+              <h2 class="view-heading" id="emp-cal-month-title">Attendance Calendar</h2>
+              <div class="view-sub">Daily attendance tagged by Onsite or Work From Home</div>
+            </div>
+            <div class="filter-row">
+              <button type="button" class="btn-kiosk-sm" onclick="changeEmpCalendarMonth(-1)">← Prev</button>
+              <button type="button" class="btn-kiosk-sm" onclick="changeEmpCalendarMonth(0)">Today</button>
+              <button type="button" class="btn-kiosk-sm" onclick="changeEmpCalendarMonth(1)">Next →</button>
+            </div>
+          </div>
+
+          <div class="emp-cal-summary">
+            <div class="cal-stat-box">
+              <span class="cal-stat-lbl">Onsite Days</span>
+              <span class="cal-stat-val" id="cal-onsite-count" style="color:var(--blue);">0</span>
+            </div>
+            <div class="cal-stat-box">
+              <span class="cal-stat-lbl">Work From Home</span>
+              <span class="cal-stat-val" id="cal-wfh-count" style="color:var(--amber);">0</span>
+            </div>
+            <div class="cal-stat-box">
+              <span class="cal-stat-lbl">Days Logged</span>
+              <span class="cal-stat-val" id="cal-total-days" style="color:var(--emerald);">0</span>
+            </div>
+          </div>
+
+          <div class="emp-cal-wrap">
+            <div class="emp-cal-weekdays">
+              <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+            <div id="emp-cal-grid" class="emp-cal-grid"></div>
+            <div id="emp-cal-day-detail" style="margin-top:16px; padding:14px 18px; border-radius:14px; background:var(--surface-recessed); border:1px solid var(--border-subtle); font-size:13px; color:var(--ink-secondary);">
+              Click any highlighted date on the calendar to inspect your Time In, Time Out, and Work Mode.
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: EMPLOYEE ATTENDANCE HISTORY + EXCEL DOWNLOAD -->
+        <div id="emp-panel-history" class="emp-sub-panel">
+          <div class="view-bar">
+            <div>
+              <h2 class="view-heading">My Attendance History</h2>
+              <div class="view-sub" id="emp-hist-count-lbl">0 shift records</div>
+            </div>
+            <div class="filter-row">
+              <select id="empHistModeFilter" class="kiosk-select" onchange="renderEmployeeHistoryTable()">
+                <option value="ALL">All Modes</option>
+                <option value="Onsite">Onsite</option>
+                <option value="Work From Home">Work From Home</option>
+              </select>
+              <button type="button" class="btn-export-xlsx" onclick="exportEmployeeAttendanceExcel()">
+                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                Download Excel
+              </button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="deck-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time In</th>
+                  <th>Time Out</th>
+                  <th>Mode</th>
+                  <th>Total Hours</th>
+                </tr>
+              </thead>
+              <tbody id="emp-history-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 3: TEAM TOOLS & LINKS (Added by Manager) -->
+        <div id="emp-panel-tools" class="emp-sub-panel">
+          <div class="view-bar">
+            <div>
+              <h2 class="view-heading">Team Tools &amp; Links</h2>
+              <div class="view-sub">Quick-access portals, forms, and resources shared by your Manager</div>
+            </div>
+          </div>
+          <div id="emp-tools-grid" class="tools-cards-grid"></div>
+        </div>
+
+      </div> <!-- /.emp-main-stage -->
+    </div> <!-- /#emp-workspace-shell -->
 
     <!-- PHONE AUTH -->
     <div id="phone-auth" class="card setup-card">
@@ -1602,6 +2052,10 @@
     let cachedFilteredRecords = [];
     let cachedManagerMembers = [];
     let cachedAnnouncements = [];
+    let cachedTeamLinks = [];
+    let cachedEmployeeRecords = [];
+    let cachedEmployeeLinks = [];
+    let empCalendarCursor = new Date();
     let memberPhotoCache = {};
     let chartInstances = {};
     let serverTodayStr = "";
@@ -1701,14 +2155,44 @@
       mgrAutoSyncInterval = null;
 
       document.getElementById('mgr-terminal-deck').classList.remove('active');
+      const empShell = document.getElementById('emp-workspace-shell');
+      if (empShell) empShell.classList.remove('active');
+
       document.getElementById('centered-stage').style.display = 'flex';
       document.getElementById('standard-footer').style.display = 'block';
-      document.getElementById('nav-sub-label').innerText = "Teams Attendance Kiosk";
+      document.getElementById('nav-sub-label').innerText = "87seconds-Group Attendance Kiosk";
       document.getElementById('live-sync-label').innerText = "System Online";
 
       document.querySelectorAll('.card').forEach(el => el.classList.remove('active-card'));
-      const target = document.getElementById(cardId);
-      if (target) target.classList.add('active-card');
+      if (cardId === 'laptop-kiosk') {
+        if (empShell) empShell.classList.add('active');
+        switchEmpTab('kiosk');
+      } else {
+        const target = document.getElementById(cardId);
+        if (target) target.classList.add('active-card');
+      }
+    }
+
+    function switchEmpTab(tabKey) {
+      ['kiosk', 'calendar', 'history', 'tools'].forEach(k => {
+        const btn = document.getElementById(`emp-nav-${k}`);
+        if (btn) btn.classList.toggle('active', k === tabKey);
+      });
+
+      const kioskCard = document.getElementById('laptop-kiosk');
+      if (kioskCard) {
+        if (tabKey === 'kiosk') kioskCard.classList.add('active-card');
+        else kioskCard.classList.remove('active-card');
+      }
+
+      ['calendar', 'history', 'tools'].forEach(p => {
+        const panel = document.getElementById(`emp-panel-${p}`);
+        if (panel) panel.classList.toggle('active', p === tabKey);
+      });
+
+      if (tabKey === 'calendar') renderEmployeeCalendar();
+      if (tabKey === 'history') renderEmployeeHistoryTable();
+      if (tabKey === 'tools') renderEmployeeToolsGrid();
     }
 
     function getInitials(name) {
@@ -2059,7 +2543,7 @@
           localStorage.setItem('mgrTargetSheetId', data.manager.spreadsheetId || "");
           sessionStorage.setItem('mgrSessionPass', newPass);
           serverTodayStr = data.today || "";
-          openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || []);
+          openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || []);
         } else {
           alert(data.error || "Registration failed.");
         }
@@ -2133,7 +2617,7 @@
           if (data.migrated) {
             alert(`Workspace upgraded! Your existing team records were automatically migrated into your new dedicated spreadsheet (Code: ${data.manager.managerCode}).`);
           }
-          openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || []);
+          openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || []);
         } else {
           alert(data.error || "Invalid credentials.");
         }
@@ -2243,13 +2727,13 @@
         const data = await res.json();
         if (data.ok) {
           serverTodayStr = data.today || serverTodayStr;
-          updateTerminalDeckData(data.manager, data.records || [], data.members || [], data.announcements || []);
+          updateTerminalDeckData(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || []);
         }
       } catch (e) {}
     }
 
     function switchDeckView(viewKey) {
-      ['live', 'insights', 'history', 'devices', 'missing', 'announce'].forEach(k => {
+      ['live', 'insights', 'history', 'devices', 'missing', 'announce', 'links'].forEach(k => {
         document.getElementById(`dock-btn-${k}`).classList.toggle('active', k === viewKey);
         document.getElementById(`deck-view-${k}`).classList.toggle('active', k === viewKey);
       });
@@ -2266,7 +2750,7 @@
       records.forEach(r => { if (r.team) teamSet.add(String(r.team).trim().toUpperCase()); });
       const teams = Array.from(teamSet).sort();
 
-      ['liveTeamFilter', 'insightsTeamFilter', 'mgrFilterTeam', 'annTeamSelect'].forEach(selectId => {
+      ['liveTeamFilter', 'insightsTeamFilter', 'mgrFilterTeam', 'annTeamSelect', 'mgrLinkTeamSelect'].forEach(selectId => {
         const sel = document.getElementById(selectId);
         if (!sel) return;
         const prev = sel.value || "ALL";
@@ -2276,22 +2760,23 @@
       });
     }
 
-    function openTerminalDashboard(manager, records, members, announcements) {
+    function openTerminalDashboard(manager, records, members, announcements, teamLinks) {
       document.getElementById('centered-stage').style.display = 'none';
       document.getElementById('standard-footer').style.display = 'none';
       document.getElementById('nav-sub-label').innerText = "Manager Command Terminal";
       document.getElementById('mgr-terminal-deck').classList.add('active');
 
-      updateTerminalDeckData(manager, records, members, announcements);
+      updateTerminalDeckData(manager, records, members, announcements, teamLinks);
 
       clearInterval(mgrAutoSyncInterval);
       mgrAutoSyncInterval = setInterval(silentSyncManagerData, 15000);
     }
 
-    function updateTerminalDeckData(manager, records, members, announcements) {
+    function updateTerminalDeckData(manager, records, members, announcements, teamLinks) {
       cachedManagerRecords = records;
       cachedManagerMembers = members;
       if (Array.isArray(announcements)) cachedAnnouncements = announcements;
+      if (Array.isArray(teamLinks)) cachedTeamLinks = teamLinks;
       persistMemberPhotos(members);
 
       document.getElementById('deck-mgr-name').innerText = String(manager.name || "MANAGER").toUpperCase();
@@ -2318,12 +2803,14 @@
       document.getElementById('dock-count-devices').innerText = members.length;
       document.getElementById('dock-count-missing').innerText = missingOutRecords.length;
       document.getElementById('dock-count-announce').innerText = cachedAnnouncements.length;
+      document.getElementById('dock-count-links').innerText = cachedTeamLinks.length;
 
       renderLiveTeamBoard(members, records);
       filterManagerTable();
       renderDevicesTable(members);
       renderMissingTimeOutsTable(missingOutRecords);
       renderAnnouncementsTable(cachedAnnouncements);
+      renderManagerLinksTable(cachedTeamLinks);
       updateSmsRecipientPreview();
 
       if (document.getElementById('deck-view-insights').classList.contains('active')) {
@@ -3065,6 +3552,333 @@
       }
     }
 
+
+    // =========================================================================
+    // VIEW 7: MANAGER TEAM TOOLS & LINKS MANAGEMENT
+    // =========================================================================
+    function renderManagerLinksTable(links) {
+      const tbody = document.getElementById('mgr-links-body');
+      if (!tbody) return;
+      if (!links || !links.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">No team tools or links added yet. Paste a link above to share it with your employees.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = links.map(l => `
+        <tr>
+          <td><strong>${escapeHtml(l.title)}</strong></td>
+          <td><span class="tag tag-blue">${escapeHtml(l.category || "Tool")}</span></td>
+          <td><span class="tag tag-gray">${escapeHtml(l.targetTeam || "ALL")}</span></td>
+          <td style="max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            <a href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer" style="color:var(--blue); font-weight:600; text-decoration:none;">${escapeHtml(l.url)}</a>
+          </td>
+          <td>
+            <button type="button" class="btn-kiosk-sm danger" onclick="deleteManagerLink(${l._row})">Delete</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function submitManagerAddLink() {
+      const title = (document.getElementById('mgrLinkTitleInput').value || "").trim();
+      const url = (document.getElementById('mgrLinkUrlInput').value || "").trim();
+      const category = document.getElementById('mgrLinkCatSelect').value || "Work Tool";
+      const targetTeam = document.getElementById('mgrLinkTeamSelect').value || "ALL";
+      const btn = document.getElementById('btn-add-team-link');
+
+      if (!title || !url) return alert("Please enter both a Tool Name and a URL.");
+
+      const email = localStorage.getItem('mgrEmail') || "";
+      const pass = sessionStorage.getItem('mgrSessionPass') || "";
+      btn.disabled = true;
+      btn.innerText = "Saving...";
+
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "MANAGER_ADD_LINK",
+            manager_email: email,
+            manager_password: pass,
+            title: title,
+            url: url,
+            category: category,
+            target_team: targetTeam
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          cachedTeamLinks = data.teamLinks || [];
+          document.getElementById('dock-count-links').innerText = cachedTeamLinks.length;
+          renderManagerLinksTable(cachedTeamLinks);
+          document.getElementById('mgrLinkTitleInput').value = "";
+          document.getElementById('mgrLinkUrlInput').value = "";
+        } else {
+          alert(data.error || "Unable to add link.");
+        }
+      } catch (e) {
+        alert("Connection error while saving link.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "+ Add Link";
+      }
+    }
+
+    async function deleteManagerLink(rowNum) {
+      if (!confirm("Remove this tool link from your team's kiosk?")) return;
+      const email = localStorage.getItem('mgrEmail') || "";
+      const pass = sessionStorage.getItem('mgrSessionPass') || "";
+
+      try {
+        const res = await fetch(GOOGLE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "MANAGER_DELETE_LINK",
+            manager_email: email,
+            manager_password: pass,
+            row_number: rowNum
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          cachedTeamLinks = data.teamLinks || [];
+          document.getElementById('dock-count-links').innerText = cachedTeamLinks.length;
+          renderManagerLinksTable(cachedTeamLinks);
+        } else {
+          alert(data.error || "Unable to remove link.");
+        }
+      } catch (e) {
+        alert("Connection error while removing link.");
+      }
+    }
+
+    // =========================================================================
+    // EMPLOYEE WORKSPACE: CALENDAR, ATTENDANCE HISTORY & TEAM TOOLS
+    // =========================================================================
+    function syncEmployeeWorkspaceData(records, teamLinks) {
+      cachedEmployeeRecords = Array.isArray(records) ? records : [];
+      cachedEmployeeLinks = Array.isArray(teamLinks) ? teamLinks : [];
+
+      const histPill = document.getElementById('emp-history-pill');
+      if (histPill) histPill.innerText = cachedEmployeeRecords.length;
+      const toolsPill = document.getElementById('emp-tools-pill');
+      if (toolsPill) toolsPill.innerText = cachedEmployeeLinks.length;
+
+      if (document.getElementById('emp-panel-calendar').classList.contains('active')) {
+        renderEmployeeCalendar();
+      }
+      if (document.getElementById('emp-panel-history').classList.contains('active')) {
+        renderEmployeeHistoryTable();
+      }
+      if (document.getElementById('emp-panel-tools').classList.contains('active')) {
+        renderEmployeeToolsGrid();
+      }
+    }
+
+    function changeEmpCalendarMonth(delta) {
+      if (delta === 0) {
+        empCalendarCursor = new Date();
+      } else {
+        empCalendarCursor = new Date(empCalendarCursor.getFullYear(), empCalendarCursor.getMonth() + delta, 1);
+      }
+      renderEmployeeCalendar();
+    }
+
+    function renderEmployeeCalendar() {
+      const grid = document.getElementById('emp-cal-grid');
+      const titleEl = document.getElementById('emp-cal-month-title');
+      if (!grid || !titleEl) return;
+
+      const year = empCalendarCursor.getFullYear();
+      const month = empCalendarCursor.getMonth();
+      const monthName = empCalendarCursor.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      titleEl.innerText = monthName;
+
+      const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+      const dayRecordsMap = {};
+      let onsiteDays = 0;
+      let wfhDays = 0;
+      let totalMonthDays = 0;
+
+      cachedEmployeeRecords.forEach(r => {
+        const dStr = String(r.date || "").trim();
+        if (!dStr.startsWith(monthPrefix)) return;
+        if (!dayRecordsMap[dStr]) dayRecordsMap[dStr] = [];
+        dayRecordsMap[dStr].push(r);
+      });
+
+      Object.keys(dayRecordsMap).forEach(dStr => {
+        totalMonthDays++;
+        const firstArr = String(dayRecordsMap[dStr][0].workArrangement || "Onsite");
+        if (firstArr === "Work From Home") wfhDays++;
+        else onsiteDays++;
+      });
+
+      document.getElementById('cal-onsite-count').innerText = onsiteDays;
+      document.getElementById('cal-wfh-count').innerText = wfhDays;
+      document.getElementById('cal-total-days').innerText = totalMonthDays;
+
+      const firstDayOfWeek = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const todayIso = new Date().toISOString().slice(0, 10);
+
+      let cellsHtml = "";
+      for (let b = 0; b < firstDayOfWeek; b++) {
+        cellsHtml += `<div class="cal-day-cell empty"></div>`;
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const isoDate = `${monthPrefix}-${String(d).padStart(2, '0')}`;
+        const logs = dayRecordsMap[isoDate] || [];
+        const isToday = (isoDate === todayIso);
+
+        if (logs.length > 0) {
+          const primaryLog = logs[0];
+          const isWfh = String(primaryLog.workArrangement || "") === "Work From Home";
+          const modeCls = isWfh ? "wfh" : "onsite";
+          const modeLabel = isWfh ? "WFH" : "ONSITE";
+          const hrsText = primaryLog.totalHours ? `${primaryLog.totalHours} hrs` : "Active";
+
+          cellsHtml += `
+            <div class="cal-day-cell has-log ${modeCls}-day ${isToday ? 'today-day' : ''}" onclick="showEmpCalendarDayDetail('${isoDate}')">
+              <div class="cal-day-num"><span>${d}</span></div>
+              <div>
+                <div class="cal-mode-pill ${modeCls}">${modeLabel}</div>
+                <div class="cal-hours-mini">${escapeHtml(hrsText)}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          cellsHtml += `
+            <div class="cal-day-cell ${isToday ? 'today-day' : ''}">
+              <div class="cal-day-num"><span style="color:var(--ink-muted);">${d}</span></div>
+            </div>
+          `;
+        }
+      }
+
+      grid.innerHTML = cellsHtml;
+    }
+
+    function showEmpCalendarDayDetail(isoDate) {
+      const box = document.getElementById('emp-cal-day-detail');
+      if (!box) return;
+      const logs = cachedEmployeeRecords.filter(r => String(r.date || "").trim() === isoDate);
+      if (!logs.length) return;
+
+      box.innerHTML = logs.map(r => {
+        const inTime = r.rawTimeIn || r.timeIn || "—";
+        const outTime = r.timeOut || "Active Shift";
+        const hrs = r.totalHours ? `${r.totalHours} hrs` : "In progress";
+        const modeTag = r.workArrangement === "Work From Home"
+          ? `<span class="tag tag-amber">Work From Home</span>`
+          : `<span class="tag tag-blue">Onsite</span>`;
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div><strong>${escapeHtml(isoDate)}</strong> • In: <strong>${escapeHtml(inTime)}</strong> • Out: <strong>${escapeHtml(outTime)}</strong></div>
+            <div style="display:flex; align-items:center; gap:10px;">${modeTag} <strong>${escapeHtml(hrs)}</strong></div>
+          </div>
+        `;
+      }).join("<hr style='border:none; border-top:1px solid var(--border); margin:8px 0;'>");
+    }
+
+    function renderEmployeeHistoryTable() {
+      const tbody = document.getElementById('emp-history-body');
+      const filterVal = (document.getElementById('empHistModeFilter').value || "ALL");
+      if (!tbody) return;
+
+      const filtered = filterVal === "ALL"
+        ? cachedEmployeeRecords
+        : cachedEmployeeRecords.filter(r => String(r.workArrangement || "Onsite") === filterVal);
+
+      document.getElementById('emp-hist-count-lbl').innerText = `${filtered.length} shift record${filtered.length === 1 ? '' : 's'}`;
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:42px; color:var(--ink-muted);">No attendance history found for this filter.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(r => {
+        const inClean = r.rawTimeIn || String(r.timeIn || "").replace(/^\d{4}-\d{2}-\d{2}\s+/, "");
+        const outCell = r.timeOut
+          ? escapeHtml(r.timeOut)
+          : `<span class="tag tag-green">● ACTIVE</span>`;
+        const modeBadge = r.workArrangement === "Work From Home"
+          ? `<span class="tag tag-amber">WFH</span>`
+          : `<span class="tag tag-blue">${escapeHtml(r.workArrangement || "Onsite")}</span>`;
+        const hrsCell = r.totalHours
+          ? `<strong>${escapeHtml(r.totalHours)}</strong>`
+          : `<span style="color:var(--ink-muted);">—</span>`;
+
+        return `
+          <tr>
+            <td style="font-weight:700;">${escapeHtml(r.date)}</td>
+            <td style="font-variant-numeric:tabular-nums;">${escapeHtml(inClean)}</td>
+            <td style="font-variant-numeric:tabular-nums;">${outCell}</td>
+            <td>${modeBadge}</td>
+            <td style="font-variant-numeric:tabular-nums;">${hrsCell}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function exportEmployeeAttendanceExcel() {
+      if (!cachedEmployeeRecords.length) return alert("No attendance records available to download yet.");
+      if (typeof XLSX === "undefined") return alert("Excel library still loading. Please try again in a second.");
+
+      const empName = (localStorage.getItem('empName') || "EMPLOYEE").toUpperCase();
+      const rows = cachedEmployeeRecords.map(r => ({
+        "Date": r.date || "",
+        "Employee Name": r.employeeName || empName,
+        "Team": r.team || "",
+        "Work Arrangement": r.workArrangement || "Onsite",
+        "Time In": r.rawTimeIn || r.timeIn || "",
+        "Time Out": r.timeOut || "Active Shift",
+        "Total Hours": r.totalHours || ""
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws["!cols"] = [
+        { wch: 14 }, { wch: 24 }, { wch: 18 }, { wch: 18 }, { wch: 16 }, { wch: 24 }, { wch: 14 }
+      ];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "My Attendance");
+      const todayStamp = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(wb, `${empName.replace(/\s+/g, "_")}_Attendance_${todayStamp}.xlsx`);
+    }
+
+    function renderEmployeeToolsGrid() {
+      const grid = document.getElementById('emp-tools-grid');
+      if (!grid) return;
+
+      if (!cachedEmployeeLinks.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--ink-muted);">No tools or links have been added by your Manager yet.</div>`;
+        return;
+      }
+
+      grid.innerHTML = cachedEmployeeLinks.map(l => {
+        const initials = escapeHtml(getInitials(l.title));
+        return `
+          <a href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer" class="tool-link-card">
+            <div>
+              <div class="tool-card-top">
+                <div class="tool-icon-box">${initials}</div>
+                <span class="tag tag-blue">${escapeHtml(l.category || "Tool")}</span>
+              </div>
+              <div class="tool-card-title">${escapeHtml(l.title)}</div>
+              <div class="tool-card-url">${escapeHtml(l.url)}</div>
+            </div>
+            <div style="font-size:12.5px; font-weight:700; color:var(--emerald); display:flex; align-items:center; justify-content:space-between;">
+              <span>Open Tool / Link</span>
+              <span>↗</span>
+            </div>
+          </a>
+        `;
+      }).join("");
+    }
+
     function escapeHtml(str) {
       return String(str || "")
         .replace(/&/g, "&amp;")
@@ -3529,12 +4343,13 @@
              waitText.style.color = 'var(--emerald)';
              document.getElementById('qr-countdown-text').innerText = '';
              
-             setTimeout(() => renderUIState(result), 1000);
+             setTimeout(() => { fetchLiveStatus(false); }, 1000);
              return;
           }
 
           if (!isSilentPolling) {
             currentShiftState = newShiftState;
+            syncEmployeeWorkspaceData(result.records || [], result.teamLinks || []);
             renderUIState(result);
           }
         } else {
