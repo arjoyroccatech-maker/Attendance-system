@@ -250,6 +250,7 @@
       background: var(--ink);
       color: #FFFFFF;
       border-color: var(--ink);
+      overflow: visible;
     }
     .id-top-badges { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
     .id-dept-badge {
@@ -1163,6 +1164,64 @@
     }
     .team-chip-del:hover { background: #FEE2E2; }
 
+
+    .id-mgr-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 12px 0 3px 0;
+    }
+    .id-mgr-row .id-mgr-title {
+      margin: 0;
+    }
+    .btn-add-team-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 9px;
+      background: rgba(52, 211, 153, 0.16);
+      border: 1px solid rgba(52, 211, 153, 0.42);
+      color: #34D399;
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.14s ease;
+    }
+    .btn-add-team-icon:hover {
+      background: rgba(52, 211, 153, 0.28);
+      color: #FFFFFF;
+    }
+    .btn-add-team-icon svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+    .mgr-team-popover {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 340px;
+      max-width: 92vw;
+      background: #FFFFFF;
+      color: var(--ink);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.22);
+      z-index: 60;
+      text-align: left;
+    }
+    .mgr-team-popover.open {
+      display: block;
+      animation: popIn 0.16s ease-out;
+    }
+
   </style>
 </head>
 <body>
@@ -1194,14 +1253,36 @@
     
     <!-- Top KPI Strip -->
     <div class="terminal-kpi-grid">
-      <div class="terminal-kpi-card terminal-id-card">
+      <div class="terminal-kpi-card terminal-id-card" id="mgr-id-card-wrap">
         <div class="id-top-badges">
           <div class="id-dept-badge" id="deck-mgr-dept">OPERATIONS</div>
           <div class="id-code-pill" id="deck-mgr-code" onclick="copyManagerCode()" title="Click to copy your Manager Code for employees">CODE: PD-0000</div>
         </div>
         <div>
-          <div class="id-mgr-title" id="deck-mgr-name">MANAGER NAME</div>
+          <div class="id-mgr-row">
+            <div class="id-mgr-title" id="deck-mgr-name">MANAGER NAME</div>
+            <button type="button" class="btn-add-team-icon" onclick="toggleMgrTeamPopover(event)" title="Add or manage teams for Employee Registration dropdown">
+              <svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              <span>Team</span>
+            </button>
+          </div>
           <div class="id-sync-sub" id="deck-sync-time">Auto-syncing terminal</div>
+        </div>
+
+        <!-- Compact Popover for Adding/Managing Registration Teams -->
+        <div id="mgr-team-popover" class="mgr-team-popover" onclick="event.stopPropagation()">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:13.5px; font-weight:800; color:var(--ink);">Registration Teams</span>
+            <button type="button" onclick="closeMgrTeamPopover()" style="background:none; border:none; font-size:16px; font-weight:800; color:var(--ink-muted); cursor:pointer; line-height:1;">×</button>
+          </div>
+          <div style="font-size:11.5px; color:var(--ink-muted); margin-bottom:10px;">
+            Teams added here appear in the Employee Registration dropdown:
+          </div>
+          <div style="display:flex; gap:6px; margin-bottom:12px;">
+            <input type="text" id="mgrNewTeamInput" class="kiosk-input" style="flex:1; min-width:0; min-height:38px; padding:7px 10px; font-size:13px; text-transform:uppercase;" placeholder="E.G. DESIGN" oninput="this.value = this.value.toUpperCase()" onkeydown="if(event.key==='Enter') submitManagerAddTeam()">
+            <button type="button" class="btn-export-xlsx" id="btn-mgr-add-team" style="min-height:38px; padding:7px 12px; font-size:12.5px;" onclick="submitManagerAddTeam()">+ Add</button>
+          </div>
+          <div id="mgr-teams-chips" style="display:flex; gap:6px; flex-wrap:wrap; max-height:130px; overflow-y:auto;"></div>
         </div>
       </div>
 
@@ -1462,30 +1543,14 @@
         </table>
       </div>
 
-      <!-- VIEW 4: REGISTERED DEVICES, TEAMS & ACCOUNT CONTROLS -->
+      <!-- VIEW 4: REGISTERED DEVICES & ACCOUNT CONTROLS -->
       <div id="deck-view-devices" class="deck-view">
         <div class="view-bar">
           <div>
-            <h2 class="view-heading">Teams, Devices &amp; Accounts</h2>
-            <div class="view-sub">Manage teams shown in Employee Registration, reset bound phones, or control access</div>
+            <h2 class="view-heading">Registered Devices &amp; Accounts</h2>
+            <div class="view-sub">Reset bound phones, suspend access, or remove an account and its logs</div>
           </div>
         </div>
-
-        <!-- Manager Team Dropdown Builder -->
-        <div style="padding:18px 28px; background:var(--surface-recessed); border-bottom:1.5px solid var(--border); display:flex; flex-direction:column; gap:12px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-            <div>
-              <div style="font-size:14px; font-weight:800; color:var(--ink);">Employee Registration Teams Dropdown</div>
-              <div style="font-size:12px; color:var(--ink-muted);">Teams listed here appear automatically when employees enter your Manager Code during setup</div>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <input type="text" id="mgrNewTeamInput" class="kiosk-input" style="min-width:200px; text-transform:uppercase;" placeholder="NEW TEAM (E.G. DESIGN)" oninput="this.value = this.value.toUpperCase()" onkeydown="if(event.key==='Enter') submitManagerAddTeam()">
-              <button type="button" class="btn-export-xlsx" id="btn-mgr-add-team" onclick="submitManagerAddTeam()">+ Add Team</button>
-            </div>
-          </div>
-          <div id="mgr-teams-chips" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;"></div>
-        </div>
-
         <table class="deck-table">
           <thead>
             <tr>
@@ -2221,7 +2286,7 @@
       qrExpiryTimer = null;
       window.shiftStartTime = null;
 
-      ['empName', 'team', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
+      ['empName', 'team', 'empPhone', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
         localStorage.removeItem(k);
       });
       switchCard('laptop-setup');
@@ -3334,7 +3399,7 @@
       } else if (deviceAction === "UNBLOCK") {
         label = `Restore access for ${empName}?`;
       } else if (deviceAction === "REMOVE") {
-        label = `Permanently remove ${empName}'s account from the database? Their workstation will reset back to the registration form.`;
+        label = `Permanently remove ${empName}'s account AND all their attendance/login records from the database? Their workstation will reset back to registration.`;
       }
       if (!confirm(label)) return;
 
@@ -3360,12 +3425,13 @@
           if (deviceAction === "REMOVE") {
             const localEmp = String(localStorage.getItem('empName') || "").trim().toLowerCase();
             if (localEmp && localEmp === String(empName).trim().toLowerCase()) {
-              ['empName', 'team', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
+              ['empName', 'team', 'empPhone', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
                 localStorage.removeItem(k);
               });
             }
           }
           cachedManagerMembers = data.members || [];
+          if (Array.isArray(data.records)) cachedManagerRecords = data.records;
           updateTerminalDeckData(
             {
               name: localStorage.getItem('mgrName') || "MANAGER",
@@ -3977,12 +4043,39 @@
     // =========================================================================
     // MANAGER TEAM DROPDOWN OPTIONS & EMPLOYEE LIVE PD-XXXX TEAM LOOKUP
     // =========================================================================
+    function toggleMgrTeamPopover(ev) {
+      if (ev) ev.stopPropagation();
+      const pop = document.getElementById('mgr-team-popover');
+      if (!pop) return;
+      const willOpen = !pop.classList.contains('open');
+      pop.classList.toggle('open', willOpen);
+      if (willOpen) {
+        renderManagedTeamChips();
+        setTimeout(() => {
+          const inp = document.getElementById('mgrNewTeamInput');
+          if (inp) inp.focus();
+        }, 50);
+      }
+    }
+
+    function closeMgrTeamPopover() {
+      const pop = document.getElementById('mgr-team-popover');
+      if (pop) pop.classList.remove('open');
+    }
+
+    document.addEventListener('click', (e) => {
+      const wrap = document.getElementById('mgr-id-card-wrap');
+      if (wrap && !wrap.contains(e.target)) {
+        closeMgrTeamPopover();
+      }
+    });
+
     function renderManagedTeamChips() {
       const box = document.getElementById('mgr-teams-chips');
       if (!box) return;
       const list = Array.from(new Set(cachedManagedTeams.map(t => String(t).trim().toUpperCase()).filter(Boolean))).sort();
       if (!list.length) {
-        box.innerHTML = `<span style="font-size:12.5px; color:var(--ink-muted);">No teams added yet. Add your first team above so employees can select it during registration.</span>`;
+        box.innerHTML = `<span style="font-size:12px; color:var(--ink-muted);">No teams added yet. Add one above.</span>`;
         return;
       }
       box.innerHTML = list.map(t => `
@@ -4028,7 +4121,7 @@
         alert("Connection error while adding team.");
       } finally {
         btn.disabled = false;
-        btn.innerText = "+ Add Team";
+        btn.innerText = "+ Add";
       }
     }
 
