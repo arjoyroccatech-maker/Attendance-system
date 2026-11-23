@@ -1512,7 +1512,7 @@
         <div class="view-bar">
           <div>
             <h2 class="view-heading">Live Team Pulse</h2>
-            <div class="view-sub">Real-time presence across your departments</div>
+            <div class="view-sub">Live check-in status across your team</div>
           </div>
           <div class="filter-row">
             <select id="liveTeamFilter" class="kiosk-select" onchange="renderLiveTeamBoard(cachedManagerMembers, cachedManagerRecords)">
@@ -1528,7 +1528,7 @@
         <div class="view-bar">
           <div>
             <h2 class="view-heading">Workforce Insights & Analytics</h2>
-            <div class="view-sub">Visual breakdown of shift trends, work modes, team hours, and peak check-in windows</div>
+            <div class="view-sub">Shift trends, work modes, team hours, and peak check-ins</div>
           </div>
           <div class="filter-row">
             <select id="insightsTeamFilter" class="kiosk-select" onchange="renderManagerInsights()">
@@ -1685,7 +1685,7 @@
         <div class="view-bar">
           <div>
             <h2 class="view-heading">Registered Devices &amp; Accounts</h2>
-            <div class="view-sub">Reset bound phones, suspend access, or remove an account and its logs</div>
+            <div class="view-sub">Manage bound phones, access status, and employee accounts</div>
           </div>
         </div>
         <table class="deck-table">
@@ -1729,7 +1729,7 @@
         <div class="view-bar">
           <div>
             <h2 class="view-heading">SMS Announcements & Team News</h2>
-            <div class="view-sub">Send direct SMS text messages to all registered mobile numbers in your workspace</div>
+            <div class="view-sub">Broadcast SMS announcements to registered employee phones</div>
           </div>
           <div class="filter-row">
             <span class="tag tag-green" id="sms-ready-count">0 Mobile Numbers Ready</span>
@@ -1797,7 +1797,7 @@
         <div class="view-bar">
           <div>
             <h2 class="view-heading">Team Tools & Quick Links</h2>
-            <div class="view-sub">Publish helpful tools, forms, and portals directly to your employees' Kiosk sidebar</div>
+            <div class="view-sub">Share tools and links to your employees' Kiosk sidebar</div>
           </div>
         </div>
 
@@ -1850,7 +1850,7 @@
     <div id="role-selector" class="card role-card active-card">
       <div class="eyebrow-badge">Attendance Terminal</div>
       <h2>Choose Your Workspace</h2>
-      <p>Select Employee to log your shift, or Manager to monitor attendance & team insights.</p>
+      <p>Select Employee to log shifts, or Manager to manage your team.</p>
       <div class="role-grid">
         <button type="button" class="role-btn employee-role" onclick="selectEmployeeRole()">
           <div class="role-icon-circle">
@@ -1892,7 +1892,7 @@
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
       </div>
       <h2>Manager Registration</h2>
-      <p>Create your manager account and automatically generate a dedicated Google Spreadsheet for your team.</p>
+      <p>Create your manager account and dedicated team spreadsheet.</p>
       <label>Full Name</label>
       <input type="text" id="mgrName" class="uppercase-field" placeholder="E.G. JANE SMITH" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
       <label>Department</label>
@@ -1909,7 +1909,7 @@
         <svg viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
       </div>
       <h2>Developer Authorization</h2>
-      <p>Enter the default developer pass code to authorize manager registration.</p>
+      <p>Enter the developer pass code to continue.</p>
       <label>Default Pass Code</label>
       <input type="password" id="devPassInput" placeholder="Enter developer pass" autocomplete="off" onkeydown="if(event.key==='Enter') verifyDevPass()">
       <button class="btn-save" id="btn-verify-dev" onclick="verifyDevPass()">Verify Developer Pass</button>
@@ -1922,7 +1922,7 @@
         <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>
       </div>
       <h2>Create Your Password</h2>
-      <p>Set a personal password you will use every time you log in as Manager.</p>
+      <p>Create a personal password for Manager login.</p>
       <label>New Manager Password (min. 4 characters)</label>
       <input type="password" id="mgrNewPass" placeholder="••••••••" autocomplete="new-password">
       <label>Confirm Password</label>
@@ -1982,7 +1982,7 @@
         <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
       </div>
       <h2>Kiosk Device Setup</h2>
-      <p>Enter your Manager's PD-XXXX code to load your department's teams, then complete your profile.</p>
+      <p>Enter your Manager Code to load your team list and set up your kiosk.</p>
       <label>Manager Code (Required • e.g. PD-1234)</label>
       <input type="text" id="empMgrCode" class="uppercase-field" placeholder="PD-XXXX" maxlength="10" autocomplete="off" oninput="handleEmpMgrCodeInput(this.value)">
       <div id="empMgrLookupStatus" class="mgr-lookup-hint" style="color:var(--ink-muted);">Enter your Manager Code to load teams</div>
@@ -2027,7 +2027,7 @@
         <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
       </div>
       <h2>Update Your Email</h2>
-      <p>Please add your email address to enable backup Email OTP verification.</p>
+      <p>Add your work email for backup OTP verification.</p>
       <label>Registered Employee</label>
       <input type="text" id="missingEmailEmpName" disabled style="background:#F1F5F9; color:#64748B;">
       <label>Work Email Address</label>
@@ -2041,7 +2041,7 @@
         <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
       </div>
       <h2>Registration Complete</h2>
-      <p>Save your 4-digit Authentication Code. You will need it to open your kiosk and verify QR scans.</p>
+      <p>Save your 4-digit Authentication Code to unlock your kiosk and verify QR scans.</p>
       <div id="auth-code-display">0000</div>
       <p style="color: var(--crimson); font-weight: 600; font-size: 13px;">⚠️ Write this down or keep it private.</p>
       <button class="btn-save" onclick="openEmployeeKiosk()">I Have Saved It, Continue</button>
@@ -2276,7 +2276,7 @@
           <div class="view-bar">
             <div>
               <h2 class="view-heading">Team Tools &amp; Links</h2>
-              <div class="view-sub">Quick-access portals, forms, and resources shared by your Manager</div>
+              <div class="view-sub">Portals and resources shared by your Manager</div>
             </div>
           </div>
           <div id="emp-tools-grid" class="tools-cards-grid"></div>
@@ -2429,7 +2429,7 @@
       const code = localStorage.getItem('mgrCode');
       if (!code) return;
       if (navigator.clipboard) navigator.clipboard.writeText(code);
-      showToast(`Manager Code ${code} copied to clipboard!`, "success");
+      showToast(`Code ${code} copied`, "success");
       const pill = document.getElementById("deck-mgr-code");
       if (pill) {
         pill.innerText = `COPIED: ${code}`;
@@ -3997,7 +3997,7 @@
           renderManagerLinksTable(cachedTeamLinks);
           document.getElementById('mgrLinkTitleInput').value = "";
           document.getElementById('mgrLinkUrlInput').value = "";
-          showToast(`Tool link "${title}" published to team!`, "success");
+          showToast(`Published "${title}"`, "success");
         } else {
           showToast(data.error || "Unable to add link.");
         }
@@ -4030,7 +4030,7 @@
           cachedTeamLinks = data.teamLinks || [];
           document.getElementById('dock-count-links').innerText = cachedTeamLinks.length;
           renderManagerLinksTable(cachedTeamLinks);
-          showToast("Tool link removed.", "info");
+          showToast("Link removed", "info");
         } else {
           showToast(data.error || "Unable to remove link.");
         }
@@ -4345,7 +4345,7 @@
           inp.value = "";
           renderManagedTeamChips();
           populateTeamFilters(cachedManagerMembers, cachedManagerRecords);
-          showToast(`Team "${teamName}" added!`, "success");
+          showToast(`Added team "${teamName}"`, "success");
         } else {
           showToast(data.error || "Unable to add team.");
         }
@@ -4937,7 +4937,7 @@
 
           if (isSilentPolling && prevLinkSig !== nextLinkSig && incomingLinks.length > cachedEmployeeLinks.length - 1) {
             if (incomingLinks.length > 0 && prevLinkSig !== "[]") {
-              showToast(`Updated Team Tools & Links (${incomingLinks.length} available)`, "info");
+              showToast(`Team Tools updated (${incomingLinks.length})`, "info");
             }
           }
 
