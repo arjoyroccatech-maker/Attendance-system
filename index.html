@@ -39,6 +39,11 @@
     
     * { box-sizing: border-box; }
 
+    html {
+      overflow-y: scroll;
+      scrollbar-gutter: stable;
+    }
+
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background-color: var(--bg-terminal);
@@ -95,6 +100,11 @@
     /* --- CENTERED KIOSK STAGE --- */
     .main-wrapper {
       flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px 24px;
+    }
+    .main-wrapper.workspace-mode {
+      justify-content: flex-start;
+      padding-top: 28px;
+      padding-bottom: 36px;
     }
 
     .card {
@@ -280,6 +290,7 @@
       box-shadow: var(--shadow-terminal);
       overflow: hidden;
       text-align: left;
+      min-height: 540px;
     }
 
     .terminal-tab-bar {
@@ -324,21 +335,21 @@
       .announce-compose-box { grid-template-columns: 1fr; }
     }
     .terminal-tab {
-      min-height: 50px;
-      padding: 12px 14px;
+      height: 50px;
+      padding: 10px 10px;
       border-radius: 14px;
       border: 1.5px solid transparent;
       background: transparent;
       color: var(--ink-secondary);
       font-family: 'Inter', sans-serif;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      transition: all 0.14s ease;
+      gap: 6px;
+      transition: background-color 0.14s ease, color 0.14s ease, border-color 0.14s ease;
       white-space: nowrap;
     }
     .terminal-tab svg { width: 18px; height: 18px; fill: currentColor; }
@@ -918,6 +929,16 @@
       width: 100%;
       min-width: 0;
     }
+    .emp-main-stage > .card,
+    .emp-sub-panel {
+      min-height: 530px;
+    }
+    .emp-main-stage > #laptop-kiosk.active-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      animation: none;
+    }
     .emp-sub-panel {
       display: none;
       background: var(--surface);
@@ -926,7 +947,6 @@
       box-shadow: var(--shadow-terminal);
       overflow: hidden;
       text-align: left;
-      animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .emp-sub-panel.active {
       display: block;
@@ -2160,7 +2180,10 @@
       const empShell = document.getElementById('emp-workspace-shell');
       if (empShell) empShell.classList.remove('active');
 
-      document.getElementById('centered-stage').style.display = 'flex';
+      const stageEl = document.getElementById('centered-stage');
+      stageEl.style.display = 'flex';
+      stageEl.classList.toggle('workspace-mode', cardId === 'laptop-kiosk');
+
       document.getElementById('standard-footer').style.display = 'block';
       document.getElementById('nav-sub-label').innerText = "87seconds-Group Attendance Kiosk";
       document.getElementById('live-sync-label').innerText = "System Online";
