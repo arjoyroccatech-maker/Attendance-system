@@ -1222,9 +1222,146 @@
       animation: popIn 0.16s ease-out;
     }
 
+
+    /* =========================================================================
+       KIOSK-GRADE TOAST NOTIFICATIONS & CONFIRM MODAL (Replaces alert/confirm)
+       ========================================================================= */
+    .kiosk-toast-stack {
+      position: fixed;
+      top: 76px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 400px;
+      width: calc(100vw - 48px);
+      pointer-events: none;
+    }
+    .kiosk-toast {
+      pointer-events: auto;
+      background: #0F172A;
+      color: #FFFFFF;
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 18px 36px -8px rgba(15, 23, 42, 0.32), 0 4px 12px rgba(15, 23, 42, 0.14);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      line-height: 1.45;
+      animation: toastSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .kiosk-toast.toast-success {
+      background: #064E3B;
+      border-color: #10B981;
+    }
+    .kiosk-toast.toast-error {
+      background: #7F1D1D;
+      border-color: #F87171;
+    }
+    .kiosk-toast.toast-warn {
+      background: #78350F;
+      border-color: #FBBF24;
+    }
+    .kiosk-toast-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+    .kiosk-toast-body {
+      flex: 1;
+      word-break: break-word;
+    }
+    .kiosk-toast-close {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+    }
+    .kiosk-toast-close:hover {
+      color: #FFFFFF;
+    }
+    @keyframes toastSlideIn {
+      from { opacity: 0; transform: translateX(18px) scale(0.97); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    /* Custom Kiosk Confirm Modal */
+    .kiosk-confirm-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.52);
+      backdrop-filter: blur(3px);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .kiosk-confirm-backdrop.open {
+      display: flex;
+      animation: viewFade 0.14s ease-out;
+    }
+    .kiosk-confirm-box {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      max-width: 420px;
+      width: 100%;
+      padding: 26px 28px;
+      box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.28);
+      text-align: left;
+    }
+    .kiosk-confirm-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--ink);
+      margin: 0 0 8px 0;
+    }
+    .kiosk-confirm-msg {
+      font-size: 13.5px;
+      color: var(--ink-secondary);
+      line-height: 1.5;
+      margin: 0 0 22px 0;
+    }
+    .kiosk-confirm-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
   </style>
 </head>
 <body>
+
+  <!-- KIOSK TOAST STACK & CONFIRM MODAL -->
+  <div id="kiosk-toast-stack" class="kiosk-toast-stack" aria-live="polite"></div>
+
+  <div id="kiosk-confirm-backdrop" class="kiosk-confirm-backdrop" role="dialog" aria-modal="true">
+    <div class="kiosk-confirm-box">
+      <h3 class="kiosk-confirm-title" id="kiosk-confirm-title">Confirm Action</h3>
+      <p class="kiosk-confirm-msg" id="kiosk-confirm-msg">Are you sure?</p>
+      <div class="kiosk-confirm-actions">
+        <button type="button" class="btn-kiosk-sm" id="kiosk-confirm-cancel">Cancel</button>
+        <button type="button" class="btn-kiosk-sm danger" id="kiosk-confirm-ok">Confirm</button>
+      </div>
+    </div>
+  </div>
 
   <!-- UNIFIED KIOSK TOP NAV BAR -->
   <div class="top-bar" id="top-nav-bar">
@@ -2187,6 +2324,7 @@
     let qrPollingInterval = null;
     let qrExpiryTimer = null;
     let mgrAutoSyncInterval = null;
+    let empAutoSyncInterval = null;
     let pendingManagerDraft = null;
     let cachedManagerRecords = [];
     let cachedFilteredRecords = [];
@@ -2203,6 +2341,83 @@
     let serverTodayStr = "";
     window.shiftStartTime = null;
 
+
+    // =========================================================================
+    // KIOSK-GRADE TOAST NOTIFICATIONS & CONFIRM MODAL ENGINE
+    // =========================================================================
+    function showToast(rawMsg, forcedType) {
+      const stack = document.getElementById('kiosk-toast-stack');
+      if (!stack) return;
+
+      let msg = String(rawMsg || "").trim();
+      let type = forcedType || "info";
+
+      if (!forcedType) {
+        if (/^(✅|✓|success|welcome back|saved|copied|deleted|removed|resolved|updated|added|sent)/i.test(msg) ||
+            /sent to|migrated|restored|uploaded|connected/i.test(msg)) {
+          type = "success";
+        } else if (/^(❌|🚫|⚠️|error|invalid|unable|failed|cannot|no |please |incorrect|access denied|connection)/i.test(msg)) {
+          type = "error";
+        }
+      }
+
+      msg = msg.replace(/^[✅❌🚫⚠️]\s*/u, "");
+
+      const iconChar = type === "success" ? "✓" : (type === "error" ? "!" : "i");
+      const toast = document.createElement('div');
+      toast.className = `kiosk-toast toast-${type}`;
+      toast.innerHTML = `
+        <div class="kiosk-toast-icon">${iconChar}</div>
+        <div class="kiosk-toast-body">${escapeHtml(msg)}</div>
+        <button type="button" class="kiosk-toast-close" aria-label="Dismiss">×</button>
+      `;
+
+      const dismiss = () => {
+        if (!toast.parentNode) return;
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(14px)";
+        toast.style.transition = "all 0.16s ease";
+        setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 160);
+      };
+
+      toast.querySelector('.kiosk-toast-close').onclick = dismiss;
+      stack.appendChild(toast);
+
+      while (stack.children.length > 4) {
+        stack.removeChild(stack.firstChild);
+      }
+
+      setTimeout(dismiss, type === "error" ? 4800 : 3400);
+    }
+
+    function kioskConfirm(message, title = "Confirm Action", confirmText = "Confirm", isDanger = true) {
+      return new Promise((resolve) => {
+        const backdrop = document.getElementById('kiosk-confirm-backdrop');
+        const titleEl = document.getElementById('kiosk-confirm-title');
+        const msgEl = document.getElementById('kiosk-confirm-msg');
+        const okBtn = document.getElementById('kiosk-confirm-ok');
+        const cancelBtn = document.getElementById('kiosk-confirm-cancel');
+
+        titleEl.innerText = title;
+        msgEl.innerText = message;
+        okBtn.innerText = confirmText;
+        okBtn.className = isDanger ? "btn-kiosk-sm danger" : "btn-kiosk-sm dark";
+        backdrop.classList.add('open');
+
+        const cleanup = (result) => {
+          backdrop.classList.remove('open');
+          okBtn.onclick = null;
+          cancelBtn.onclick = null;
+          backdrop.onclick = null;
+          resolve(result);
+        };
+
+        okBtn.onclick = () => cleanup(true);
+        cancelBtn.onclick = () => cleanup(false);
+        backdrop.onclick = (e) => { if (e.target === backdrop) cleanup(false); };
+      });
+    }
+
     function getEmployeeRoutingPayload() {
       return {
         manager_code: localStorage.getItem('empManagerCode') || "",
@@ -2214,6 +2429,7 @@
       const code = localStorage.getItem('mgrCode');
       if (!code) return;
       if (navigator.clipboard) navigator.clipboard.writeText(code);
+      showToast(`Manager Code ${code} copied to clipboard!`, "success");
       const pill = document.getElementById("deck-mgr-code");
       if (pill) {
         pill.innerText = `COPIED: ${code}`;
@@ -2295,6 +2511,10 @@
     function switchCard(cardId) {
       clearInterval(mgrAutoSyncInterval);
       mgrAutoSyncInterval = null;
+      if (cardId !== 'laptop-kiosk') {
+        clearInterval(empAutoSyncInterval);
+        empAutoSyncInterval = null;
+      }
 
       document.getElementById('mgr-terminal-deck').classList.remove('active');
       const empShell = document.getElementById('emp-workspace-shell');
@@ -2351,9 +2571,11 @@
       clearInterval(qrPollingInterval);
       clearInterval(qrExpiryTimer);
       clearInterval(mgrAutoSyncInterval);
+      clearInterval(empAutoSyncInterval);
       qrPollingInterval = null;
       qrExpiryTimer = null;
       mgrAutoSyncInterval = null;
+      empAutoSyncInterval = null;
       window.shiftStartTime = null;
 
       const savedEmp = (localStorage.getItem('empName') || "").toUpperCase();
@@ -2426,8 +2648,8 @@
       const pin = document.getElementById('recPin').value.trim();
       const btn = document.getElementById('btn-recover-kiosk');
 
-      if (!email || email.indexOf("@") < 1) return alert("Please enter your registered Work Email.");
-      if (!pin || pin.length !== 4) return alert("Please enter your 4-digit Auth PIN.");
+      if (!email || email.indexOf("@") < 1) return showToast("Please enter your registered Work Email.");
+      if (!pin || pin.length !== 4) return showToast("Please enter your 4-digit Auth PIN.");
 
       btn.disabled = true;
       btn.innerText = "Restoring Kiosk...";
@@ -2454,13 +2676,13 @@
           if (data.member.fileId) localStorage.setItem('profileFileId', data.member.fileId);
           if (data.profileDataUrl) localStorage.setItem('profileDataUrl', data.profileDataUrl);
 
-          alert(`Welcome back, ${data.member.name}! Your kiosk has been restored.`);
+          showToast(`Welcome back, ${data.member.name}! Your kiosk has been restored.`);
           openEmployeeKiosk();
         } else {
-          alert(data.error || "Unable to recover account.");
+          showToast(data.error || "Unable to recover account.");
         }
       } catch (e) {
-        alert("Connection error while restoring kiosk.");
+        showToast("Connection error while restoring kiosk.");
       } finally {
         btn.disabled = false;
         btn.innerText = "Restore My Kiosk";
@@ -2500,6 +2722,13 @@
       }
 
       fetchLiveStatus(false);
+      clearInterval(empAutoSyncInterval);
+      empAutoSyncInterval = setInterval(() => {
+        const empShell = document.getElementById('emp-workspace-shell');
+        if (empShell && empShell.classList.contains('active')) {
+          fetchLiveStatus(true);
+        }
+      }, 10000);
     }
 
     function openSwitchManager() {
@@ -2613,8 +2842,8 @@
       const dept = document.getElementById('mgrDept').value.trim().toUpperCase();
       const email = document.getElementById('mgrEmail').value.trim().toLowerCase();
 
-      if (!name || !dept || !email) return alert("Please fill in Name, Department, and Email.");
-      if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
+      if (!name || !dept || !email) return showToast("Please fill in Name, Department, and Email.");
+      if (email.indexOf("@") < 1) return showToast("Please enter a valid email address.");
 
       pendingManagerDraft = { name, dept, email };
       document.getElementById('devPassInput').value = "";
@@ -2625,7 +2854,7 @@
     async function verifyDevPass() {
       const devPass = document.getElementById('devPassInput').value.trim();
       const btn = document.getElementById('btn-verify-dev');
-      if (!devPass) return alert("Please enter the developer default pass.");
+      if (!devPass) return showToast("Please enter the developer default pass.");
 
       btn.disabled = true;
       btn.innerText = "Verifying...";
@@ -2644,10 +2873,10 @@
           switchCard('manager-create-pass');
           setTimeout(() => document.getElementById('mgrNewPass').focus(), 100);
         } else {
-          alert(data.error || "Invalid developer password.");
+          showToast(data.error || "Invalid developer password.");
         }
       } catch (e) {
-        alert("Connection failed. Please try again.");
+        showToast("Connection failed. Please try again.");
       } finally {
         btn.disabled = false;
         btn.innerText = "Verify Developer Pass";
@@ -2659,8 +2888,8 @@
       const confirmPass = document.getElementById('mgrConfirmPass').value.trim();
       const btn = document.getElementById('btn-save-mgr');
 
-      if (!newPass || newPass.length < 4) return alert("Password must be at least 4 characters.");
-      if (newPass !== confirmPass) return alert("Passwords do not match.");
+      if (!newPass || newPass.length < 4) return showToast("Password must be at least 4 characters.");
+      if (newPass !== confirmPass) return showToast("Passwords do not match.");
       if (!pendingManagerDraft) return switchCard('manager-setup');
 
       btn.disabled = true;
@@ -2690,10 +2919,10 @@
           serverTodayStr = data.today || "";
           openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || [], data.teams || []);
         } else {
-          alert(data.error || "Registration failed.");
+          showToast(data.error || "Registration failed.");
         }
       } catch (e) {
-        alert("Connection failed while saving manager account.");
+        showToast("Connection failed while saving manager account.");
       } finally {
         btn.disabled = false;
         btn.innerText = "Save Password & Open Dashboard";
@@ -2705,7 +2934,7 @@
       const password = document.getElementById('mgrLoginPass').value.trim();
       const btn = document.getElementById('btn-mgr-login');
 
-      if (!password) return alert("Please enter your manager password.");
+      if (!password) return showToast("Please enter your manager password.");
 
       // Developer Shortcut: typing "dev1234" opens the compact Dev Manager Console
       if (password === "dev1234") {
@@ -2725,10 +2954,10 @@
             sessionStorage.setItem('devDashboardPass', password);
             openDevManagerConsole(data.managers || []);
           } else {
-            alert(data.error || "Invalid developer code.");
+            showToast(data.error || "Invalid developer code.");
           }
         } catch (e) {
-          alert("Connection error while opening Developer Console.");
+          showToast("Connection error while opening Developer Console.");
         } finally {
           btn.disabled = false;
           btn.innerText = "Access Dashboard";
@@ -2760,14 +2989,14 @@
           sessionStorage.setItem('mgrSessionPass', password);
           serverTodayStr = data.today || "";
           if (data.migrated) {
-            alert(`Workspace upgraded! Your existing team records were automatically migrated into your new dedicated spreadsheet (Code: ${data.manager.managerCode}).`);
+            showToast(`Workspace upgraded! Your existing team records were automatically migrated into your new dedicated spreadsheet (Code: ${data.manager.managerCode}).`);
           }
           openTerminalDashboard(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || [], data.teams || []);
         } else {
-          alert(data.error || "Invalid credentials.");
+          showToast(data.error || "Invalid credentials.");
         }
       } catch (e) {
-        alert("Connection error while logging in.");
+        showToast("Connection error while logging in.");
       } finally {
         btn.disabled = false;
         btn.innerText = "Access Dashboard";
@@ -2791,9 +3020,9 @@
         });
         const data = await res.json();
         if (data.ok) renderDevManagersTable(data.managers || []);
-        else alert(data.error || "Failed to refresh.");
+        else showToast(data.error || "Failed to refresh.");
       } catch (e) {
-        alert("Connection error.");
+        showToast("Connection error.");
       }
     }
 
@@ -2823,7 +3052,7 @@
     }
 
     async function devClearManagerAccount(mgrEmail, mgrName) {
-      if (!confirm(`Clear manager account for ${mgrName} (${mgrEmail})? This will remove their manager login so they can re-register.`)) return;
+      if (!(await kioskConfirm(`Clear manager account for ${mgrName} (${mgrEmail})? This will remove their manager login so they can re-register.`, "Reset Manager Account", "Clear Account", true))) return;
 
       const devPass = sessionStorage.getItem('devDashboardPass') || "";
       try {
@@ -2838,7 +3067,7 @@
         });
         const data = await res.json();
         if (data.ok) {
-          alert(data.message);
+          showToast(data.message);
           const localMgrEmail = String(localStorage.getItem('mgrEmail') || "").trim().toLowerCase();
           if (localMgrEmail && localMgrEmail === mgrEmail.toLowerCase()) {
             ['mgrName', 'mgrDept', 'mgrEmail', 'mgrCode', 'mgrTargetSheetId'].forEach(k => localStorage.removeItem(k));
@@ -2846,10 +3075,10 @@
           }
           renderDevManagersTable(data.managers || []);
         } else {
-          alert(data.error || "Unable to clear manager account.");
+          showToast(data.error || "Unable to clear manager account.");
         }
       } catch (e) {
-        alert("Connection error while clearing manager account.");
+        showToast("Connection error while clearing manager account.");
       }
     }
 
@@ -3314,8 +3543,8 @@
 
     function exportAttendanceToExcel() {
       const rowsToExport = cachedFilteredRecords.length ? cachedFilteredRecords : cachedManagerRecords;
-      if (!rowsToExport.length) return alert("No attendance records available to export.");
-      if (typeof XLSX === "undefined") return alert("Excel library still loading. Please try again in a second.");
+      if (!rowsToExport.length) return showToast("No attendance records available to export.");
+      if (typeof XLSX === "undefined") return showToast("Excel library still loading. Please try again in a second.");
 
       const worksheetData = rowsToExport.map(r => ({
         "Date": r.date || "",
@@ -3401,7 +3630,7 @@
       } else if (deviceAction === "REMOVE") {
         label = `Permanently remove ${empName}'s account AND all their attendance/login records from the database? Their workstation will reset back to registration.`;
       }
-      if (!confirm(label)) return;
+      if (!(await kioskConfirm(label, "Confirm Account Action", "Proceed", true))) return;
 
       const email = localStorage.getItem('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
@@ -3421,7 +3650,7 @@
         });
         const data = await res.json();
         if (data.ok) {
-          alert(data.message);
+          showToast(data.message);
           if (deviceAction === "REMOVE") {
             const localEmp = String(localStorage.getItem('empName') || "").trim().toLowerCase();
             if (localEmp && localEmp === String(empName).trim().toLowerCase()) {
@@ -3443,10 +3672,10 @@
             cachedManagerMembers
           );
         } else {
-          alert(data.error || "Action failed.");
+          showToast(data.error || "Action failed.");
         }
       } catch (e) {
-        alert("Connection error while updating account.");
+        showToast("Connection error while updating account.");
       }
     }
 
@@ -3483,7 +3712,7 @@
     async function submitResolveShift(rowNum) {
       const timeOutVal = (document.getElementById(`resolve-out-${rowNum}`).value || "").trim();
       const noteVal = (document.getElementById(`resolve-note-${rowNum}`).value || "").trim();
-      if (!timeOutVal) return alert("Please enter a Time Out (e.g. 06:00 PM or 18:00).");
+      if (!timeOutVal) return showToast("Please enter a Time Out (e.g. 06:00 PM or 18:00).");
 
       const email = localStorage.getItem('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
@@ -3503,7 +3732,7 @@
         });
         const data = await res.json();
         if (data.ok) {
-          alert(data.message);
+          showToast(data.message);
           updateTerminalDeckData(
             {
               name: localStorage.getItem('mgrName') || "MANAGER",
@@ -3515,10 +3744,10 @@
             cachedManagerMembers
           );
         } else {
-          alert(data.error || "Unable to update shift.");
+          showToast(data.error || "Unable to update shift.");
         }
       } catch (e) {
-        alert("Connection error while saving Time Out.");
+        showToast("Connection error while saving Time Out.");
       }
     }
 
@@ -3624,7 +3853,7 @@
 
     async function deleteAnnouncementsByRows(rowNumbers) {
       const count = rowNumbers.length;
-      if (!confirm(`Delete ${count} selected announcement message${count > 1 ? 's' : ''}?`)) return;
+      if (!(await kioskConfirm(`Delete ${count} selected announcement message${count > 1 ? 's' : ''}?`, "Delete Announcements", "Delete", true))) return;
 
       const email = localStorage.getItem('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
@@ -3648,11 +3877,11 @@
           document.getElementById('dock-count-announce').innerText = cachedAnnouncements.length;
           renderAnnouncementsTable(cachedAnnouncements);
         } else {
-          alert(data.error || "Unable to delete selected announcements.");
+          showToast(data.error || "Unable to delete selected announcements.");
           updateAnnSelectionUI();
         }
       } catch (e) {
-        alert("Connection error while deleting announcements.");
+        showToast("Connection error while deleting announcements.");
         updateAnnSelectionUI();
       }
     }
@@ -3663,7 +3892,7 @@
       const targetTeam = document.getElementById('annTeamSelect').value || "ALL";
       const btn = document.getElementById('btn-send-sms-ann');
 
-      if (!message) return alert("Please enter an announcement message.");
+      if (!message) return showToast("Please enter an announcement message.");
 
       const email = localStorage.getItem('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
@@ -3691,15 +3920,15 @@
           renderAnnouncementsTable(cachedAnnouncements);
         }
         if (data.ok) {
-          alert("✅ " + data.message);
+          showToast("✅ " + data.message);
           document.getElementById('annTitleInput').value = "";
           document.getElementById('annMessageInput').value = "";
           updateSmsCharCount();
         } else {
-          alert(data.error || "Unable to send SMS announcement.");
+          showToast(data.error || "Unable to send SMS announcement.");
         }
       } catch (e) {
-        alert("Connection error while sending SMS announcement.");
+        showToast("Connection error while sending SMS announcement.");
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> Send SMS to Team`;
@@ -3740,7 +3969,7 @@
       const targetTeam = document.getElementById('mgrLinkTeamSelect').value || "ALL";
       const btn = document.getElementById('btn-add-team-link');
 
-      if (!title || !url) return alert("Please enter both a Tool Name and a URL.");
+      if (!title || !url) return showToast("Please enter both a Tool Name and a URL.");
 
       const email = localStorage.getItem('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
@@ -3768,11 +3997,12 @@
           renderManagerLinksTable(cachedTeamLinks);
           document.getElementById('mgrLinkTitleInput').value = "";
           document.getElementById('mgrLinkUrlInput').value = "";
+          showToast(`Tool link "${title}" published to team!`, "success");
         } else {
-          alert(data.error || "Unable to add link.");
+          showToast(data.error || "Unable to add link.");
         }
       } catch (e) {
-        alert("Connection error while saving link.");
+        showToast("Connection error while saving link.");
       } finally {
         btn.disabled = false;
         btn.innerText = "+ Add Link";
@@ -3780,7 +4010,7 @@
     }
 
     async function deleteManagerLink(rowNum) {
-      if (!confirm("Remove this tool link from your team's kiosk?")) return;
+      if (!(await kioskConfirm("Remove this tool link from your team's kiosk?", "Remove Team Link", "Remove", true))) return;
       const email = localStorage.getItem('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
 
@@ -3800,11 +4030,12 @@
           cachedTeamLinks = data.teamLinks || [];
           document.getElementById('dock-count-links').innerText = cachedTeamLinks.length;
           renderManagerLinksTable(cachedTeamLinks);
+          showToast("Tool link removed.", "info");
         } else {
-          alert(data.error || "Unable to remove link.");
+          showToast(data.error || "Unable to remove link.");
         }
       } catch (e) {
-        alert("Connection error while removing link.");
+        showToast("Connection error while removing link.");
       }
     }
 
@@ -3985,8 +4216,8 @@
     }
 
     function exportEmployeeAttendanceExcel() {
-      if (!cachedEmployeeRecords.length) return alert("No attendance records available to download yet.");
-      if (typeof XLSX === "undefined") return alert("Excel library still loading. Please try again in a second.");
+      if (!cachedEmployeeRecords.length) return showToast("No attendance records available to download yet.");
+      if (typeof XLSX === "undefined") return showToast("Excel library still loading. Please try again in a second.");
 
       const empName = (localStorage.getItem('empName') || "EMPLOYEE").toUpperCase();
       const rows = cachedEmployeeRecords.map(r => ({
@@ -4090,7 +4321,7 @@
       const inp = document.getElementById('mgrNewTeamInput');
       const teamName = (inp.value || "").trim().toUpperCase();
       const btn = document.getElementById('btn-mgr-add-team');
-      if (!teamName) return alert("Please enter a team name.");
+      if (!teamName) return showToast("Please enter a team name.");
 
       const email = localStorage.getItem('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
@@ -4114,11 +4345,12 @@
           inp.value = "";
           renderManagedTeamChips();
           populateTeamFilters(cachedManagerMembers, cachedManagerRecords);
+          showToast(`Team "${teamName}" added!`, "success");
         } else {
-          alert(data.error || "Unable to add team.");
+          showToast(data.error || "Unable to add team.");
         }
       } catch (e) {
-        alert("Connection error while adding team.");
+        showToast("Connection error while adding team.");
       } finally {
         btn.disabled = false;
         btn.innerText = "+ Add";
@@ -4126,7 +4358,15 @@
     }
 
     async function deleteManagerTeam(teamName) {
-      if (!confirm(`Remove "${teamName}" from the Employee Registration dropdown?`)) return;
+      const targetUpper = String(teamName || "").trim().toUpperCase();
+      const prevTeams = [...cachedManagedTeams];
+
+      // Optimistic 0ms UI update
+      cachedManagedTeams = cachedManagedTeams.filter(t => String(t).trim().toUpperCase() !== targetUpper);
+      renderManagedTeamChips();
+      populateTeamFilters(cachedManagerMembers, cachedManagerRecords);
+      showToast(`Removed team "${targetUpper}"`, "info");
+
       const email = localStorage.getItem('mgrEmail') || "";
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
 
@@ -4138,19 +4378,27 @@
             action: "MANAGER_DELETE_TEAM",
             manager_email: email,
             manager_password: pass,
-            team_name: teamName
+            team_name: targetUpper
           })
         });
         const data = await res.json();
         if (data.ok) {
-          cachedManagedTeams = data.teams || [];
+          if (Array.isArray(data.teams)) {
+            cachedManagedTeams = data.teams;
+            renderManagedTeamChips();
+            populateTeamFilters(cachedManagerMembers, cachedManagerRecords);
+          }
+        } else {
+          cachedManagedTeams = prevTeams;
           renderManagedTeamChips();
           populateTeamFilters(cachedManagerMembers, cachedManagerRecords);
-        } else {
-          alert(data.error || "Unable to remove team.");
+          showToast(data.error || "Unable to remove team.", "error");
         }
       } catch (e) {
-        alert("Connection error while removing team.");
+        cachedManagedTeams = prevTeams;
+        renderManagedTeamChips();
+        populateTeamFilters(cachedManagerMembers, cachedManagerRecords);
+        showToast("Connection error while removing team.", "error");
       }
     }
 
@@ -4470,10 +4718,10 @@
               }
               applyProfilePhoto(result.profileDataUrl || dataUrl, result.fileId);
             } else {
-              alert("Photo upload failed: " + (result.error || "Unknown error"));
+              showToast("Photo upload failed: " + (result.error || "Unknown error"));
             }
           } catch (err) {
-            alert("Connection error while uploading photo.");
+            showToast("Connection error while uploading photo.");
           } finally {
             loader.style.display = 'none';
             event.target.value = "";
@@ -4681,9 +4929,20 @@
              return;
           }
 
+          const prevLinkSig = JSON.stringify(cachedEmployeeLinks.map(l => l.title + "|" + l.url));
+          const incomingLinks = result.teamLinks || [];
+          const nextLinkSig = JSON.stringify(incomingLinks.map(l => l.title + "|" + l.url));
+
+          syncEmployeeWorkspaceData(result.records || [], incomingLinks);
+
+          if (isSilentPolling && prevLinkSig !== nextLinkSig && incomingLinks.length > cachedEmployeeLinks.length - 1) {
+            if (incomingLinks.length > 0 && prevLinkSig !== "[]") {
+              showToast(`Updated Team Tools & Links (${incomingLinks.length} available)`, "info");
+            }
+          }
+
           if (!isSilentPolling) {
             currentShiftState = newShiftState;
-            syncEmployeeWorkspaceData(result.records || [], result.teamLinks || []);
             renderUIState(result);
           }
         } else {
@@ -4801,11 +5060,11 @@
       const email = document.getElementById('empEmail').value.trim().toLowerCase();
       const btn = document.getElementById('btn-register-laptop');
 
-      if (!mgrCode) return alert("Please enter your Manager Code (e.g. PD-1234).");
-      if (!team) return alert("Please select your Team / Department from the dropdown.");
-      if (!name || !phone || !email) return alert("Please complete all fields including your mobile number and email.");
-      if (phone.replace(/[^0-9]/g, "").length < 10) return alert("Please enter a valid 11-digit mobile number (e.g. 09171234567).");
-      if (email.indexOf("@") < 1) return alert("Please enter a valid email address.");
+      if (!mgrCode) return showToast("Please enter your Manager Code (e.g. PD-1234).");
+      if (!team) return showToast("Please select your Team / Department from the dropdown.");
+      if (!name || !phone || !email) return showToast("Please complete all fields including your mobile number and email.");
+      if (phone.replace(/[^0-9]/g, "").length < 10) return showToast("Please enter a valid 11-digit mobile number (e.g. 09171234567).");
+      if (email.indexOf("@") < 1) return showToast("Please enter a valid email address.");
 
       btn.disabled = true;
       btn.innerText = "Saving Profile...";
@@ -4829,7 +5088,7 @@
         const result = await response.json();
 
         if (!result.ok) {
-          alert("Registration error: " + result.error);
+          showToast("Registration error: " + result.error);
           btn.disabled = false;
           btn.innerText = "Secure Device & Continue";
           return;
@@ -4846,7 +5105,7 @@
         switchCard('laptop-reveal');
         document.getElementById('auth-code-display').innerText = newAuthCode;
       } catch (err) {
-        alert("Connection failed while saving registration. Please try again.");
+        showToast("Connection failed while saving registration. Please try again.");
         btn.disabled = false;
         btn.innerText = "Secure Device & Continue";
       }
@@ -4856,7 +5115,7 @@
       const email = document.getElementById('missingEmailInput').value.trim().toLowerCase();
       const btn = document.getElementById('btn-save-missing-email');
 
-      if (!email || email.indexOf("@") < 1) return alert("Please enter a valid email address.");
+      if (!email || email.indexOf("@") < 1) return showToast("Please enter a valid email address.");
 
       btn.disabled = true;
       btn.innerText = "Saving Email...";
@@ -4881,12 +5140,12 @@
           localStorage.setItem('empEmail', email);
           openEmployeeKiosk();
         } else {
-          alert("Error: " + result.error);
+          showToast("Error: " + result.error);
           btn.disabled = false;
           btn.innerText = "Save Email & Continue";
         }
       } catch (err) {
-        alert("Connection error. Please try again.");
+        showToast("Connection error. Please try again.");
         btn.disabled = false;
         btn.innerText = "Save Email & Continue";
       }
