@@ -1345,6 +1345,7 @@
       gap: 10px;
     }
 
+    input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
   </style>
 </head>
 <body>
@@ -1416,7 +1417,7 @@
             Teams added here appear in the Employee Registration dropdown:
           </div>
           <div style="display:flex; gap:6px; margin-bottom:12px;">
-            <input type="text" id="mgrNewTeamInput" name="team_label" autocomplete="one-time-code" data-lpignore="true" class="kiosk-input" style="flex:1; min-width:0; min-height:38px; padding:7px 10px; font-size:13px; text-transform:uppercase;" placeholder="E.G. DESIGN" oninput="this.value = this.value.toUpperCase()" onkeydown="if(event.key==='Enter') submitManagerAddTeam()">
+            <input type="search" id="mgrNewTeamInput" name="team_dept_query" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" readonly onfocus="this.removeAttribute('readonly')" class="kiosk-input" style="flex:1; min-width:0; min-height:38px; padding:7px 10px; font-size:13px; text-transform:uppercase;" placeholder="E.G. DESIGN" oninput="this.value = this.value.toUpperCase()" onkeydown="if(event.key==='Enter') submitManagerAddTeam()">
             <button type="button" class="btn-export-xlsx" id="btn-mgr-add-team" style="min-height:38px; padding:7px 12px; font-size:12.5px;" onclick="submitManagerAddTeam()">+ Add</button>
           </div>
           <div id="mgr-teams-chips" style="display:flex; gap:6px; flex-wrap:wrap; max-height:130px; overflow-y:auto;"></div>
@@ -1645,7 +1646,7 @@
             <div class="view-sub" id="mgr-filtered-count">0 logs found</div>
           </div>
           <div class="filter-row">
-            <input type="text" id="mgrSearchInput" name="log_search" autocomplete="one-time-code" data-lpignore="true" class="kiosk-input" placeholder="Search name or date..." oninput="filterManagerTable()">
+            <input type="search" id="mgrSearchInput" name="log_search_query" autocomplete="off" data-lpignore="true" class="kiosk-input" placeholder="Search name or date..." oninput="filterManagerTable()">
             <select id="mgrFilterTeam" class="kiosk-select" onchange="filterManagerTable()">
               <option value="ALL">All Teams</option>
             </select>
@@ -1740,7 +1741,7 @@
           <div class="announce-card">
             <div style="font-size:15px; font-weight:800; margin-bottom:12px;">Compose SMS Broadcast</div>
             <div style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
-              <input type="text" id="annTitleInput" name="sms_headline" autocomplete="one-time-code" data-lpignore="true" class="kiosk-input" style="flex:1; min-width:180px; text-transform:uppercase;" placeholder="HEADLINE (E.G. SHIFT UPDATE)">
+              <input type="search" id="annTitleInput" name="sms_headline_query" autocomplete="off" data-lpignore="true" class="kiosk-input" style="flex:1; min-width:180px; text-transform:uppercase;" placeholder="HEADLINE (E.G. SHIFT UPDATE)">
               <select id="annTeamSelect" class="kiosk-select" onchange="updateSmsRecipientPreview()">
                 <option value="ALL">All Teams</option>
               </select>
@@ -1802,8 +1803,8 @@
         </div>
 
         <div style="padding:22px 28px; background:var(--surface-recessed); border-bottom:1.5px solid var(--border); display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-          <input type="text" id="mgrLinkTitleInput" name="tool_title" autocomplete="one-time-code" data-lpignore="true" class="kiosk-input" style="flex:1; min-width:190px;" placeholder="Tool / Link Name (e.g. Payroll Portal)">
-          <input type="url" id="mgrLinkUrlInput" name="tool_url" autocomplete="one-time-code" data-lpignore="true" class="kiosk-input" style="flex:1.5; min-width:240px;" placeholder="Paste URL (e.g. https://...)">
+          <input type="search" id="mgrLinkTitleInput" name="tool_title_query" autocomplete="off" data-lpignore="true" class="kiosk-input" style="flex:1; min-width:190px;" placeholder="Tool / Link Name (e.g. Payroll Portal)">
+          <input type="url" id="mgrLinkUrlInput" name="tool_url_query" autocomplete="off" data-lpignore="true" class="kiosk-input" style="flex:1.5; min-width:240px;" placeholder="Paste URL (e.g. https://...)">
           <select id="mgrLinkCatSelect" class="kiosk-select">
             <option value="Work Tool">Work Tool</option>
             <option value="HR & Payroll">HR & Payroll</option>
@@ -2825,9 +2826,13 @@
       const emailInput = document.getElementById('mgrLoginEmail');
       const passInput = document.getElementById('mgrLoginPass');
       const subtitle = document.getElementById('mgr-login-subtitle');
-      if (emailInput) emailInput.disabled = false;
+      if (emailInput) {
+        emailInput.disabled = false;
+        emailInput.type = "email";
+      }
       if (passInput) {
         passInput.disabled = false;
+        passInput.type = "password";
         passInput.value = "";
       }
 
@@ -2851,7 +2856,7 @@
       if (email.indexOf("@") < 1) return showToast("Please enter a valid email address.");
 
       pendingManagerDraft = { name, dept, email };
-      document.getElementById('devPassInput').value = "";
+      const dpEl = document.getElementById('devPassInput'); dpEl.disabled = false; dpEl.type = 'password'; dpEl.value = "";
       switchCard('manager-dev-auth');
       setTimeout(() => document.getElementById('devPassInput').focus(), 100);
     }
@@ -2873,8 +2878,7 @@
         const data = await res.json();
         if (data.ok) {
           pendingManagerDraft.devPass = devPass;
-          document.getElementById('mgrNewPass').value = "";
-          document.getElementById('mgrConfirmPass').value = "";
+          const npEl = document.getElementById('mgrNewPass'); const cpEl = document.getElementById('mgrConfirmPass'); npEl.disabled = false; npEl.type = 'password'; npEl.value = ""; cpEl.disabled = false; cpEl.type = 'password'; cpEl.value = "";
           switchCard('manager-create-pass');
           setTimeout(() => document.getElementById('mgrNewPass').focus(), 100);
         } else {
@@ -3141,10 +3145,14 @@
     }
 
     function openTerminalDashboard(manager, records, members, announcements, teamLinks, teams) {
-      const loginEmailEl = document.getElementById('mgrLoginEmail');
-      const loginPassEl = document.getElementById('mgrLoginPass');
-      if (loginEmailEl) { loginEmailEl.value = ""; loginEmailEl.disabled = true; }
-      if (loginPassEl) { loginPassEl.value = ""; loginPassEl.disabled = true; }
+      ['mgrLoginEmail', 'mgrLoginPass', 'devPassInput', 'mgrNewPass', 'mgrConfirmPass'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.value = "";
+          el.type = "text";
+          el.disabled = true;
+        }
+      });
 
       document.getElementById('centered-stage').style.display = 'none';
       document.getElementById('standard-footer').style.display = 'none';
@@ -3712,8 +3720,8 @@
             <div class="person-name">${escapeHtml(r.date)}</div>
             <div class="person-team">In: ${escapeHtml(r.timeIn)}</div>
           </td>
-          <td><input type="text" class="inline-field" autocomplete="one-time-code" data-lpignore="true" id="resolve-out-${r._row}" placeholder="e.g. 06:00 PM"></td>
-          <td><input type="text" class="inline-field" autocomplete="one-time-code" data-lpignore="true" id="resolve-note-${r._row}" placeholder="Optional reason"></td>
+          <td><input type="search" class="inline-field" autocomplete="off" data-lpignore="true" id="resolve-out-${r._row}" placeholder="e.g. 06:00 PM"></td>
+          <td><input type="search" class="inline-field" autocomplete="off" data-lpignore="true" id="resolve-note-${r._row}" placeholder="Optional reason"></td>
           <td><button type="button" class="btn-kiosk-sm dark" onclick="submitResolveShift(${r._row})">Save</button></td>
         </tr>
       `).join("");
