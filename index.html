@@ -583,11 +583,88 @@
       height: 44px;
       font-size: 14px;
     }
-    .emp-photo-avatar.is-live {
-      border-color: var(--emerald);
-      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.18);
-      background: var(--emerald-bg);
-      color: var(--emerald);
+    /* ACTIVE SHIFT: Flickering Fire Aura */
+    .emp-photo-avatar.state-active {
+      border: 2.5px solid #F97316;
+      background: radial-gradient(circle at 50% 85%, #FACC15 0%, #F97316 48%, #DC2626 100%);
+      color: #FFFFFF;
+      overflow: visible;
+      animation: avatarFireAura 1.4s ease-in-out infinite alternate;
+    }
+    .emp-photo-avatar.state-active img,
+    .emp-photo-avatar.state-done img {
+      border-radius: 50%;
+    }
+    .emp-photo-avatar.state-active::after {
+      content: "🔥";
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 1.5px solid #F97316;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);
+      animation: flameBadgeBounce 0.9s ease-in-out infinite alternate;
+    }
+
+    /* TIMED OUT / COMPLETED: Calm Blue Shift-Complete Ring */
+    .emp-photo-avatar.state-done {
+      border: 2.5px solid #2563EB;
+      background: linear-gradient(135deg, #DBEAFE 0%, #D1FAE5 100%);
+      color: #1D4ED8;
+      overflow: visible;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+      transition: all 0.35s ease;
+    }
+    .emp-photo-avatar.state-done::after {
+      content: "✓";
+      position: absolute;
+      bottom: -3px;
+      right: -3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #2563EB;
+      color: #FFFFFF;
+      border: 2px solid #FFFFFF;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+    }
+
+    @keyframes avatarFireAura {
+      0% {
+        box-shadow:
+          0 0 0 2.5px rgba(251, 191, 36, 0.75),
+          0 -3px 10px rgba(249, 115, 22, 0.65),
+          0 -6px 16px rgba(220, 38, 38, 0.35);
+      }
+      50% {
+        box-shadow:
+          0 0 0 3.5px rgba(249, 115, 22, 0.85),
+          -2px -5px 14px rgba(234, 88, 12, 0.8),
+          2px -9px 20px rgba(220, 38, 38, 0.5);
+      }
+      100% {
+        box-shadow:
+          0 0 0 3px rgba(250, 204, 21, 0.9),
+          2px -6px 16px rgba(249, 115, 22, 0.85),
+          0 -11px 24px rgba(239, 68, 68, 0.55);
+      }
+    }
+
+    @keyframes flameBadgeBounce {
+      from { transform: scale(0.92) rotate(-6deg); }
+      to   { transform: scale(1.08) rotate(6deg); }
     }
 
     /* High-Legibility Zero-Scroll Tables */
@@ -2479,21 +2556,23 @@
       return map;
     }
 
-    function renderEmployeeAvatarHtml(empName, sizeClass, isLive) {
+    function renderEmployeeAvatarHtml(empName, sizeClass, statusState) {
       const key = String(empName || "").trim().toLowerCase();
       const cached = memberPhotoCache[key];
       const initials = escapeHtml(getInitials(empName));
-      const liveCls = isLive ? " is-live" : "";
+      const stateCls = (statusState === 'active' || statusState === true) ? ' state-active'
+                     : statusState === 'done' ? ' state-done'
+                     : '';
 
       if (cached && (cached.dataUrl || cached.fileId)) {
         const src = cached.dataUrl || `https://lh3.googleusercontent.com/d/${cached.fileId}=s200`;
         return `
-          <div class="emp-photo-avatar ${sizeClass}${liveCls}">
+          <div class="emp-photo-avatar ${sizeClass}${stateCls}">
             <img src="${src}" alt="${escapeHtml(empName)}" onerror="this.parentElement.innerHTML='${initials}'">
           </div>
         `;
       }
-      return `<div class="emp-photo-avatar ${sizeClass}${liveCls}">${initials}</div>`;
+      return `<div class="emp-photo-avatar ${sizeClass}${stateCls}">${initials}</div>`;
     }
 
     function resetLocalEmployeeWorkstation() {
@@ -3162,7 +3241,7 @@
       updateTerminalDeckData(manager, records, members, announcements, teamLinks, teams);
 
       clearInterval(mgrAutoSyncInterval);
-      mgrAutoSyncInterval = setInterval(silentSyncManagerData, 15000);
+      mgrAutoSyncInterval = setInterval(silentSyncManagerData, 8000);
     }
 
     function updateTerminalDeckData(manager, records, members, announcements, teamLinks, teams) {
@@ -3472,7 +3551,7 @@
           <div class="roster-card ${activeShift ? 'online' : ''}">
             <div class="roster-top">
               <div class="person-cell">
-                ${renderEmployeeAvatarHtml(m.name, "size-lg", Boolean(activeShift))}
+                ${renderEmployeeAvatarHtml(m.name, "size-lg", activeShift ? "active" : (todayCompleted ? "done" : "offline"))}
                 <div>
                   <div class="person-name">${escapeHtml(m.name)}</div>
                   <div class="person-team">${escapeHtml(m.team)}</div>
