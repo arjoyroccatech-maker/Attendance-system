@@ -2405,6 +2405,18 @@
     // MAIN SPREADSHEET WEB APP URL (Single Backend Code Endpoint)
     // =========================================================================
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxZxXqtW1_Olqvux2zHJN_cTeG0bpBHypvcv2LH4bjvXoBsJv4KJdtTTQuFIGYDdHcl2w/exec";
+    let isEmployeeSyncInFlight = false;
+    let isManagerSyncInFlight = false;
+
+    function fetchFreshApi(payload) {
+      const bustUrl = `${GOOGLE_URL}?_t=${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+      return fetch(bustUrl, {
+        method: 'POST',
+        cache: 'no-store',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+    }
 
     // --- GLOBAL STATE DECLARATIONS ---
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -2652,6 +2664,10 @@
       if (tabKey === 'calendar') renderEmployeeCalendar();
       if (tabKey === 'history') renderEmployeeHistoryTable();
       if (tabKey === 'tools') renderEmployeeToolsGrid();
+
+      if (tabKey !== 'kiosk') {
+        fetchLiveStatus(true);
+      }
     }
 
     function getInitials(name) {
@@ -2749,8 +2765,9 @@
       btn.innerText = "Restoring Kiosk...";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "RECOVER_MEMBER",
@@ -2822,8 +2839,21 @@
         if (empShell && empShell.classList.contains('active')) {
           fetchLiveStatus(true);
         }
-      }, 10000);
+      }, 4000);
     }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        const empShell = document.getElementById('emp-workspace-shell');
+        if (empShell && empShell.classList.contains('active')) {
+          fetchLiveStatus(true);
+        }
+        const mgrDeck = document.getElementById('mgr-terminal-deck');
+        if (mgrDeck && mgrDeck.classList.contains('active')) {
+          silentSyncManagerData();
+        }
+      }
+    });
 
     function openSwitchManager() {
       const currentCode = (localStorage.getItem('empManagerCode') || "").toUpperCase();
@@ -2866,8 +2896,9 @@
 
       try {
         const routing = getEmployeeRoutingPayload();
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "SWITCH_MANAGER",
@@ -2963,8 +2994,9 @@
       btn.innerText = "Verifying...";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: "VERIFY_DEV_PASS", dev_pass: devPass })
         });
@@ -2998,8 +3030,9 @@
       btn.innerText = "Creating Spreadsheet & Account...";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "REGISTER_MANAGER",
@@ -3071,8 +3104,9 @@
       btn.innerText = "Authenticating...";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "MANAGER_LOGIN",
@@ -3115,8 +3149,9 @@
       const devPass = sessionStorage.getItem('devDashboardPass') || "";
       if (!devPass) return openManagerLogin();
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: "DEV_LIST_MANAGERS", dev_pass: devPass })
         });
@@ -3158,8 +3193,9 @@
 
       const devPass = sessionStorage.getItem('devDashboardPass') || "";
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "DEV_REMOVE_MANAGER",
@@ -3189,23 +3225,23 @@
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
       if (!pass || !document.getElementById('mgr-terminal-deck').classList.contains('active')) return;
 
+      if (isManagerSyncInFlight) return;
+      isManagerSyncInFlight = true;
       try {
-        const res = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "MANAGER_LOGIN",
-            email: email,
-            password: pass,
-            known_file_ids: getKnownFileIdsMap()
-          })
+        const res = await fetchFreshApi({
+          action: "MANAGER_LOGIN",
+          email: email,
+          password: pass,
+          known_file_ids: getKnownFileIdsMap()
         });
         const data = await res.json();
         if (data.ok) {
           serverTodayStr = data.today || serverTodayStr;
           updateTerminalDeckData(data.manager, data.records || [], data.members || [], data.announcements || [], data.teamLinks || [], data.teams || []);
         }
-      } catch (e) {}
+      } catch (e) {} finally {
+        isManagerSyncInFlight = false;
+      }
     }
 
     function switchDeckView(viewKey) {
@@ -3751,8 +3787,9 @@
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "MANAGER_DEVICE_ACTION",
@@ -3833,8 +3870,9 @@
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "MANAGER_RESOLVE_SHIFT",
@@ -3976,8 +4014,9 @@
       if (delBtn) delBtn.disabled = true;
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "DELETE_ANNOUNCEMENTS",
@@ -4016,8 +4055,9 @@
       btn.innerText = "Sending SMS...";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "SEND_ANNOUNCEMENT",
@@ -4092,8 +4132,9 @@
       btn.innerText = "Saving...";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "MANAGER_ADD_LINK",
@@ -4130,8 +4171,9 @@
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "MANAGER_DELETE_LINK",
@@ -4444,8 +4486,9 @@
       btn.innerText = "Adding...";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "MANAGER_ADD_TEAM",
@@ -4486,8 +4529,9 @@
       const pass = sessionStorage.getItem('mgrSessionPass') || "";
 
       try {
-        const res = await fetch(GOOGLE_URL, {
+        const res = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "MANAGER_DELETE_TEAM",
@@ -4620,8 +4664,9 @@
 
       try {
         const routing = getEmployeeRoutingPayload();
-        const response = await fetch(GOOGLE_URL, {
+        const response = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "SEND_OTP",
@@ -4676,8 +4721,9 @@
 
       try {
         const routing = getEmployeeRoutingPayload();
-        const response = await fetch(GOOGLE_URL, {
+        const response = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "VERIFY_OTP",
@@ -4865,8 +4911,9 @@
 
       if (!empName || !empTeam) return;
       try {
-        const response = await fetch(GOOGLE_URL, {
+        const response = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "GET_DATA",
@@ -4961,19 +5008,18 @@
         loadingState.style.display = 'block';
       }
 
+      if (isSilentPolling && isEmployeeSyncInFlight) return;
+      if (isSilentPolling) isEmployeeSyncInFlight = true;
+
       try {
         const routing = getEmployeeRoutingPayload();
-        const response = await fetch(GOOGLE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: "GET_DATA",
-            employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
-            team: (localStorage.getItem('team') || "").toUpperCase(),
-            device_id: "Kiosk-Sync",
-            skip_photo: isSilentPolling,
-            ...routing
-          })
+        const response = await fetchFreshApi({
+          action: "GET_DATA",
+          employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
+          team: (localStorage.getItem('team') || "").toUpperCase(),
+          device_id: "Kiosk-Sync",
+          skip_photo: isSilentPolling,
+          ...routing
         });
         
         const result = await response.json();
@@ -5076,6 +5122,8 @@
           btnIn.style.display = 'flex';
           btnOut.style.display = 'none';
         }
+      } finally {
+        if (isSilentPolling) isEmployeeSyncInFlight = false;
       }
     }
 
@@ -5199,8 +5247,9 @@
       const newAuthCode = Math.floor(1000 + Math.random() * 9000).toString();
 
       try {
-        const response = await fetch(GOOGLE_URL, {
+        const response = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "REGISTER_MEMBER",
@@ -5249,8 +5298,9 @@
 
       try {
         const routing = getEmployeeRoutingPayload();
-        const response = await fetch(GOOGLE_URL, {
+        const response = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: "REGISTER_MEMBER",
@@ -5383,8 +5433,9 @@
       };
 
       try {
-        const response = await fetch(GOOGLE_URL, {
+        const response = await fetch(`${GOOGLE_URL}?_t=${Date.now()}`, {
           method: 'POST',
+          cache: 'no-store',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
