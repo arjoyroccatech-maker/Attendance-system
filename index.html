@@ -102,9 +102,9 @@
       flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px 24px;
     }
     .main-wrapper.workspace-mode {
-      justify-content: center;
-      padding-top: 20px;
-      padding-bottom: 20px;
+      justify-content: flex-start;
+      padding-top: 24px;
+      padding-bottom: 24px;
     }
 
     .card {
@@ -937,14 +937,14 @@
     .emp-workspace-shell {
       display: none;
       width: 100%;
-      max-width: 1060px;
+      max-width: 1040px;
       margin: 0 auto;
       gap: 22px;
       align-items: flex-start;
     }
     .emp-workspace-shell.active {
       display: grid;
-      grid-template-columns: 235px minmax(0, 800px);
+      grid-template-columns: 235px minmax(0, 780px);
       justify-content: center;
     }
 
@@ -1024,7 +1024,7 @@
     }
     .emp-main-stage > .card,
     .emp-sub-panel {
-      min-height: 465px;
+      min-height: 525px;
     }
     .emp-main-stage > #laptop-kiosk.active-card {
       display: flex;
@@ -1043,6 +1043,74 @@
     }
     .emp-sub-panel.active {
       display: block;
+    }
+
+    /* Pro Kiosk: 3-Pill Personal Shift Pulse Strip & Quick-Lock Button */
+    .emp-pulse-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .emp-pulse-pill {
+      background: var(--surface-recessed);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 10px 14px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .emp-pulse-lbl {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink-muted);
+    }
+    .emp-pulse-val {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .emp-dock-divider {
+      height: 1px;
+      background: var(--border-subtle);
+      margin: 4px 6px;
+    }
+    .emp-dock-lock-btn {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 13px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(220, 38, 38, 0.25);
+      background: var(--crimson-bg);
+      color: var(--crimson);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      white-space: nowrap;
+      transition: all 0.14s ease;
+    }
+    .emp-dock-lock-btn:hover {
+      background: #FEE2E2;
+      border-color: var(--crimson);
+    }
+    .emp-dock-lock-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+    @media (max-width: 640px) {
+      .emp-pulse-strip { grid-template-columns: 1fr; }
     }
 
     /* Employee Attendance Calendar Grid */
@@ -1973,7 +2041,7 @@
       <h2>Employee Login</h2>
       <p id="emp-login-subtitle">Enter your 4-digit Authentication Code to open your kiosk.</p>
       <label style="text-align:center;">Your 4-Digit Auth Code</label>
-      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="empLoginCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') submitEmployeeLogin()">
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="empLoginCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;" oninput="if(this.value.replace(/\D/g,'').length===4) submitEmployeeLogin()" onkeydown="if(event.key==='Enter') submitEmployeeLogin()">
       <button class="btn-save" onclick="submitEmployeeLogin()">Unlock Kiosk</button>
       <div id="emp-login-error" style="color:var(--crimson); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
       <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
@@ -2167,11 +2235,17 @@
           <span>Tools &amp; Links</span>
           <span class="dock-pill" id="emp-tools-pill">0</span>
         </button>
+
+        <div class="emp-dock-divider"></div>
+        <button type="button" class="emp-dock-lock-btn" onclick="lockEmployeeKiosk()" title="Lock kiosk back to 4-digit PIN screen">
+          <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+          <span>Lock Kiosk</span>
+        </button>
       </aside>
 
       <!-- Right Main Stage -->
       <div class="emp-main-stage">
-        <div id="laptop-kiosk" class="card" style="max-width: 680px; margin: 0 auto;">
+        <div id="laptop-kiosk" class="card" style="max-width: 100%; margin: 0;">
       <div class="card-padding">
         
         <input type="file" id="photo-upload-input" accept="image/*" style="display: none;" onchange="handlePhotoSelected(event)">
@@ -2202,6 +2276,21 @@
                 MGR: SET PD-XXXX
               </button>
             </div>
+          </div>
+        </div>
+
+        <div class="emp-pulse-strip">
+          <div class="emp-pulse-pill">
+            <span class="emp-pulse-lbl">Today's Logged</span>
+            <span class="emp-pulse-val" id="emp-pulse-today" style="color:var(--emerald);">0.0 hrs</span>
+          </div>
+          <div class="emp-pulse-pill">
+            <span class="emp-pulse-lbl">This Week</span>
+            <span class="emp-pulse-val" id="emp-pulse-week" style="color:var(--blue);">0.0 hrs</span>
+          </div>
+          <div class="emp-pulse-pill">
+            <span class="emp-pulse-lbl">Month Shifts</span>
+            <span class="emp-pulse-val" id="emp-pulse-month">0 days</span>
           </div>
         </div>
 
@@ -2390,7 +2479,7 @@
       <div id="phone-badge" class="phone-badge">TIME IN • Onsite</div>
 
       <label style="text-align:center;">Authentication Code</label>
-      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" autofocus style="text-align: center; font-size: 28px; letter-spacing: 8px;">
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" autofocus style="text-align: center; font-size: 28px; letter-spacing: 8px;" oninput="if(this.value.replace(/\D/g,'').length===4) verifyAndSubmit()">
       <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
       <div id="scan-status" style="font-size: 14px; font-weight: 600; margin-top: 15px;"></div>
     </div>
@@ -4200,9 +4289,62 @@
     // =========================================================================
     // EMPLOYEE WORKSPACE: CALENDAR, ATTENDANCE HISTORY & TEAM TOOLS
     // =========================================================================
+    function lockEmployeeKiosk() {
+      clearInterval(qrPollingInterval);
+      clearInterval(qrExpiryTimer);
+      clearInterval(empAutoSyncInterval);
+      qrPollingInterval = null;
+      qrExpiryTimer = null;
+      empAutoSyncInterval = null;
+      selectEmployeeRole();
+      showToast("Kiosk locked", "info");
+    }
+
+    function updateEmployeePulseStrip(records) {
+      const todayEl = document.getElementById('emp-pulse-today');
+      const weekEl = document.getElementById('emp-pulse-week');
+      const monthEl = document.getElementById('emp-pulse-month');
+      if (!todayEl || !weekEl || !monthEl) return;
+
+      const now = new Date();
+      const todayIso = now.toLocaleDateString('en-CA');
+      const monthPrefix = todayIso.slice(0, 7);
+
+      const startOfWeek = new Date(now);
+      startOfWeek.setHours(0, 0, 0, 0);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+
+      let todayHrs = 0;
+      let weekHrs = 0;
+      const monthDaysSet = new Set();
+
+      (records || []).forEach(r => {
+        const dStr = String(r.date || "").trim();
+        const hrs = parseHoursValue(r.totalHours);
+        if (dStr === todayIso) todayHrs += hrs;
+        if (dStr.startsWith(monthPrefix)) monthDaysSet.add(dStr);
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dStr)) {
+          const dObj = new Date(dStr + "T00:00:00");
+          if (dObj >= startOfWeek) weekHrs += hrs;
+        }
+      });
+
+      if (window.shiftStartTime && !isNaN(window.shiftStartTime.getTime())) {
+        const activeHrs = Math.max(0, (Date.now() - window.shiftStartTime.getTime()) / 3600000);
+        todayHrs += activeHrs;
+        weekHrs += activeHrs;
+      }
+
+      todayEl.innerText = `${todayHrs.toFixed(1)} hrs`;
+      weekEl.innerText = `${weekHrs.toFixed(1)} hrs`;
+      monthEl.innerText = `${monthDaysSet.size} day${monthDaysSet.size === 1 ? '' : 's'}`;
+    }
+
     function syncEmployeeWorkspaceData(records, teamLinks) {
       cachedEmployeeRecords = Array.isArray(records) ? records : [];
       cachedEmployeeLinks = Array.isArray(teamLinks) ? teamLinks : [];
+
+      updateEmployeePulseStrip(cachedEmployeeRecords);
 
       const histPill = document.getElementById('emp-history-pill');
       if (histPill) histPill.innerText = cachedEmployeeRecords.length;
@@ -5156,6 +5298,7 @@
 
         window.shiftStartTime = parseShiftTime(result.openRecord.timeIn);
         updateClock();
+        updateEmployeePulseStrip(cachedEmployeeRecords);
       } else {
         if (avatarWrap) {
           avatarWrap.classList.remove('state-active');
