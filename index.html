@@ -937,14 +937,14 @@
     .emp-workspace-shell {
       display: none;
       width: 100%;
-      max-width: 960px;
+      max-width: 1060px;
       margin: 0 auto;
-      gap: 20px;
-      align-items: stretch;
+      gap: 22px;
+      align-items: flex-start;
     }
     .emp-workspace-shell.active {
       display: grid;
-      grid-template-columns: 220px minmax(0, 700px);
+      grid-template-columns: 235px minmax(0, 800px);
       justify-content: center;
     }
 
@@ -956,7 +956,7 @@
       box-shadow: var(--shadow-terminal);
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 10px;
     }
     .emp-dock-label {
@@ -969,20 +969,21 @@
     }
     .emp-dock-btn {
       width: 100%;
-      min-height: 52px;
-      padding: 11px 14px;
+      min-height: 48px;
+      padding: 10px 13px;
       border-radius: 14px;
       border: 1.5px solid transparent;
       background: var(--surface-recessed);
       color: var(--ink-secondary);
       font-family: 'Inter', sans-serif;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 10px;
       text-align: left;
+      white-space: nowrap;
       transition: all 0.14s ease;
     }
     .emp-dock-btn svg {
@@ -1049,7 +1050,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      padding: 18px 24px;
+      padding: 14px 24px;
       background: var(--surface-recessed);
       border-bottom: 1.5px solid var(--border-subtle);
     }
@@ -1066,7 +1067,7 @@
     .cal-stat-val { font-size: 20px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
 
     .emp-cal-wrap {
-      padding: 20px 24px 24px 24px;
+      padding: 16px 24px 18px 24px;
     }
     .emp-cal-weekdays {
       display: grid;
@@ -1086,11 +1087,11 @@
       gap: 8px;
     }
     .cal-day-cell {
-      min-height: 78px;
-      border-radius: 14px;
+      min-height: 60px;
+      border-radius: 12px;
       border: 1.5px solid var(--border-subtle);
       background: var(--surface-recessed);
-      padding: 8px 9px;
+      padding: 7px 9px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -2170,7 +2171,7 @@
 
       <!-- Right Main Stage -->
       <div class="emp-main-stage">
-        <div id="laptop-kiosk" class="card" style="max-width: 100%; margin: 0;">
+        <div id="laptop-kiosk" class="card" style="max-width: 680px; margin: 0 auto;">
       <div class="card-padding">
         
         <input type="file" id="photo-upload-input" accept="image/*" style="display: none;" onchange="handlePhotoSelected(event)">
