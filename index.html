@@ -2864,7 +2864,7 @@
     async function verifyDevPass() {
       const devPass = document.getElementById('devPassInput').value.trim();
       const btn = document.getElementById('btn-verify-dev');
-      if (!devPass) return showToast("Please enter the developer default pass.");
+      if (!devPass) return showToast("Please enter the workspace pass code.");
 
       btn.disabled = true;
       btn.innerText = "Verifying...";
@@ -2882,13 +2882,13 @@
           switchCard('manager-create-pass');
           setTimeout(() => document.getElementById('mgrNewPass').focus(), 100);
         } else {
-          showToast(data.error || "Invalid developer password.");
+          showToast(data.error || "Invalid workspace pass code.");
         }
       } catch (e) {
         showToast("Connection failed. Please try again.");
       } finally {
         btn.disabled = false;
-        btn.innerText = "Verify Developer Pass";
+        btn.innerText = "Verify Workspace Pass";
       }
     }
 
