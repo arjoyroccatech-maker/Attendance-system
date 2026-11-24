@@ -121,7 +121,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .card-padding { padding: 40px 44px 32px 44px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .card-padding { padding: 28px 44px 24px 44px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
 
     /* --- PORTAL SELECTOR --- */
     .role-card { max-width: 660px; padding: 48px 42px; }
@@ -748,7 +748,7 @@
     }
 
     /* --- EMPLOYEE KIOSK UI --- */
-    .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 26px; }
+    .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 18px; }
     .welcome-divider { width: 1px; height: 64px; background-color: var(--border); }
 
     .avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; flex-shrink: 0; border-radius: 50%; transition: all 0.3s ease; }
@@ -815,7 +815,7 @@
     }
     .mgr-pill-btn:hover { background: #DBEAFE; border-color: var(--blue); }
 
-    .clock-section { margin-bottom: 28px; }
+    .clock-section { margin-bottom: 18px; }
     .time-display { font-size: 68px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -2.5px; font-variant-numeric: tabular-nums; }
     .time-display span { font-size: 22px; font-weight: 700; color: var(--ink-secondary); margin-left: 6px; letter-spacing: 0; }
     .date-display { font-size: 14.5px; color: var(--ink-muted); font-weight: 600; margin-top: 6px; }
@@ -887,7 +887,7 @@
       border-radius: 18px; display: inline-block;
       border: 1.5px solid var(--border);
     }
-    #qrcode-container img { width: 196px; height: 196px; display: block; }
+    #qrcode-container img { width: 168px; height: 168px; display: block; }
     .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--emerald); margin-top: 10px; font-size: 14px; }
     .qr-countdown { font-size: 12px; font-weight: 600; color: var(--ink-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
     .cancel-link { font-size: 13px; color: var(--ink-muted); font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: 8px; display: inline-block; }
@@ -1027,10 +1027,8 @@
     }
     .emp-main-stage > .card,
     .emp-sub-panel {
-      height: 540px;
       min-height: 540px;
-      max-height: 540px;
-      overflow-y: auto;
+      overflow: hidden;
     }
     .emp-main-stage > #laptop-kiosk.active-card {
       display: flex;
