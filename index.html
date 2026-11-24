@@ -102,7 +102,7 @@
       flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px 24px;
     }
     .main-wrapper.workspace-mode {
-      justify-content: flex-start;
+      justify-content: center;
       padding-top: 24px;
       padding-bottom: 24px;
     }
@@ -1024,7 +1024,10 @@
     }
     .emp-main-stage > .card,
     .emp-sub-panel {
-      min-height: 525px;
+      height: 540px;
+      min-height: 540px;
+      max-height: 540px;
+      overflow-y: auto;
     }
     .emp-main-stage > #laptop-kiosk.active-card {
       display: flex;
@@ -1973,8 +1976,8 @@
       <h2>Employee Login</h2>
       <p id="emp-login-subtitle">Enter your 4-digit Authentication Code to open your kiosk.</p>
       <label style="text-align:center;">Your 4-Digit Auth Code</label>
-      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="empLoginCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;" oninput="if(this.value.replace(/\D/g,'').length===4) submitEmployeeLogin()" onkeydown="if(event.key==='Enter') submitEmployeeLogin()">
-      <button class="btn-save" onclick="submitEmployeeLogin()">Unlock Kiosk</button>
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="empLoginCode" class="masked-input" placeholder="••••" style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') submitEmployeeLogin()">
+      <button class="btn-save" id="btn-emp-unlock" onclick="submitEmployeeLogin()" style="display:inline-flex; align-items:center; justify-content:center; gap:10px;">Unlock Kiosk</button>
       <div id="emp-login-error" style="color:var(--crimson); font-size:13px; font-weight:600; margin-top:12px; min-height:18px;"></div>
       <span class="sub-link" onclick="showRoleSelector()">← Back to Portal Selection</span>
     </div>
@@ -2392,7 +2395,7 @@
       <div id="phone-badge" class="phone-badge">TIME IN • Onsite</div>
 
       <label style="text-align:center;">Authentication Code</label>
-      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" autofocus style="text-align: center; font-size: 28px; letter-spacing: 8px;" oninput="if(this.value.replace(/\D/g,'').length===4) verifyAndSubmit()">
+      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" autofocus style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') verifyAndSubmit()">
       <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
       <div id="scan-status" style="font-size: 14px; font-weight: 600; margin-top: 15px;"></div>
     </div>
@@ -2735,9 +2738,11 @@
     }
 
     function submitEmployeeLogin() {
-      const enteredCode = document.getElementById('empLoginCode').value.trim();
+      const codeInput = document.getElementById('empLoginCode');
+      const enteredCode = codeInput.value.trim();
       const savedCode = localStorage.getItem('authCode');
       const errEl = document.getElementById('emp-login-error');
+      const btn = document.getElementById('btn-emp-unlock');
 
       if (!enteredCode || enteredCode.length !== 4) {
         errEl.innerText = "Please enter your 4-digit Auth Code.";
@@ -2746,13 +2751,27 @@
 
       if (enteredCode !== savedCode) {
         errEl.innerText = "Incorrect Authentication Code. Please try again.";
-        document.getElementById('empLoginCode').value = "";
-        document.getElementById('empLoginCode').focus();
+        codeInput.value = "";
+        codeInput.focus();
         return;
       }
 
       errEl.innerText = "";
-      openEmployeeKiosk();
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner" style="border-top-color:#FFFFFF; width:16px; height:16px; border-width:2.5px;"></div> Unlocking Kiosk...';
+      }
+      codeInput.disabled = true;
+
+      setTimeout(() => {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = 'Unlock Kiosk';
+        }
+        codeInput.disabled = false;
+        codeInput.value = "";
+        openEmployeeKiosk();
+      }, 650);
     }
 
     async function submitKioskRecovery() {
