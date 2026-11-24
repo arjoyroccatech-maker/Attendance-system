@@ -56,19 +56,43 @@
     }
 
     /* =========================================================================
-       NIGHT STAGE MODE (Dark Canvas + Inverted Outer Chrome, Crisp White Forms)
+       FULL NIGHT MODE (Complete Dark UI Across All Forms, Sidebars, Tables & Charts)
        ========================================================================= */
     body.night-stage {
-      background-color: #090D16;
+      --bg-terminal: #080C14;
+      --surface: #111827;
+      --surface-recessed: #1A2333;
+      --ink: #F8FAFC;
+      --ink-secondary: #CBD5E1;
+      --ink-muted: #94A3B8;
+      --border: #2A374C;
+      --border-subtle: #1F2B3E;
+
+      --emerald: #10B981;
+      --emerald-bg: rgba(16, 185, 129, 0.14);
+      --crimson: #F87171;
+      --crimson-bg: rgba(239, 68, 68, 0.14);
+      --amber: #FBBF24;
+      --amber-bg: rgba(245, 158, 11, 0.14);
+      --blue: #60A5FA;
+      --blue-bg: rgba(59, 130, 246, 0.15);
+      --violet: #A78BFA;
+      --violet-bg: rgba(139, 92, 246, 0.15);
+
+      --shadow-terminal: 0 26px 56px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+      background-color: #080C14;
       background-image:
-        radial-gradient(circle at 14% 12%, rgba(16, 185, 129, 0.10) 0%, transparent 44%),
-        radial-gradient(circle at 86% 88%, rgba(59, 130, 246, 0.08) 0%, transparent 48%);
+        radial-gradient(circle at 14% 10%, rgba(16, 185, 129, 0.10) 0%, transparent 45%),
+        radial-gradient(circle at 86% 90%, rgba(59, 130, 246, 0.09) 0%, transparent 48%);
+      color: var(--ink);
     }
+
     body.night-stage .top-bar {
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom-color: rgba(255, 255, 255, 0.10);
+      background: rgba(17, 24, 39, 0.90);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom-color: var(--border);
     }
     body.night-stage .brand-circle-87s {
       background: #0F172A;
@@ -84,22 +108,158 @@
       border-color: rgba(52, 211, 153, 0.28);
     }
     body.night-stage .nav-btn {
-      background: rgba(255, 255, 255, 0.07);
+      background: #1A2333;
       color: #F8FAFC;
-      border-color: rgba(255, 255, 255, 0.15);
+      border-color: var(--border);
     }
     body.night-stage .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: rgba(255, 255, 255, 0.35);
+      background: #243044;
+      border-color: #475569;
     }
+
+    /* Cards, Modals & Containers */
     body.night-stage .card,
     body.night-stage .emp-side-dock,
     body.night-stage .emp-sub-panel,
     body.night-stage .terminal-console,
-    body.night-stage .terminal-kpi-card:not(.terminal-id-card) {
-      border-color: rgba(255, 255, 255, 0.16);
-      box-shadow: 0 24px 54px -12px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    body.night-stage .terminal-kpi-card:not(.terminal-id-card),
+    body.night-stage .chart-card,
+    body.night-stage .insight-pill-card,
+    body.night-stage .announce-card,
+    body.night-stage .cal-stat-box,
+    body.night-stage .kiosk-confirm-box,
+    body.night-stage .mgr-team-popover {
+      background-color: #111827;
+      border-color: var(--border);
+      color: var(--ink);
     }
+
+    body.night-stage .view-bar,
+    body.night-stage .roster-grid,
+    body.night-stage .roster-card.online,
+    body.night-stage .roster-card.completed,
+    body.night-stage .cal-day-cell.has-log {
+      background-color: #111827;
+    }
+
+    body.night-stage .roster-card.offline,
+    body.night-stage .cal-day-cell {
+      background-color: #182132;
+      border-color: var(--border-subtle);
+    }
+
+    body.night-stage .cal-day-cell.onsite-day {
+      background: rgba(37, 99, 235, 0.14);
+      border-color: rgba(96, 165, 250, 0.35);
+    }
+    body.night-stage .cal-day-cell.wfh-day {
+      background: rgba(217, 119, 6, 0.14);
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+
+    /* Buttons, Tabs & Interactive Tiles */
+    body.night-stage .role-btn:hover,
+    body.night-stage .emp-dock-btn:hover,
+    body.night-stage .tool-link-card:hover,
+    body.night-stage .btn-kiosk-sm {
+      background-color: #1E293B;
+      border-color: #475569;
+      color: #F8FAFC;
+    }
+    body.night-stage .btn-kiosk-sm.dark,
+    body.night-stage .emp-dock-btn.active,
+    body.night-stage .btn-save {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #FFFFFF;
+      border-color: #10B981;
+    }
+    body.night-stage .btn-save:hover {
+      opacity: 0.94;
+    }
+    body.night-stage .terminal-tab:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #F8FAFC;
+    }
+    body.night-stage .terminal-tab.active {
+      background: #111827;
+      color: #F8FAFC;
+      border-color: var(--border);
+    }
+    body.night-stage .tab-counter {
+      background: #243044;
+      color: #CBD5E1;
+    }
+    body.night-stage .terminal-tab.active .tab-counter {
+      background: #10B981;
+      color: #FFFFFF;
+    }
+
+    /* Inputs & Selects */
+    body.night-stage .setup-card input,
+    body.night-stage .setup-card select,
+    body.night-stage .kiosk-input,
+    body.night-stage .kiosk-select,
+    body.night-stage .inline-field,
+    body.night-stage .announce-textarea,
+    body.night-stage #otp-code-input,
+    body.night-stage #newMgrCodeInput {
+      background-color: #1A2333;
+      color: #F8FAFC;
+      border-color: var(--border);
+    }
+    body.night-stage .setup-card input:focus,
+    body.night-stage .setup-card select:focus,
+    body.night-stage .kiosk-input:focus,
+    body.night-stage .kiosk-select:focus,
+    body.night-stage .announce-textarea:focus {
+      background-color: #0F172A;
+      border-color: #10B981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+    }
+    body.night-stage .status-select option,
+    body.night-stage .kiosk-select option,
+    body.night-stage .setup-card select option {
+      background-color: #111827;
+      color: #F8FAFC;
+    }
+
+    /* Icons, Avatars & Badges */
+    body.night-stage .status-icon-box,
+    body.night-stage .team-chip-pill {
+      background-color: #111827;
+      border-color: var(--border);
+      color: #F8FAFC;
+    }
+    body.night-stage .manager-role .role-icon-circle,
+    body.night-stage .ic-slate,
+    body.night-stage .emp-photo-avatar,
+    body.night-stage .tag-gray {
+      background-color: #243044;
+      color: #E2E8F0;
+      border-color: var(--border);
+    }
+    body.night-stage .phone-avatar-circle {
+      border-color: #111827;
+    }
+    body.night-stage .emp-photo-avatar.state-active::after {
+      border-color: #111827;
+    }
+    body.night-stage .emp-photo-avatar.state-done::after {
+      border-color: #111827;
+    }
+    body.night-stage .camera-badge {
+      background: #10B981;
+      border-color: #111827;
+    }
+
+    /* Keep QR Code container pure white so phone cameras scan it effortlessly in the dark */
+    body.night-stage #qrcode-container {
+      background: #FFFFFF;
+      border-color: #334155;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Footer */
     body.night-stage .footer {
       color: #94A3B8;
     }
@@ -119,13 +279,13 @@
     .theme-toggle-btn:active { transform: scale(0.97); }
     .theme-toggle-btn svg { width: 16px; height: 16px; fill: currentColor; }
     body.night-stage .theme-toggle-btn {
-      background: rgba(255, 255, 255, 0.07);
+      background: rgba(253, 230, 138, 0.12);
       color: #FDE68A;
-      border-color: rgba(253, 230, 138, 0.28);
+      border-color: rgba(253, 230, 138, 0.30);
     }
     body.night-stage .theme-toggle-btn:hover {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: rgba(253, 230, 138, 0.5);
+      background: rgba(253, 230, 138, 0.20);
+      border-color: rgba(253, 230, 138, 0.55);
     }
 
     /* --- UNIFIED KIOSK TOP HEADER BAR --- */
@@ -2549,6 +2709,9 @@
       const nextState = !document.body.classList.contains('night-stage');
       localStorage.setItem('kioskNightStage', nextState ? '1' : '0');
       applyNightStage(nextState);
+      if (document.getElementById('deck-view-insights') && document.getElementById('deck-view-insights').classList.contains('active')) {
+        renderManagerInsights();
+      }
     }
 
     if (localStorage.getItem('kioskNightStage') === '1') {
@@ -3582,6 +3745,10 @@
       Object.values(chartInstances).forEach(ch => { if (ch) ch.destroy(); });
       chartInstances = {};
 
+      const isNight = document.body.classList.contains('night-stage');
+      const chartTextColor = isNight ? '#CBD5E1' : '#334155';
+      const chartGridColor = isNight ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)';
+      const chartSurfaceColor = isNight ? '#111827' : '#FFFFFF';
       const baseFont = { family: "'Inter', sans-serif", weight: '600' };
 
       const sortedDates = Object.keys(dailyMap).sort().slice(-7);
@@ -3595,7 +3762,7 @@
                 type: 'bar',
                 label: 'Shifts Logged',
                 data: sortedDates.length ? sortedDates.map(d => dailyMap[d].shifts) : [0],
-                backgroundColor: 'rgba(15, 23, 42, 0.85)',
+                backgroundColor: isNight ? '#60A5FA' : 'rgba(15, 23, 42, 0.85)',
                 borderRadius: 8,
                 barPercentage: 0.5,
                 yAxisID: 'y'
@@ -3618,11 +3785,11 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { position: 'top', labels: { font: baseFont, usePointStyle: true } } },
+            plugins: { legend: { position: 'top', labels: { color: chartTextColor, font: baseFont, usePointStyle: true } } },
             scales: {
-              x: { grid: { display: false }, ticks: { font: baseFont } },
-              y: { beginAtZero: true, position: 'left', ticks: { precision: 0, font: baseFont }, title: { display: true, text: 'Shifts', font: baseFont } },
-              y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { font: baseFont }, title: { display: true, text: 'Hours', font: baseFont } }
+              x: { grid: { display: false }, ticks: { color: chartTextColor, font: baseFont } },
+              y: { beginAtZero: true, position: 'left', grid: { color: chartGridColor }, ticks: { color: chartTextColor, precision: 0, font: baseFont }, title: { display: true, text: 'Shifts', color: chartTextColor, font: baseFont } },
+              y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: chartTextColor, font: baseFont }, title: { display: true, text: 'Hours', color: chartTextColor, font: baseFont } }
             }
           }
         });
@@ -3637,7 +3804,7 @@
             datasets: [{
               data: [onsiteCount, wfhCount],
               backgroundColor: ['#2563EB', '#D97706'],
-              borderColor: '#FFFFFF',
+              borderColor: chartSurfaceColor,
               borderWidth: 4,
               hoverOffset: 6
             }]
@@ -3647,7 +3814,7 @@
             maintainAspectRatio: false,
             cutout: '66%',
             plugins: {
-              legend: { position: 'bottom', labels: { font: baseFont, padding: 18, usePointStyle: true } }
+              legend: { position: 'bottom', labels: { color: chartTextColor, font: baseFont, padding: 18, usePointStyle: true } }
             }
           }
         });
@@ -3674,8 +3841,8 @@
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-              x: { beginAtZero: true, ticks: { font: baseFont } },
-              y: { grid: { display: false }, ticks: { font: baseFont } }
+              x: { beginAtZero: true, grid: { color: chartGridColor }, ticks: { color: chartTextColor, font: baseFont } },
+              y: { grid: { display: false }, ticks: { color: chartTextColor, font: baseFont } }
             }
           }
         });
@@ -3701,8 +3868,8 @@
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-              x: { grid: { display: false }, ticks: { font: baseFont } },
-              y: { beginAtZero: true, ticks: { precision: 0, font: baseFont } }
+              x: { grid: { display: false }, ticks: { color: chartTextColor, font: baseFont } },
+              y: { beginAtZero: true, grid: { color: chartGridColor }, ticks: { color: chartTextColor, precision: 0, font: baseFont } }
             }
           }
         });
