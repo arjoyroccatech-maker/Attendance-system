@@ -519,37 +519,57 @@
       justify-content: center;
     }
 
-    /* Roster Cards Grid */
+    /* Roster Cards Grid — Sleek Dark Obsidian Employee Cards */
     .roster-grid {
       padding: 24px 28px;
+      background: #F1F5F9;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(295px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(305px, 1fr));
       gap: 18px;
     }
     .roster-card {
-      border: 1.5px solid var(--border);
+      border: 1.5px solid #1E293B;
       border-radius: 20px;
       padding: 20px;
-      background: var(--surface-recessed);
+      background: linear-gradient(145deg, #0F172A 0%, #1E293B 100%);
+      color: #F8FAFC;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.28);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.2s ease;
     }
     .roster-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 22px -6px rgba(15, 23, 42, 0.08);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 30px -8px rgba(15, 23, 42, 0.38);
     }
     .roster-card.online {
-      background: #FFFFFF;
-      border-color: var(--emerald);
-      box-shadow: 0 8px 20px -6px rgba(5, 150, 105, 0.20);
+      background: linear-gradient(145deg, #0F172A 0%, #1C1917 65%, #291811 100%);
+      border-color: #F97316;
+      box-shadow: 0 12px 28px -6px rgba(249, 115, 22, 0.32);
+    }
+    .roster-card.completed {
+      background: linear-gradient(145deg, #0F172A 0%, #172554 100%);
+      border-color: #3B82F6;
+      box-shadow: 0 12px 26px -6px rgba(37, 99, 235, 0.28);
+    }
+    .roster-card.offline {
+      opacity: 0.86;
+    }
+    .roster-card .person-name {
+      color: #FFFFFF;
+    }
+    .roster-card .person-team {
+      color: #94A3B8;
     }
     .roster-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .roster-bottom {
       display: flex; justify-content: space-between; align-items: center;
-      padding-top: 12px; border-top: 1px solid var(--border-subtle);
-      font-size: 13px; color: var(--ink-secondary);
+      padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 13px; color: #CBD5E1;
+    }
+    .roster-bottom strong {
+      color: #FFFFFF;
     }
 
     /* Live Employee Photo Avatar System */
@@ -3544,11 +3564,15 @@
         } else if (todayCompleted) {
           statusTag = `<span class="tag tag-blue">✓ DONE</span>`;
           metaLeft = `Total: <strong>${escapeHtml(todayCompleted.totalHours || "—")}</strong>`;
-          metaRight = escapeHtml(todayCompleted.workArrangement || "");
+          metaRight = todayCompleted.workArrangement === "Work From Home"
+            ? `<span class="tag tag-amber">WFH</span>`
+            : (todayCompleted.workArrangement ? `<span class="tag tag-blue">ONSITE</span>` : "");
         }
 
+        const cardStateCls = activeShift ? 'online' : (todayCompleted ? 'completed' : 'offline');
+
         return `
-          <div class="roster-card ${activeShift ? 'online' : ''}">
+          <div class="roster-card ${cardStateCls}">
             <div class="roster-top">
               <div class="person-cell">
                 ${renderEmployeeAvatarHtml(m.name, "size-lg", activeShift ? "active" : (todayCompleted ? "done" : "offline"))}
