@@ -5115,12 +5115,14 @@
                localStorage.setItem('localShiftStart', Date.now().toString());
              }
 
+             syncEmployeeWorkspaceData(result.records || [], result.teamLinks || []);
+
              const waitText = document.getElementById('qr-waiting-text');
              waitText.innerHTML = '✅ Verified Successfully!';
              waitText.style.color = 'var(--emerald)';
              document.getElementById('qr-countdown-text').innerText = '';
              
-             setTimeout(() => { fetchLiveStatus(false); }, 1000);
+             setTimeout(() => { renderUIState(result); }, 450);
              return;
           }
 
@@ -5413,7 +5415,8 @@
       clearInterval(qrPollingInterval);
       clearInterval(qrExpiryTimer);
 
-      qrPollingInterval = setInterval(() => fetchLiveStatus(true), 2000);
+      setTimeout(() => { if (expectedTargetState) fetchLiveStatus(true); }, 1000);
+      qrPollingInterval = setInterval(() => fetchLiveStatus(true), 1500);
       qrExpiryTimer = setInterval(() => {
         secondsLeft--;
         if (secondsLeft <= 15 && secondsLeft > 0) {
