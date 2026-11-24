@@ -102,9 +102,9 @@
       flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px 24px;
     }
     .main-wrapper.workspace-mode {
-      justify-content: flex-start;
+      justify-content: center;
       padding-top: 20px;
-      padding-bottom: 24px;
+      padding-bottom: 20px;
     }
 
     .card {
@@ -822,7 +822,7 @@
 
     .button-group { display: flex; justify-content: center; gap: 18px; margin-bottom: 16px; }
     .btn-pill {
-      flex: 1; max-width: 310px; padding: 18px 26px; border-radius: 16px;
+      flex: 1; max-width: 340px; padding: 17px 28px; border-radius: 16px;
       display: flex; align-items: center; justify-content: center; gap: 14px;
       font-size: 20px; font-weight: 700; color: white; border: none; cursor: pointer;
       font-family: 'Inter', sans-serif;
@@ -937,28 +937,27 @@
     .emp-workspace-shell {
       display: none;
       width: 100%;
-      max-width: 1120px;
+      max-width: 960px;
       margin: 0 auto;
-      gap: 22px;
-      align-items: flex-start;
+      gap: 20px;
+      align-items: stretch;
     }
     .emp-workspace-shell.active {
       display: grid;
-      grid-template-columns: 230px minmax(0, 860px);
+      grid-template-columns: 220px minmax(0, 700px);
       justify-content: center;
     }
 
     .emp-side-dock {
       background: var(--surface);
       border: 1.5px solid var(--border);
-      border-radius: 22px;
-      padding: 14px 12px;
+      border-radius: 24px;
+      padding: 18px 14px;
       box-shadow: var(--shadow-terminal);
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      position: sticky;
-      top: 88px;
+      justify-content: center;
+      gap: 10px;
     }
     .emp-dock-label {
       font-size: 10.5px;
