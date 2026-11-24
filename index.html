@@ -497,10 +497,11 @@
     .terminal-kpi-card.accent-slate { border-left: 5px solid var(--ink); }
     .terminal-kpi-card.accent-amber { border-left: 5px solid var(--amber); }
 
-    .terminal-id-card {
-      background: var(--ink);
+    .terminal-id-card,
+    body.night-stage .terminal-id-card {
+      background: #0F172A;
       color: #FFFFFF;
-      border-color: var(--ink);
+      border-color: #1E293B;
       overflow: visible;
     }
     .id-top-badges { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -2127,7 +2128,7 @@
           </div>
         </div>
 
-        <div style="padding:14px 24px; background:#FFFFFF; border-bottom:1.5px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div class="sms-bulk-bar" style="padding:14px 24px; background:var(--surface); border-bottom:1.5px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
           <label style="display:inline-flex; align-items:center; gap:9px; font-size:13px; font-weight:700; color:var(--ink); cursor:pointer; margin:0;">
             <input type="checkbox" id="annSelectAllCheckbox" onchange="toggleSelectAllAnnouncements(this.checked)" style="width:17px; height:17px; cursor:pointer; accent-color:var(--ink);">
             Select All Messages
@@ -2394,7 +2395,7 @@
       <h2>Update Your Email</h2>
       <p>Add your work email for backup OTP verification.</p>
       <label>Registered Employee</label>
-      <input type="text" id="missingEmailEmpName" disabled style="background:#F1F5F9; color:#64748B;">
+      <input type="text" id="missingEmailEmpName" disabled style="background:var(--surface-recessed); color:var(--ink-muted);">
       <label>Work Email Address</label>
       <input type="email" id="missingEmailInput" placeholder="e.g. john.doe@company.com" autocomplete="off">
       <button class="btn-save" id="btn-save-missing-email" onclick="saveMissingEmail()">Save Email & Continue</button>
