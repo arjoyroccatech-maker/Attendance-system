@@ -2742,7 +2742,8 @@
       }
     }
 
-    if (localStorage.getItem('kioskNightStage') === '1') {
+    const nightParam = new URLSearchParams(window.location.search).get('night');
+    if (nightParam === '1' || (nightParam !== '0' && localStorage.getItem('kioskNightStage') === '1')) {
       applyNightStage(true);
     }
 
@@ -5708,8 +5709,9 @@
         localStorage.setItem('localShiftStart', qrTimestamp.toString());
       }
 
+      const isNight = document.body.classList.contains('night-stage') ? '1' : '0';
       const currentWebsite = window.location.origin + window.location.pathname;
-      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&photo=${encodeURIComponent(photoId)}&sheet=${encodeURIComponent(targetSheetId)}&mcode=${encodeURIComponent(mgrCode)}&ts=${qrTimestamp}`;
+      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&photo=${encodeURIComponent(photoId)}&sheet=${encodeURIComponent(targetSheetId)}&mcode=${encodeURIComponent(mgrCode)}&ts=${qrTimestamp}&night=${isNight}`;
       const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
       
       document.getElementById('qr-image').src = qrImageUrl;
