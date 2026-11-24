@@ -59,7 +59,7 @@
     .top-bar {
       background: #FFFFFF;
       border-bottom: 1.5px solid var(--border);
-      padding: 14px 36px;
+      padding: 12px 24px;
       display: flex; justify-content: space-between; align-items: center;
       position: sticky; top: 0; z-index: 50;
     }
@@ -103,8 +103,8 @@
     }
     .main-wrapper.workspace-mode {
       justify-content: flex-start;
-      padding-top: 28px;
-      padding-bottom: 36px;
+      padding-top: 20px;
+      padding-bottom: 24px;
     }
 
     .card {
@@ -121,7 +121,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .card-padding { padding: 44px 44px 36px 44px; }
+    .card-padding { padding: 28px 36px 24px 36px; }
 
     /* --- PORTAL SELECTOR --- */
     .role-card { max-width: 660px; padding: 48px 42px; }
@@ -748,16 +748,29 @@
     }
 
     /* --- EMPLOYEE KIOSK UI --- */
-    .welcome-section { display: flex; justify-content: center; align-items: center; gap: 22px; margin-bottom: 28px; }
+    .welcome-section { display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 18px; }
     .welcome-divider { width: 1px; height: 64px; background-color: var(--border); }
 
-    .avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; flex-shrink: 0; }
+    .avatar-wrapper { position: relative; width: 78px; height: 78px; cursor: pointer; flex-shrink: 0; border-radius: 50%; transition: all 0.3s ease; }
     .avatar {
       width: 100%; height: 100%; background: var(--surface-recessed); border-radius: 50%;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden; border: 2px solid var(--border); transition: border-color 0.2s;
     }
     .avatar-wrapper:hover .avatar { border-color: var(--ink); }
+    .avatar-wrapper.state-active {
+      animation: emeraldSonarWave 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    }
+    .avatar-wrapper.state-active .avatar {
+      border: 3px solid #10B981;
+      background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+    }
+    .avatar-wrapper.state-done {
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+    }
+    .avatar-wrapper.state-done .avatar {
+      border: 3px solid #2563EB;
+    }
     .avatar svg { width: 40px; height: 40px; fill: #94A3B8; }
     .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
 
@@ -802,10 +815,10 @@
     }
     .mgr-pill-btn:hover { background: #DBEAFE; border-color: var(--blue); }
 
-    .clock-section { margin-bottom: 32px; }
-    .time-display { font-size: 74px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -2.5px; font-variant-numeric: tabular-nums; }
+    .clock-section { margin-bottom: 20px; }
+    .time-display { font-size: 62px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -2.2px; font-variant-numeric: tabular-nums; }
     .time-display span { font-size: 22px; font-weight: 700; color: var(--ink-secondary); margin-left: 6px; letter-spacing: 0; }
-    .date-display { font-size: 16px; color: var(--ink-muted); font-weight: 600; margin-top: 10px; }
+    .date-display { font-size: 14.5px; color: var(--ink-muted); font-weight: 600; margin-top: 6px; }
 
     .button-group { display: flex; justify-content: center; gap: 18px; margin-bottom: 16px; }
     .btn-pill {
@@ -847,7 +860,7 @@
     #otp-status-msg, #switch-mgr-status { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
 
     .status-bar { border-top: 1.5px solid var(--border); display: flex; background: var(--surface-recessed); }
-    .status-col { flex: 1; padding: 20px 28px; display: flex; align-items: center; gap: 14px; text-align: left; }
+    .status-col { flex: 1; padding: 14px 24px; display: flex; align-items: center; gap: 14px; text-align: left; }
     .status-col:first-child { border-right: 1.5px solid var(--border); }
     .status-icon-box {
       width: 40px; height: 40px; border-radius: 11px;
@@ -870,13 +883,14 @@
     .footer span { color: var(--ink); font-weight: 800; }
 
     #qrcode-container {
-      margin: 10px auto; padding: 18px; background: white;
-      border-radius: 20px; display: inline-block;
+      margin: 4px auto; padding: 12px; background: white;
+      border-radius: 18px; display: inline-block;
       border: 1.5px solid var(--border);
     }
-    .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--emerald); margin-top: 14px; font-size: 14.5px; }
+    #qrcode-container img { width: 196px; height: 196px; display: block; }
+    .qr-waiting { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: 700; color: var(--emerald); margin-top: 10px; font-size: 14px; }
     .qr-countdown { font-size: 12px; font-weight: 600; color: var(--ink-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
-    .cancel-link { font-size: 13px; color: var(--ink-muted); font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: 14px; display: inline-block; }
+    .cancel-link { font-size: 13px; color: var(--ink-muted); font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: 8px; display: inline-block; }
     
     .spinner { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid currentColor; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; }
     .spinner-large { width: 32px; height: 32px; border-width: 4px; border-top-color: var(--ink); margin: 40px auto; display: block; }
@@ -1010,7 +1024,7 @@
     }
     .emp-main-stage > .card,
     .emp-sub-panel {
-      min-height: 530px;
+      min-height: 465px;
     }
     .emp-main-stage > #laptop-kiosk.active-card {
       display: flex;
@@ -2163,7 +2177,7 @@
         <input type="file" id="photo-upload-input" accept="image/*" style="display: none;" onchange="handlePhotoSelected(event)">
 
         <div class="welcome-section">
-          <div class="avatar-wrapper" onclick="triggerPhotoUpload()" title="Click to add or change profile photo">
+          <div class="avatar-wrapper" id="kiosk-avatar-wrapper" onclick="triggerPhotoUpload()" title="Click to add or change profile photo">
             <div class="avatar">
               <svg id="default-avatar-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
               <img id="profile-photo-img" src="" alt="Profile Photo" onerror="handleImageError()">
@@ -5078,7 +5092,13 @@
       document.getElementById('switch-mgr-section').style.display = 'none';
       document.getElementById('action-section').style.display = 'block';
 
+      const avatarWrap = document.getElementById('kiosk-avatar-wrapper');
+
       if (result.openRecord) {
+        if (avatarWrap) {
+          avatarWrap.classList.remove('state-done');
+          avatarWrap.classList.add('state-active');
+        }
         if (result.openRecord.workArrangement) {
           arrSelect.value = result.openRecord.workArrangement;
         }
@@ -5089,6 +5109,12 @@
         window.shiftStartTime = parseShiftTime(result.openRecord.timeIn);
         updateClock();
       } else {
+        if (avatarWrap) {
+          avatarWrap.classList.remove('state-active');
+          const todayStr = new Date().toLocaleDateString('en-CA');
+          const hasCompletedToday = Array.isArray(result.records) && result.records.some(r => r.date === todayStr && r.timeOut);
+          avatarWrap.classList.toggle('state-done', hasCompletedToday);
+        }
         window.shiftStartTime = null;
         localStorage.removeItem('localShiftStart');
         statusText.innerText = "Not Yet Clocked In";
