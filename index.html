@@ -2750,8 +2750,7 @@
             action: "RECOVER_MEMBER",
             manager_code: mgrCode,
             email: email,
-            auth_pin: pin,
-            kiosk_browser_id: getOrCreateKioskBrowserId()
+            auth_pin: pin
           })
         });
         const data = await res.json();
@@ -3715,15 +3714,11 @@
               <div style="font-weight:700; color:var(--ink); font-family:monospace;">${m.phone ? "📱 +" + escapeHtml(m.phone) : "⚠️ No Mobile #"}</div>
               <div style="font-size:12px; color:var(--ink-muted);">${escapeHtml(m.email || "—")}</div>
             </td>
-            <td style="font-family:monospace; font-size:13px; font-weight:600;">
-              <div>📱 ${escapeHtml(m.deviceId || "Unbound")}</div>
-              <div style="font-size:11.5px; color:var(--ink-muted); margin-top:2px;">💻 ${escapeHtml(m.kioskBrowserId || "Browser Unbound")}</div>
-            </td>
+            <td style="font-family:monospace; font-size:13px; font-weight:600;">${escapeHtml(m.deviceId || "Unbound")}</td>
             <td>${statusTag}</td>
             <td>
               <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button type="button" class="btn-kiosk-sm" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET')">Reset Phone</button>
-                <button type="button" class="btn-kiosk-sm" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'RESET_KIOSK')">Reset Browser</button>
                 ${toggleBtn}
                 <button type="button" class="btn-kiosk-sm danger" onclick="handleDeviceAction('${escapeAttr(m.name)}', 'REMOVE')">Remove Account</button>
               </div>
@@ -3737,8 +3732,6 @@
       let label = "";
       if (deviceAction === "RESET") {
         label = `Reset bound mobile phone for ${empName}? Their next QR scan will register their new device.`;
-      } else if (deviceAction === "RESET_KIOSK") {
-        label = `Reset browser lock for ${empName}? They will be able to log in on a new browser (e.g. Chrome) and bind it as their primary kiosk.`;
       } else if (deviceAction === "BLOCK") {
         label = `Suspend attendance access for ${empName}?`;
       } else if (deviceAction === "UNBLOCK") {
@@ -4589,18 +4582,6 @@
       return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
     }
 
-    // --- PERSISTENT KIOSK BROWSER TOKEN (EMPLOYEES ONLY 1-TO-1 BROWSER LOCK) ---
-    function getOrCreateKioskBrowserId() {
-      let kioskId = localStorage.getItem('boundKioskBrowserId');
-      if (!kioskId) {
-        const randPart = Math.floor(100000 + Math.random() * 900000);
-        const charPart = Math.random().toString(36).substring(2, 6).toUpperCase();
-        kioskId = `KIOSK-${randPart}-${charPart}`;
-        localStorage.setItem('boundKioskBrowserId', kioskId);
-      }
-      return kioskId;
-    }
-
     // --- PERSISTENT MOBILE DEVICE TOKEN (1-TO-1 BINDING) ---
     function getOrCreateMobileDeviceId() {
       let devId = localStorage.getItem('boundMobileDeviceId');
@@ -4984,7 +4965,6 @@
             employee_name: (localStorage.getItem('empName') || "").toUpperCase(),
             team: (localStorage.getItem('team') || "").toUpperCase(),
             device_id: "Kiosk-Sync",
-            kiosk_browser_id: getOrCreateKioskBrowserId(),
             skip_photo: isSilentPolling,
             ...routing
           })
@@ -4995,16 +4975,6 @@
         if (result.ok) {
           if (result.accountRemoved) {
             resetLocalEmployeeWorkstation();
-            return;
-          }
-
-          if (result.browserLocked) {
-            clearInterval(qrPollingInterval);
-            clearInterval(qrExpiryTimer);
-            qrPollingInterval = null;
-            qrExpiryTimer = null;
-            switchCard('device-error');
-            document.getElementById('error-message').innerText = result.error || "Access Denied: Account locked to another registered browser.";
             return;
           }
 
@@ -5221,8 +5191,7 @@
             phone_number: phone,
             email: email,
             auth_pin: newAuthCode,
-            manager_code: mgrCode,
-            kiosk_browser_id: getOrCreateKioskBrowserId()
+            manager_code: mgrCode
           })
         });
         const result = await response.json();
