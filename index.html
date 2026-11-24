@@ -591,34 +591,30 @@
       height: 44px;
       font-size: 14px;
     }
-    /* ACTIVE SHIFT: Flickering Fire Aura */
+    /* ACTIVE SHIFT: Emerald Sonar Pulse */
     .emp-photo-avatar.state-active {
-      border: 2.5px solid #F97316;
-      background: radial-gradient(circle at 50% 85%, #FACC15 0%, #F97316 48%, #DC2626 100%);
-      color: #FFFFFF;
+      border: 2.5px solid #10B981;
+      background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+      color: #065F46;
       overflow: visible;
-      animation: avatarFireAura 1.4s ease-in-out infinite alternate;
+      animation: emeraldSonarWave 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
     }
     .emp-photo-avatar.state-active img,
     .emp-photo-avatar.state-done img {
       border-radius: 50%;
     }
     .emp-photo-avatar.state-active::after {
-      content: "🔥";
+      content: "";
       position: absolute;
-      bottom: -4px;
-      right: -4px;
-      width: 22px;
-      height: 22px;
+      bottom: -2px;
+      right: -2px;
+      width: 15px;
+      height: 15px;
       border-radius: 50%;
-      background: #FFFFFF;
-      border: 1.5px solid #F97316;
-      font-size: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);
-      animation: flameBadgeBounce 0.9s ease-in-out infinite alternate;
+      background: #10B981;
+      border: 2.5px solid #FFFFFF;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.35);
+      animation: emeraldDotPulse 1.6s ease-in-out infinite;
     }
 
     /* TIMED OUT / COMPLETED: Calm Blue Shift-Complete Ring */
@@ -649,30 +645,27 @@
       box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
     }
 
-    @keyframes avatarFireAura {
+    @keyframes emeraldSonarWave {
       0% {
         box-shadow:
-          0 0 0 2.5px rgba(251, 191, 36, 0.75),
-          0 -3px 10px rgba(249, 115, 22, 0.65),
-          0 -6px 16px rgba(220, 38, 38, 0.35);
+          0 0 0 0 rgba(16, 185, 129, 0.55),
+          0 0 0 0 rgba(52, 211, 153, 0.30);
       }
-      50% {
+      70% {
         box-shadow:
-          0 0 0 3.5px rgba(249, 115, 22, 0.85),
-          -2px -5px 14px rgba(234, 88, 12, 0.8),
-          2px -9px 20px rgba(220, 38, 38, 0.5);
+          0 0 0 9px rgba(16, 185, 129, 0),
+          0 0 0 16px rgba(52, 211, 153, 0);
       }
       100% {
         box-shadow:
-          0 0 0 3px rgba(250, 204, 21, 0.9),
-          2px -6px 16px rgba(249, 115, 22, 0.85),
-          0 -11px 24px rgba(239, 68, 68, 0.55);
+          0 0 0 0 rgba(16, 185, 129, 0),
+          0 0 0 0 rgba(52, 211, 153, 0);
       }
     }
 
-    @keyframes flameBadgeBounce {
-      from { transform: scale(0.92) rotate(-6deg); }
-      to   { transform: scale(1.08) rotate(6deg); }
+    @keyframes emeraldDotPulse {
+      0%, 100% { transform: scale(0.95); }
+      50%      { transform: scale(1.15); }
     }
 
     /* High-Legibility Zero-Scroll Tables */
