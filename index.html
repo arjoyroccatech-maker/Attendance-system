@@ -937,15 +937,18 @@
     .emp-workspace-shell {
       display: none;
       width: 100%;
-      max-width: 1040px;
+      max-width: 1320px;
       margin: 0 auto;
-      gap: 22px;
+      gap: 28px;
       align-items: flex-start;
     }
     .emp-workspace-shell.active {
       display: grid;
-      grid-template-columns: 235px minmax(0, 780px);
-      justify-content: center;
+      grid-template-columns: 1fr minmax(0, 780px) 1fr;
+    }
+    .emp-side-dock {
+      justify-self: end;
+      width: 235px;
     }
 
     .emp-side-dock {
@@ -1215,6 +1218,16 @@
       text-overflow: ellipsis;
     }
 
+    @media (max-width: 1120px) {
+      .emp-workspace-shell.active {
+        grid-template-columns: 235px minmax(0, 780px);
+        justify-content: center;
+      }
+      .emp-side-dock {
+        justify-self: stretch;
+        width: auto;
+      }
+    }
     @media (max-width: 900px) {
       .emp-workspace-shell.active {
         grid-template-columns: 1fr;
@@ -1224,6 +1237,7 @@
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
+        width: 100%;
       }
       .emp-dock-label { display: none; }
       .emp-dock-btn { width: auto; flex: 1; min-width: 140px; }
