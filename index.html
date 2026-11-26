@@ -3525,7 +3525,7 @@
           <td><span class="tag tag-amber" style="font-family:monospace;">${escapeHtml(m.managerCode)}</span></td>
           <td style="font-size:12.5px; color:var(--ink-muted);">${escapeHtml(m.createdAt || "—")}</td>
           <td>
-            <button type="button" class="btn-kiosk-sm danger" onclick="devClearManagerAccount('${escapeAttr(m.email)}', '${escapeAttr(m.name)}')">
+            <button type="button" class="btn-kiosk-sm danger" onclick="devClearManagerAccount('${escapeAttr(m.email)}', '${escapeAttr(m.name)}', '${escapeAttr(m.managerCode || "")}', '${escapeAttr(m.spreadsheetId || "")}')">
               Clear & Reset to Reg
             </button>
           </td>
@@ -3533,8 +3533,8 @@
       `).join("");
     }
 
-    async function devClearManagerAccount(mgrEmail, mgrName) {
-      if (!(await kioskConfirm(`Clear manager account for ${mgrName} (${mgrEmail})? This will remove their manager login so they can re-register.`, "Reset Manager Account", "Clear Account", true))) return;
+    async function devClearManagerAccount(mgrEmail, mgrName, mgrCode, mgrSheetId) {
+      if (!(await kioskConfirm(`Clear manager account for ${mgrName} (${mgrEmail}) AND remove all employee accounts/logs under them?`, "Reset Manager & Team", "Clear All", true))) return;
 
       const devPass = sessionStorage.getItem('devDashboardPass') || "";
       try {
@@ -3545,7 +3545,10 @@
           body: JSON.stringify({
             action: "DEV_REMOVE_MANAGER",
             dev_pass: devPass,
-            target_email: mgrEmail
+            target_email: mgrEmail,
+            target_manager_code: mgrCode || "",
+            target_sheet_id: mgrSheetId || "",
+            remove_employees: true
           })
         });
         const data = await res.json();
@@ -3555,6 +3558,14 @@
           if (localMgrEmail && localMgrEmail === mgrEmail.toLowerCase()) {
             ['mgrName', 'mgrDept', 'mgrEmail', 'mgrCode', 'mgrTargetSheetId'].forEach(k => localStorage.removeItem(k));
             sessionStorage.removeItem('mgrSessionPass');
+          }
+          const localEmpMgrCode = String(localStorage.getItem('empManagerCode') || "").trim().toUpperCase();
+          const localEmpSheetId = String(localStorage.getItem('empTargetSheetId') || "").trim();
+          if ((mgrCode && localEmpMgrCode === String(mgrCode).trim().toUpperCase()) ||
+              (mgrSheetId && localEmpSheetId === String(mgrSheetId).trim())) {
+            ['empName', 'team', 'empPhone', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => localStorage.removeItem(k));
+            cachedEmployeeRecords = [];
+            cachedEmployeeLinks = [];
           }
           renderDevManagersTable(data.managers || []);
         } else {
@@ -5458,6 +5469,15 @@
             renderUIState(result);
           }
         } else {
+          const errStr = String(result.error || "").toLowerCase();
+          const isOrphanedManager = /not found|no manager|invalid manager|does not exist|deleted|removed|missing|unable to access/i.test(errStr);
+          if (isOrphanedManager) {
+            cachedEmployeeRecords = [];
+            cachedEmployeeLinks = [];
+            resetLocalEmployeeWorkstation();
+            showToast("Your manager's workspace was removed. Your account and login logs have been cleared.");
+            return;
+          }
           if (!isSilentPolling) {
             loadingState.style.display = 'none';
             openSwitchManager();
