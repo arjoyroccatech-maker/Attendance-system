@@ -3046,7 +3046,45 @@
     }
 
     // --- EMPLOYEE ENTRY, AUTH CODE LOGIN, RECOVERY & MANAGER SWITCH ---
-    function selectEmployeeRole() {
+    async function checkOrphanedEmployeeSession() {
+      const savedName = (localStorage.getItem('empName') || "").toUpperCase();
+      if (!savedName) return false;
+
+      const routing = getEmployeeRoutingPayload();
+      if (!routing.manager_code && !routing.target_sheet_id) {
+        cachedEmployeeRecords = [];
+        cachedEmployeeLinks = [];
+        resetLocalEmployeeWorkstation();
+        showToast("No manager workspace linked. Your account has been reset to registration.");
+        return true;
+      }
+
+      try {
+        const res = await fetchFreshApi({
+          action: "GET_DATA",
+          employee_name: savedName,
+          team: (localStorage.getItem('team') || "").toUpperCase(),
+          device_id: "Kiosk-Sync",
+          skip_photo: true,
+          ...routing
+        });
+        const data = await res.json();
+        const errStr = String(data.error || "").toLowerCase();
+        const isOrphaned = Boolean(data.accountRemoved) ||
+          (!data.ok && /not found|no manager|invalid manager|does not exist|deleted|removed|missing|unable to access|cannot open spreadsheet/i.test(errStr));
+
+        if (isOrphaned) {
+          cachedEmployeeRecords = [];
+          cachedEmployeeLinks = [];
+          resetLocalEmployeeWorkstation();
+          showToast("Your manager's workspace was removed. Your account and login data have been cleared.");
+          return true;
+        }
+      } catch (e) {}
+      return false;
+    }
+
+    async function selectEmployeeRole() {
       const savedName = (localStorage.getItem('empName') || "").toUpperCase();
       const authCode = localStorage.getItem('authCode');
       if (savedName && authCode) {
@@ -3055,12 +3093,13 @@
         document.getElementById('emp-login-error').innerText = "";
         switchCard('employee-login');
         setTimeout(() => document.getElementById('empLoginCode').focus(), 100);
+        await checkOrphanedEmployeeSession();
       } else {
         switchCard('laptop-setup');
       }
     }
 
-    function submitEmployeeLogin() {
+    async function submitEmployeeLogin() {
       const codeInput = document.getElementById('empLoginCode');
       const enteredCode = codeInput.value.trim();
       const savedCode = localStorage.getItem('authCode');
@@ -3072,19 +3111,39 @@
         return;
       }
 
+      errEl.innerText = "";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner" style="border-top-color:#FFFFFF; width:16px; height:16px; border-width:2.5px;"></div> Checking Workspace...';
+      }
+      codeInput.disabled = true;
+
+      const wasOrphaned = await checkOrphanedEmployeeSession();
+      if (wasOrphaned) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = 'Unlock Kiosk';
+        }
+        codeInput.disabled = false;
+        codeInput.value = "";
+        return;
+      }
+
       if (enteredCode !== savedCode) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = 'Unlock Kiosk';
+        }
+        codeInput.disabled = false;
         errEl.innerText = "Incorrect Authentication Code. Please try again.";
         codeInput.value = "";
         codeInput.focus();
         return;
       }
 
-      errEl.innerText = "";
       if (btn) {
-        btn.disabled = true;
         btn.innerHTML = '<div class="spinner" style="border-top-color:#FFFFFF; width:16px; height:16px; border-width:2.5px;"></div> Unlocking Kiosk...';
       }
-      codeInput.disabled = true;
 
       setTimeout(() => {
         if (btn) {
@@ -3094,7 +3153,7 @@
         codeInput.disabled = false;
         codeInput.value = "";
         openEmployeeKiosk();
-      }, 650);
+      }, 450);
     }
 
     async function submitKioskRecovery() {
@@ -5470,7 +5529,7 @@
           }
         } else {
           const errStr = String(result.error || "").toLowerCase();
-          const isOrphanedManager = /not found|no manager|invalid manager|does not exist|deleted|removed|missing|unable to access/i.test(errStr);
+          const isOrphanedManager = /not found|no manager|invalid manager|does not exist|deleted|removed|missing|unable to access|cannot open spreadsheet/i.test(errStr);
           if (isOrphanedManager) {
             cachedEmployeeRecords = [];
             cachedEmployeeLinks = [];
