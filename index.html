@@ -2937,7 +2937,7 @@
       qrExpiryTimer = null;
       window.shiftStartTime = null;
 
-      ['empName', 'team', 'empPhone', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
+      ['empName', 'team', 'empPhone', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart', 'kioskPairToken'].forEach(k => {
         localStorage.removeItem(k);
       });
       switchCard('laptop-setup');
@@ -3622,7 +3622,7 @@
           const localEmpSheetId = String(localStorage.getItem('empTargetSheetId') || "").trim();
           if ((mgrCode && localEmpMgrCode === String(mgrCode).trim().toUpperCase()) ||
               (mgrSheetId && localEmpSheetId === String(mgrSheetId).trim())) {
-            ['empName', 'team', 'empPhone', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => localStorage.removeItem(k));
+            ['empName', 'team', 'empPhone', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart', 'kioskPairToken'].forEach(k => localStorage.removeItem(k));
             cachedEmployeeRecords = [];
             cachedEmployeeLinks = [];
           }
@@ -4225,7 +4225,7 @@
           if (deviceAction === "REMOVE") {
             const localEmp = String(localStorage.getItem('empName') || "").trim().toLowerCase();
             if (localEmp && localEmp === String(empName).trim().toLowerCase()) {
-              ['empName', 'team', 'empPhone', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart'].forEach(k => {
+              ['empName', 'team', 'empPhone', 'empEmail', 'authCode', 'empManagerCode', 'empTargetSheetId', 'profileDataUrl', 'profileFileId', 'localShiftStart', 'kioskPairToken'].forEach(k => {
                 localStorage.removeItem(k);
               });
             }
@@ -5051,18 +5051,41 @@
       return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
     }
 
-    // --- PERSISTENT MOBILE DEVICE TOKEN (1-TO-1 BINDING • iOS SAFARI MULTI-STORE) ---
+    // --- PERSISTENT WORKSTATION-PAIRED MOBILE TOKEN (100% iOS CODE SCANNER & ANDROID COMPATIBLE) ---
+    function getOrCreateKioskPairToken() {
+      let ktok = "";
+      try { ktok = localStorage.getItem('kioskPairToken') || ""; } catch (e) {}
+      if (!ktok || !ktok.toUpperCase().startsWith("PHONE-")) {
+        const randPart = Math.floor(100000 + Math.random() * 900000);
+        const charPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+        ktok = `PHONE-${randPart}-${charPart}`;
+        try { localStorage.setItem('kioskPairToken', ktok); } catch (e) {}
+      }
+      return ktok;
+    }
+
     function getOrCreateMobileDeviceId() {
+      // Primary: Use the physical laptop workstation's paired token from the live QR code.
+      // iOS "Code Scanner" runs an ephemeral WebView that wipes localStorage & cookies after EVERY scan;
+      // anchoring to the workstation's secret pair token ensures Time In and Time Out ALWAYS match on iOS!
+      const qrPairToken = (urlParams.get('ktok') || "").trim().toUpperCase();
+      if (qrPairToken && qrPairToken.startsWith("PHONE-")) {
+        try { localStorage.setItem('boundMobileDeviceId', qrPairToken); } catch (e) {}
+        try {
+          document.cookie = `boundMobileDeviceId=${qrPairToken}; max-age=31536000; path=/; SameSite=Lax; Secure`;
+        } catch (e) {}
+        try { window.name = qrPairToken; } catch (e) {}
+        return qrPairToken;
+      }
+
       let devId = "";
       try { devId = localStorage.getItem('boundMobileDeviceId') || ""; } catch (e) {}
 
-      // Fallback 1: Read from persistent 1-year cookie (survives iOS Safari tab/storage resets)
       if (!devId) {
         const cookieMatch = document.cookie.match(/(?:^|;\s*)boundMobileDeviceId=(PHONE-[A-Z0-9-]+)/);
         if (cookieMatch) devId = cookieMatch[1];
       }
 
-      // Fallback 2: Read from window.name if Safari Private Browsing blocked localStorage
       if (!devId && typeof window.name === "string" && window.name.startsWith("PHONE-")) {
         devId = window.name.trim();
       }
@@ -5073,7 +5096,6 @@
         devId = `PHONE-${randPart}-${charPart}`;
       }
 
-      // Persist across all three stores so iOS Safari keeps the exact same token
       try { localStorage.setItem('boundMobileDeviceId', devId); } catch (e) {}
       try {
         document.cookie = `boundMobileDeviceId=${devId}; max-age=31536000; path=/; SameSite=Lax; Secure`;
@@ -5727,6 +5749,7 @@
         localStorage.setItem('authCode', newAuthCode);
         localStorage.setItem('empManagerCode', result.managerCode || mgrCode);
         localStorage.setItem('empTargetSheetId', result.targetSheetId || "");
+        getOrCreateKioskPairToken();
 
         switchCard('laptop-reveal');
         document.getElementById('auth-code-display').innerText = newAuthCode;
@@ -5809,8 +5832,9 @@
       }
 
       const isNight = document.body.classList.contains('night-stage') ? '1' : '0';
+      const kioskPairToken = getOrCreateKioskPairToken();
       const currentWebsite = window.location.origin + window.location.pathname;
-      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&photo=${encodeURIComponent(photoId)}&sheet=${encodeURIComponent(targetSheetId)}&mcode=${encodeURIComponent(mgrCode)}&ts=${qrTimestamp}&night=${isNight}`;
+      const payloadUrl = `${currentWebsite}?mode=scan&action=${actionType}&name=${encodeURIComponent(name)}&team=${encodeURIComponent(team)}&arr=${encodeURIComponent(arrangement)}&photo=${encodeURIComponent(photoId)}&sheet=${encodeURIComponent(targetSheetId)}&mcode=${encodeURIComponent(mgrCode)}&ts=${qrTimestamp}&ktok=${encodeURIComponent(kioskPairToken)}&night=${isNight}`;
       const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(payloadUrl)}`;
       
       document.getElementById('qr-image').src = qrImageUrl;
