@@ -2692,8 +2692,8 @@
       <div id="phone-badge" class="phone-badge">TIME IN • Onsite</div>
 
       <label style="text-align:center;">Authentication Code</label>
-      <input type="tel" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" autofocus style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') verifyAndSubmit()">
-      <button class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
+      <input type="text" pattern="[0-9]*" inputmode="numeric" maxlength="4" id="enteredCode" class="masked-input" placeholder="••••" autocomplete="one-time-code" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)" style="text-align: center; font-size: 28px; letter-spacing: 8px;" onkeydown="if(event.key==='Enter') verifyAndSubmit()">
+      <button type="button" class="btn-save" id="submit-btn" onclick="verifyAndSubmit()">Verify & Submit</button>
       <div id="scan-status" style="font-size: 14px; font-weight: 600; margin-top: 15px;"></div>
     </div>
   </div>
@@ -5051,15 +5051,35 @@
       return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
     }
 
-    // --- PERSISTENT MOBILE DEVICE TOKEN (1-TO-1 BINDING) ---
+    // --- PERSISTENT MOBILE DEVICE TOKEN (1-TO-1 BINDING • iOS SAFARI MULTI-STORE) ---
     function getOrCreateMobileDeviceId() {
-      let devId = localStorage.getItem('boundMobileDeviceId');
+      let devId = "";
+      try { devId = localStorage.getItem('boundMobileDeviceId') || ""; } catch (e) {}
+
+      // Fallback 1: Read from persistent 1-year cookie (survives iOS Safari tab/storage resets)
+      if (!devId) {
+        const cookieMatch = document.cookie.match(/(?:^|;\s*)boundMobileDeviceId=(PHONE-[A-Z0-9-]+)/);
+        if (cookieMatch) devId = cookieMatch[1];
+      }
+
+      // Fallback 2: Read from window.name if Safari Private Browsing blocked localStorage
+      if (!devId && typeof window.name === "string" && window.name.startsWith("PHONE-")) {
+        devId = window.name.trim();
+      }
+
       if (!devId) {
         const randPart = Math.floor(100000 + Math.random() * 900000);
         const charPart = Math.random().toString(36).substring(2, 6).toUpperCase();
         devId = `PHONE-${randPart}-${charPart}`;
-        localStorage.setItem('boundMobileDeviceId', devId);
       }
+
+      // Persist across all three stores so iOS Safari keeps the exact same token
+      try { localStorage.setItem('boundMobileDeviceId', devId); } catch (e) {}
+      try {
+        document.cookie = `boundMobileDeviceId=${devId}; max-age=31536000; path=/; SameSite=Lax; Secure`;
+      } catch (e) {}
+      try { window.name = devId; } catch (e) {}
+
       return devId;
     }
 
@@ -5826,7 +5846,9 @@
     }
 
     async function verifyAndSubmit() {
-      const enteredCode = document.getElementById('enteredCode').value.trim();
+      const codeEl = document.getElementById('enteredCode');
+      const enteredCode = String(codeEl.value || "").replace(/[^0-9]/g, "").slice(0, 4);
+      codeEl.value = enteredCode;
       const qrTimestamp = Number(urlParams.get('ts') || 0);
       const statusDiv = document.getElementById('scan-status');
       const submitBtn = document.getElementById('submit-btn');
